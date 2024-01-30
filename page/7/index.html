@@ -56,7 +56,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2024-01-30 16:09:55'
+  postUpdate: '2024-01-30 19:33:27'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -165,141 +165,242 @@
     }
     detectApple()
     })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
-</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">92</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Zhangzqs</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/929f/" title="Android-RelativeLayout实战">Android-RelativeLayout实战</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-03-07T02:46:53.000Z" title="发表于 2022-03-07 10:46:53">2022-03-07</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Android/">Android</a></span></div><div class="content"> 需求分析
-实现如下图所示的效果
-需要设置字体大小，对齐方式，组件间隔，按钮样式
-最外层布局具有一个整体的内边距
-当点击按钮时，背景色改为红色，字体颜色改为黄色
-当输入框捕获焦点时（点击时），要求其边框为加粗的蓝色圆角框，否则要求其边框为细的灰色圆角框
-仅使用相对布局实现
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">103</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">33</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Zhangzqs</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/9699/" title="树莓派安装虚拟化平台VMware ESXi">树莓派安装虚拟化平台VMware ESXi</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-04-15T01:52:51.000Z" title="发表于 2022-04-15 09:52:51">2022-04-15</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/">虚拟化</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/ESXi/">ESXi</a></span></div><div class="content"> 准备工作
+下载VMware ESXi
+Download ESXi for ARM (vmware.com)
+Github上下载最新树莓派固件
+https://github.com/raspberrypi/firmware
+Github Release上下载最新树莓派UEFI固件
+Releases · pftf/RPi4 (github.com)
+下载rufus软件用于烧录VMware ESXi镜像
+Rufus - 轻松创建USB启动盘
+ 制作UEFI启动TF卡
+ 格式化TF卡
+格式化TF卡为FAT32卷标设置为UEFI
 
- 布局实施
- 整体内边距
-设置最外层RelativeLayout的paddingHorizontal边距
-android:paddingHorizontal=“10dp”
- 确定退出文字设计
-最顶端有一个居中的“你确定要退出吗？”文本显示，使用TextView来实现
-设置TextView的尺寸适应内容，文本内容，文字大小，加粗显示，水平居中，
-由于相对布局需要知道其兄弟组件名，赋予其id为text1
-12345678&lt;TextView       android:layout_width=&quot;wrap_content&quot;       android:layout_height=&quot;wrap_content&quot;       android:text=&quot;你确定要退出吗?& ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/7c4b/" title="操作系统45讲-2">操作系统45讲-2</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-03-06T14:17:36.000Z" title="发表于 2022-03-06 22:17:36">2022-03-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F45%E8%AE%B2/">操作系统45讲</a></span></div><div class="content"> main函数调用之前的代码
-编写如下的汇编入口代码, entry.asm
-123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596;彭东 @ 2021.01.09MBT_HDR_FLAGS    EQU 0x00010003MBT_HDR_MAGIC    EQU 0x1BADB002 ;多引导协议头魔数MBT_HDR2_MAGIC    EQU 0xe85250d6 ;第二版多引导协议头魔数global _start ;导出_start符号extern main ;导入外部的main函数符号[section .start.text] ;定义.start.text代码节[bits 32] ;汇编成32位代码_start:    jmp _entryALIGN 8mbt_hdr:  ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/7d0b/" title="操作系统45讲-1">操作系统45讲-1</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-03-06T10:13:34.000Z" title="发表于 2022-03-06 18:13:34">2022-03-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F45%E8%AE%B2/">操作系统45讲</a></span></div><div class="content"> 代码编写
-写个HelloWorld
-123456#include &lt;stdio.h&gt;int main(int argc, char const *argv[])&#123;    printf(&quot;hello world!\n&quot;);    return 0;&#125;
- 代码编译
-程序的编译过程如下图，
+ 写入fireware文件到tf卡
+解压fireware-master.zip下的boot文件夹中的所有文件到tf卡中
 
-根据源文件生成预处理文件 HelloWorld.i
-1gcc -E HelloWorld.c -o HelloWorld.i
-根据预处理文件生成汇编文件 HelloWorld.s
-1gcc -S HelloWorld.i -o HelloWorld.s
-根据汇编文件生成目标文件 HelloWorld.o
-1gcc -c HelloWorld.s -o HelloWorld.o
-根据目标文件生成可执行文件
-1gcc HelloWorld.o -o HelloWorld
- 代码执行
-运行可执行文件
-1./HelloWorld
- 代码反编译
- 反编译可执行文件
-反编译可执行文件 HelloWorld.dump
-1objdump -d HelloWorld  ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/9171/" title="Manjaro中zsh在vscode下乱码">Manjaro中zsh在vscode下乱码</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-03-05T01:12:16.000Z" title="发表于 2022-03-05 09:12:16">2022-03-05</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%84%E7%A7%8D%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91%E5%B0%8F%E6%8A%80%E5%B7%A7/">各种日常踩坑小技巧</a></span></div><div class="content">在Manjaro下，vscode使用zsh产生乱码，如下图所示，
+删除所有的kernal*.img文件
 
-打开设置，搜索terminal font
-找到设置项Terminal › Integrated: Font Family
-设置为NotoSansMono Nerd Font
-如下图即可显示正常
+ 覆盖UEFI固件文件
+打开RPi4_UEFI_Firmware_*.zip文件，解压覆盖所有的文件到tf卡中。
 
-</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/4db3/" title="Linux下优雅地通过docker-easyconnect实现内网访问">Linux下优雅地通过docker-easyconnect实现内网访问</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-03-04T02:44:21.000Z" title="发表于 2022-03-04 10:44:21">2022-03-04</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%84%E7%A7%8D%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91%E5%B0%8F%E6%8A%80%E5%B7%A7/">各种日常踩坑小技巧</a></span></div><div class="content">在Linux下用过EasyConnect的小伙伴应该知道，EasyConnect在Linux环境下相当难用。笔者之前在Ubuntu20.04下安装EasyConnect打开后闪退。
-        闪退问题主要是系统库太新了，而EasyConnect还没升级依赖库。网上有解决方案，但是打开后还是有一定概率闪退。而且连接成功后，莫名其妙导致电脑只能访问EasyConnect内网环境，外网无法访问。
-        最近，更换到Manjaro 21后，通过yay安装软件真香，但是只有EasyConnect安装失败，于是便探索出一个方法。
+ 制作VMware ESXi启动u盘
 
- EasyConnect In Docker
-使用容器化技术，将EasyConnect封印在Docker中运行。
-该项目Github主页如下，docker-easyconnect
-电脑安装Docker后，通过如下命令即可一键运行docker-easyconnect镜像
-1docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -p 127.0.0.1:1080:1080 -p 127.0.0.1: ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/5d0/" title="淘宝架构的演进">淘宝架构的演进</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-03-03T06:53:31.000Z" title="发表于 2022-03-03 14:53:31">2022-03-03</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/">系统架构</a></span></div><div class="content">本文作为朱栩老师的上课笔记
-原文如下，
-淘宝技术架构演进之路 - 云+社区 - 腾讯云 (tencent.com)
- 基本概念
+ 安装ESXi
+树莓派插上制作好的tf卡，u盘，开机出现树莓派LOGO时候按ESC进入UEFI固件设置页面。
+
+树莓派4的UEFI固件默认有一个使用3G ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/f33c/" title="Hadoop环境搭建">Hadoop环境搭建</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-04-12T06:24:45.000Z" title="发表于 2022-04-12 14:24:45">2022-04-12</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></span></div><div class="content"> 配置虚拟机环境
+建立四台虚拟机，配置Hadoop的分布式集群。并且配置静态ip地址如下，最终实现master能够直接与三个节点ssh无密码联通。
 
 
-分布式系统
-一个系统的多个模块在不同服务器上部署
 
-
-高可用
-系统中部分节点失效，其他节点能够代替它继续完成服务，可认为系统具有高可用性。
-
-
-集群
-一个特定领域的软件部署在多台服务器上并作为一个整体提供一类服务。
-
-
-负载均衡
-请求发送到系统时，通过某些方式把请求均匀分发到多个节点上，使系统中每个节点能够均匀的处理请求负载，则可认为系统是负载均衡的。
-
-
-代理
-
-
-正向代理
-系统内访问外部网络时，通过一个统一的代理服务器把请求转发出去，从外部看来该请求就是代理服务器发出的，此时代理服务器实现了正向的代理。
-
-
-反向代理
-外部请求进入系统时，代理服务器把该请求转发到系统内的某个服务器，从外部看来，该请求的处理者就是代理服务器，此时代理服务器实现了反向代理。
+主机名
+ip地址
 
 
 
 
- 架构演进
- 架构0 单机架构
+master
+192.168.166.100
 
-一个非常普通，非常简单的单机架构，只有一台服务器主机，Tomcat与数据库放在同一台服务器上。
-随着用户数的增长，单机应对并发读写数据库的场景成为瓶颈。
-单机架 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/cd29/" title="初步了解Python字节码">初步了解Python字节码</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-02-25T03:56:00.000Z" title="发表于 2022-02-25 11:56:00">2022-02-25</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Python/">Python</a></span></div><div class="content"> 定义函数
-打开python解释器，输入如下代码，定义了一个简单的函数foo，
-12345678910zzq@ubuntu:~$ python3Python 3.8.10 (default, Nov 26 2021, 20:14:08) [GCC 9.3.0] on linuxType &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.&gt;&gt;&gt; def foo():...     a=2...     b=3...     c=a+b...     return c... 
- 字节码反编译
-使用内置的dis模块可得到函数foo字节码的汇编代码
-123456789101112131415&gt;&gt;&gt; import dis&gt;&gt;&gt; dis.dis(foo)  2           0 LOAD_CONST               1 (2)              2 STORE_ ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/bd17/" title="[论文翻译]使用WebAssembly的可证明安全的多语言沙箱">[论文翻译]使用WebAssembly的可证明安全的多语言沙箱</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-02-24T11:19:31.000Z" title="发表于 2022-02-24 19:19:31">2022-02-24</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/">论文翻译</a></span></div><div class="content">本文一篇关于WebAssembly的多语言沙箱的学术论文的翻译，原文参考：
-Provably-Safe Multilingual Software Sandboxing using WebAssembly
- Provably-Safe Multilingual Software Sandboxing using WebAssembly
-使用WebAssembly的可证明安全的多语言软件的沙箱
- Abstract
-Many applications, from the Web to smart contracts, need to safely execute untrusted code.
-许多应用程序，从Web到智能合约(区块链相关)，都需要安全地执行不受信任的代码。
-We observe that WebAssembly (Wasm) is ideally positioned to support such applications, since it promises safety and performance, while serving as a compiler tar ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/6ffb/" title="matlab笔记">matlab笔记</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-02-12T08:10:56.000Z" title="发表于 2022-02-12 16:10:56">2022-02-12</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/">数学建模</a></span></div><div class="content"> matlab数组基本运算
-matlab的索引从1开始
-定义一个三行四列的矩阵如下
-1234567&gt;&gt; a=[1,2,1,3; 2,6,5,7; 7,3,2,0]a =     1     2     1     3     2     6     5     7     7     3     2     0
-获取矩阵尺寸
-12345&gt;&gt; size(a)ans =     3     4
-取2-4列所有元素
-1234567&gt;&gt; a(:,2:4)ans =     2     1     3     6     5     7     3     2     0
-取1-2行2-4列的所有元素
-123456&gt;&gt; a(1:2,2:4)ans =     2     1     3     6     5     7
-取2-最后一列的所有元素
-1234567&gt;&gt; a(:,2:end)ans =     2     1     3     6     5     7     3     2     0
-给第2和第3列所在所有行的元素赋 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/7f01/" title="数学建模-Snowboard-Course">数学建模-Snowboard-Course</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-02-08T16:27:14.000Z" title="发表于 2022-02-09 00:27:14">2022-02-09</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/">数学建模</a></span></div><div class="content"> 美赛2011年题目
- Problem A: Snowboard Course
-Determine the shape of a snowboard course (currently known as a “half-pipe”) to maximize the production of “vertical air” by a skilled snowboarder.
-设计一个滑雪道的形状(当前已知是半个管道)来最大化一个熟练地滑雪运动员的vertical air。
-“Vertical air” is the maximum vertical distance above the edge of the half-pipe.
-vertical air指的是在半圆管道之上最大的垂直距离。
-Tailor the shape to optimize other possible requirement, such as maximum twist in the air.
-设计一个合适的形状去尽可能优化所需条件，如最大化在空中的扭曲动作。
-What tradeoffs may be req ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/6/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#content-inner">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#content-inner">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/#content-inner">10</a><a class="extend next" rel="next" href="/page/8/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">92</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-01-30T08:08:47.016Z" title="更新于 2024-01-30 16:08:47">2024-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-01-30T08:08:47.016Z" title="更新于 2024-01-30 16:08:47">2024-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/880c/" title="Docker快速部署prometheus+grafana监控体系">Docker快速部署prometheus+grafana监控体系</a><time datetime="2023-06-09T09:33:05.000Z" title="更新于 2023-06-09 17:33:05">2023-06-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/7f88/" title="Chapter 8 File system">Chapter 8 File system</a><time datetime="2023-01-13T07:47:45.000Z" title="更新于 2023-01-13 15:47:45">2023-01-13</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+
+node1
+192.168.166.101
+
+
+node2
+192.168.166.102
+
+
+node3
+192.168.166.103
+
+
+
+ 安装VMware虚拟机平台
+略
+ 新建虚拟机
+略
+ 安装CentOS-7系统
+略
+ 安装Java环境
+略
+ 克隆虚拟机
+略
+ 配置静态ip与hosts文件
+略
+ 配置ssh免密登陆
+使用 ssh-keygen -t rsa 生成一对RSA公私钥，将公钥放在目标登录的服务器上，私钥放在本地。当ssh客户端发出请求，请求使用基于密钥的安全验证，服务器将先寻找公钥，并与传递过来的公钥做比较，若一致，则服务器使用公钥加密一个challenge并返回客户端，客户端通过私钥解密challenge并发送到服务器即可完成安全验证。
+ssh-copy-id -i ~/.ssh/id_rsa.pub master
+ssh-copy-i ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/7cbe/" title="软件测试过程">软件测试过程</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-04-11T12:07:49.000Z" title="发表于 2022-04-11 20:07:49">2022-04-11</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/">软件测试</a></span></div><div class="content"> 软件测试过程
+软件测试是有阶段性的，软件测试过程与软件设计周期有相互对应的关系。从过程来看，软件测试可分为单元测试、集成测试、系统测试和验收测试等一系列不同的测试阶段。
+ 概述
+单元测试的目的是保证每个模块单独运行正确，多采用白盒技术，检查模块控制结构的某些特殊路径，期望覆盖尽可能多的出错点。
+经单元测试后的模块，组装为软件包，对软件包进行集成测试，主要测试软件结构问题，因测试建立在模块间的接口上，所以多为黑盒测试，适当辅以白盒测试技术，以便能对主要控制路径进行测试。
+系统测试主要是检验软件是否满足功能、行为和性能方面的要求，这一步完全采用黑盒测试技术。
+验收测试是检验软件产品的最后一道工序，与前面各种测试过程的不同之处主要在于它突出了客户的作用，同时软件开发人员也要参与。
+ 单元测试
+单元测试是对软件设计的最小单元——模块进行正确性检验的测试工作，主要测试模块在语法、格式和逻辑上的错误。
+单元测试应对模块内所有重要的控制路径进行测试，以便发现模块内部的错误。单元测试是检查软件源程序的第一次机会，通过孤立地测试每个单元，确保每个单元工作正常，这样比单元作为一个更大系统的一个部分更容易 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/7cdc/" title="软件测试概述">软件测试概述</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-04-11T11:38:15.000Z" title="发表于 2022-04-11 19:38:15">2022-04-11</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/">软件测试</a></span></div><div class="content"> 软件测试概述
+ 软件测试模型
+ V模型
+V模型是最具有代表意义的测试模型 ，反映出了测试活动与分析设计活动的关系。
+V模型指出如下要求，
+
+
+单元和集成测试应检测程序的执行是否满足软件设计的要求；
+
+
+系统测试应检测系统功能、性能的质量特性是否达到系统要求的指标；
+
+
+验收测试确定软件的实现是否满足用户需要或合同的要求。
+
+
+
+ W模型
+W模型由两个V字型模型组成，分别代表测试与开发过程。
+W模型强调：
+测试伴随着整个软件开发周期，而且测试的对象不仅仅是程序，需求、设计等同样要测试，也就是说，测试与开发是同步进行的。
+
+ H模型
+H模型将测试活动完全独立出来，形成了一个完全独立的流程，将测试准备活动和测试执行活动清晰地体现出来。
+H模型揭示了软件测试是一个独立的流程，贯穿产品整个生命周期，与其他流程并发地进行。
+
+ 其他模型
+除上述几种常见模型外，还流传着其他几种模型，例如X模型、前置测试模型等。
+ X模型
+X模型提出针对单独的程序片段进行相互分离的编码和测试，此后通过频繁的交接，通过集成最综合成为可执行的程序。
+ 前置测试模型
+前置测试模型体现了开发与测试的结合，要求对每一个交付内 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/c06a/" title="Leetcode-357-统计各位数字都不同的数字个数">Leetcode-357-统计各位数字都不同的数字个数</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-04-11T02:55:05.000Z" title="发表于 2022-04-11 10:55:05">2022-04-11</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/Leetcode/">Leetcode</a></span></div><div class="content"> 题目
+ 357. 统计各位数字都不同的数字个数
+给你一个整数 n ，统计并返回各位数字都不同的数字 x 的个数，其中 0 &lt;= x &lt; 10n 。
+示例 1：
+
+输入：n = 2
+输出：91
+解释：答案应为除去 11、22、33、44、55、66、77、88、99 外，在 0 ≤ x &lt; 100 范围内的所有数字。
+
+示例 2：
+
+输入：n = 0
+输出：1
+
+提示：
+
+0 &lt;= n &lt;= 8
+
+ 解题
+ 题目分析
+我们逐一考虑各种情况, 设函数d(t)d(t)d(t)的值为n=tn = tn=t时的结果, 设函数f(t)f(t)f(t)为仅含有t位数字的各位数字都不同的数字x的个数
+
+
+当t = 0 时候, 0≤x&lt;10\leq x &lt; 10≤x&lt;1, 此时x只能选择0, 即有1种选择
+
+即d(0)=1d(0) = 1d(0)=1
+
+
+
+当t = 1 时候, 0≤x&lt;100\leq x &lt; 100≤x&lt;10, 此时x只能选择0~9, 即有10种选择
+
+即d(1)=10d(1)=10d(1)=10
+
+
+
+当t = 2  ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/e5a/" title="Leetcode-310-最小高度树">Leetcode-310-最小高度树</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-04-10T01:28:47.000Z" title="发表于 2022-04-10 09:28:47">2022-04-10</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/Leetcode/">Leetcode</a></span></div><div class="content"> 题目
+ 原文
+原题链接
+
+树是一个无向图，其中任何两个顶点只通过一条路径连接。 换句话说，一个任何没有简单环路的连通图都是一棵树。
+  给你一棵包含 n 个节点的树，标记为 0 到 n - 1 。给定数字 n 和一个有 n - 1 条无向边的 edges 列表（每一个边都是一对标签），其中 edges[i] = [ai, bi] 表示树中节点 ai 和 bi 之间存在一条无向边。
+可选择树中任何一个节点作为根。当选择节点 x 作为根节点时，设结果树的高度为 h 。在所有可能的树中，具有最小高度的树（即，min(h)）被称为 最小高度树 。
+  请你找到所有的 最小高度树 并按 任意顺序 返回它们的根节点标签列表。
+树的 高度 是指根节点和叶子节点之间最长向下路径上边的数量。
+  样例输入： n = 4, edges = [[1,0],[1,2],[1,3]]
+  样例输出： [1]
+
+示例 1：
+
+输入：n = 4, edges = [[1,0],[1,2],[1,3]]
+输出：[1]
+解释：如图所示，当根是标签为 1 的节点时，树的高度是 1 ，这是唯一的最小高度树。
+示例 2：
+ ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/d751/" title="Leetcode-307-区域和检索-数组可修改[线段树]">Leetcode-307-区域和检索-数组可修改[线段树]</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-04-07T10:00:58.000Z" title="发表于 2022-04-07 18:00:58">2022-04-07</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/Leetcode/">Leetcode</a></span></div><div class="content"> Leetcode-307-区域和检索-数组可修改
+ 题目
+给你一个数组 nums ，请你完成两类查询。
+
+
+其中一类查询要求 更新 数组 nums 下标对应的值
+
+
+另一类查询要求返回数组 nums 中索引 left 和索引 right 之间（ 包含 ）的nums元素的 和 ，其中 left &lt;= right
+
+
+实现 NumArray 类：
+
+
+NumArray(int[] nums) 用整数数组 nums 初始化对象
+
+
+void update(int index, int val) 将 nums[index] 的值 更新 为 val
+
+
+int sumRange(int left, int right) 返回数组 nums 中索引 left 和索引 right 之间（ 包含 ）的nums元素的 和 （即，nums[left] + nums[left + 1], …, nums[right]）
+
+
+ 解题思路
+ 暴力法
+根据题意不难直接写出暴力解决方案, 当然直接TLE
+可以得出, 更新操作时间复杂度O(1)O(1)O(1), 求和操作时间复杂度O(r−l)O(r-l)O( ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/f681/" title="二叉树的遍历">二叉树的遍历</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-04-07T08:01:43.000Z" title="发表于 2022-04-07 16:01:43">2022-04-07</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E5%85%B6%E4%BB%96/">其他</a></span></div><div class="content"> 准备工作
+我们定义一个树的结点的结构体如下,
+123456789101112struct TreeNode &#123;    int val;    TreeNode *left;    TreeNode *right;    TreeNode(int val) : val(val), left(nullptr), right(nullptr) &#123;&#125;    TreeNode(int val, TreeNode *left) : val(val), left(left), right(nullptr) &#123;&#125;    TreeNode(int val, TreeNode *left, TreeNode *right)        : val(val), left(left), right(right) &#123;&#125;&#125;;
+定义一系列调试输出函数
+12345678910111213141516171819202122232425262728293031// 美化输出一颗二叉树void output(TreeNode *root) ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/d9c8/" title="创造一块虚拟硬盘">创造一块虚拟硬盘</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-03-08T04:36:17.000Z" title="发表于 2022-03-08 12:36:17">2022-03-08</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F45%E8%AE%B2/">操作系统45讲</a></span></div><div class="content"> /dev/zero讲解
+在Linux中，文件/dev/zero是在逻辑上存放了无限大小的0x00数据。
+我们可以写一段简单的Python脚本验证，
+1234f = open(&#x27;/dev/zero&#x27;)f.read(1)f.read(10)f.read(100)
+如下图，可以发现输出结果全是字节为0的二进制数据。
+
+注意：read中参数表示一次读取多少字节数据，如果你不传入参数，即使用默认参数-1，就表示一次性完整读取整个文件并加载到内存中，然而/dev/zero是逻辑上的文件，拥有无限大小，永远也读不完。所以，如果你直接使用f.read()那么你可以看到电脑内存将飙升，直到内存不足死机。[doge]
+ 创造虚拟硬盘
+现在，我们需要创建一块虚拟硬盘，虚拟硬盘本质上就是一个文件，把这个文件当作一块硬盘，进行原始的读写硬盘操作，所以创建一块虚拟硬盘就是创建一个一定大小的文件。我们现在有一个目标，就是创建一块100M大小的文件，内容全部填充为0x00。
+在Linux中，使用cat命令可以读取文件并输出到终端，使用&gt;操作符可以使终端输出重定向到指定文件的输入。
+我们使用 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/posts/61f3/" title="Android-ConstraintLayout实战">Android-ConstraintLayout实战</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-03-07T07:54:08.000Z" title="发表于 2022-03-07 15:54:08">2022-03-07</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Android/">Android</a></span></div><div class="content"> 需求分析
+使用ConstraintLayout，完成以下布局的设计
+
+ 实施
+ 整体边距约束
+对最外层ConstraintLayout添加属性，实现整体的内边距
+android:padding=“20dp”
+ 第一个标题
+设置尺寸自适应，字号30sp，加粗显示后
+设置该控件位于父容器左上角，即
+
+
+Start与父容器的Start对齐
+
+app:layout_constraintStart_toStartOf=“parent”
+
+
+
+Top与父容器的Top对齐
+
+app:layout_constraintTop_toTopOf=“parent”
+
+
+
+123456789&lt;TextView    android:id=&quot;@+id/third_text1&quot;    android:layout_width=&quot;wrap_content&quot;    android:layout_height=&quot;wrap_content&quot;    android:textSize=&quot;30sp&quot;    android:textStyle ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/6/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#content-inner">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#content-inner">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/#content-inner">11</a><a class="extend next" rel="next" href="/page/8/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">103</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">33</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-01-30T11:32:59.750Z" title="更新于 2024-01-30 19:32:59">2024-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-01-30T11:32:59.750Z" title="更新于 2024-01-30 19:32:59">2024-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-01-30T11:32:59.750Z" title="更新于 2024-01-30 19:32:59">2024-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-01-30T11:32:59.674Z" title="更新于 2024-01-30 19:32:59">2024-01-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-01-30T11:32:59.674Z" title="更新于 2024-01-30 19:32:59">2024-01-30</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
             <i class="fas fa-folder-open"></i>
             <span>分类</span>
             <a class="card-more-btn" href="/categories/" title="查看更多">
     <i class="fas fa-angle-right"></i></a>
             </div>
             <ul class="card-category-list" id="aside-cat-list">
-            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Android/"><span class="card-category-list-name">Android</span><span class="card-category-list-count">7</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Golang/"><span class="card-category-list-name">Golang</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java%E6%A1%86%E6%9E%B6/"><span class="card-category-list-name">Java框架</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Python/"><span class="card-category-list-name">Python</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/ROS%E6%9C%BA%E5%99%A8%E4%BA%BA/"><span class="card-category-list-name">ROS机器人</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Rust/"><span class="card-category-list-name">Rust</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/"><span class="card-category-list-name">信息安全</span><span class="card-category-list-count">9</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%84%E7%A7%8D%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91%E5%B0%8F%E6%8A%80%E5%B7%A7/"><span class="card-category-list-name">各种日常踩坑小技巧</span><span class="card-category-list-count">4</span></a></li>
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Android/"><span class="card-category-list-name">Android</span><span class="card-category-list-count">7</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Golang/"><span class="card-category-list-name">Golang</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java%E6%A1%86%E6%9E%B6/"><span class="card-category-list-name">Java框架</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Python/"><span class="card-category-list-name">Python</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/ROS%E6%9C%BA%E5%99%A8%E4%BA%BA/"><span class="card-category-list-name">ROS机器人</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Rust/"><span class="card-category-list-name">Rust</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/TODO/"><span class="card-category-list-name">TODO</span><span class="card-category-list-count">10</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/"><span class="card-category-list-name">信息安全</span><span class="card-category-list-count">9</span></a></li>
             </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/C-C/" style="font-size: 1.1em; color: #999">C/C++</a> <a href="/tags/Hibernate/" style="font-size: 1.1em; color: #999">Hibernate</a> <a href="/tags/Java/" style="font-size: 1.5em; color: #99a9bf">Java</a> <a href="/tags/Linux/" style="font-size: 1.1em; color: #999">Linux</a> <a href="/tags/MyBatis/" style="font-size: 1.1em; color: #999">MyBatis</a> <a href="/tags/Scrum/" style="font-size: 1.1em; color: #999">Scrum</a> <a href="/tags/Typora/" style="font-size: 1.1em; color: #999">Typora</a> <a href="/tags/hexo/" style="font-size: 1.1em; color: #999">hexo</a> <a href="/tags/pandoc/" style="font-size: 1.1em; color: #999">pandoc</a> <a href="/tags/%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91/" style="font-size: 1.1em; color: #999">敏捷开发</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" style="font-size: 1.1em; color: #999">数学建模</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 1.3em; color: #99a1ac">数据库</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.1em; color: #999">算法</a> <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" style="font-size: 1.1em; color: #999">编译原理</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 1.1em; color: #999">设计模式</a> <a href="/tags/%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90/" style="font-size: 1.1em; color: #999">语法分析</a> <a href="/tags/%E8%AF%BB%E5%90%8E%E6%84%9F/" style="font-size: 1.1em; color: #999">读后感</a> <a href="/tags/%E8%B8%A9%E5%9D%91/" style="font-size: 1.1em; color: #999">踩坑</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
-    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/01/"><span class="card-archive-list-date">一月 2024</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/11/"><span class="card-archive-list-date">十一月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/06/"><span class="card-archive-list-date">六月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/01/"><span class="card-archive-list-date">一月 2023</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/11/"><span class="card-archive-list-date">十一月 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/10/"><span class="card-archive-list-date">十月 2022</span><span class="card-archive-list-count">5</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/09/"><span class="card-archive-list-date">九月 2022</span><span class="card-archive-list-count">8</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/08/"><span class="card-archive-list-date">八月 2022</span><span class="card-archive-list-count">1</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">92</div></div><div class="webinfo-item"><div class="item-name">已运行时间 :</div><div class="item-count" id="runtimeshow" data-publishDate="2021-09-29T18:39:33.000Z"></div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">147k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-01-30T08:09:54.186Z"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/01/"><span class="card-archive-list-date">一月 2024</span><span class="card-archive-list-count">13</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/11/"><span class="card-archive-list-date">十一月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/06/"><span class="card-archive-list-date">六月 2023</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/01/"><span class="card-archive-list-date">一月 2023</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/11/"><span class="card-archive-list-date">十一月 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/10/"><span class="card-archive-list-date">十月 2022</span><span class="card-archive-list-count">5</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/09/"><span class="card-archive-list-date">九月 2022</span><span class="card-archive-list-count">8</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/08/"><span class="card-archive-list-date">八月 2022</span><span class="card-archive-list-count">1</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">103</div></div><div class="webinfo-item"><div class="item-name">已运行时间 :</div><div class="item-count" id="runtimeshow" data-publishDate="2021-09-29T18:39:33.000Z"></div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">147k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2024-01-30T11:33:26.027Z"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>function panguFn () {
   if (typeof pangu === 'object') pangu.autoSpacingPage()
   else {
     getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
