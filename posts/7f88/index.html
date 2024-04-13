@@ -1,0 +1,307 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Chapter 8 File system | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="文件系统的目的是为了组织和存放数据。文件系统通常是为了用户之间和应用程序之间共享数据使用，同时还能够实现持久话存储，以便于数据在重启之后依旧可用。 xv6文件系统提供了类Unix的文件，目录和路径名称，并且存储它的数据在virtio磁盘以持久话数据。文件系统需要解决几个挑战：  文件系统需要在磁盘之"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/7f88/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Chapter 8 File system',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-01-13 15:47:45'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Chapter 8 File system<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/论文翻译/xv6文档翻译/Chapter-8-File-system.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-01-13T07:47:45.000Z" title="发表于 2023-01-13 15:47:45">2023-01-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-01-13T07:47:45.000Z" title="更新于 2023-01-13 15:47:45">2023-01-13</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Chapter 8 File system"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/7f88/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><p>文件系统的目的是为了组织和存放数据。文件系统通常是为了用户之间和应用程序之间共享数据使用，同时还能够实现持久话存储，以便于数据在重启之后依旧可用。</p>
+<p>xv6文件系统提供了类Unix的文件，目录和路径名称，并且存储它的数据在virtio磁盘以持久话数据。文件系统需要解决几个挑战：</p>
+<ul>
+<li>文件系统需要在磁盘之上的数据结构来表达树形的目录和文件，能够记录块标识来控制每个文件的内容，记录磁盘上的哪些区域是空闲的。</li>
+<li>文件系统必须支持<code>崩溃恢复</code>。这是因为，如果崩溃发生了（如断电），文件系统必须在重启之后仍然能够正常地工作。风险在于崩溃可能会中断一个一连串的的更新，并且在磁盘数据结构上留下不一致性。（例如：一个块既被一个文件所使用又被标记为空闲块）</li>
+<li>不同的进程可能在同一时间操作文件系统，所以文件系统的代码必须是 coordinate 来维持 invariants.</li>
+<li>访问一个磁盘比访问内存慢几个数量级，所以文件系统对于频繁使用的块必须维护一个内存缓存。</li>
+</ul>
+<p>这一章阐述了xv6的文件系统将如何应对这些挑战。</p>
+<h2 id="81-overview"><a class="markdownIt-Anchor" href="#81-overview"></a> 8.1 Overview</h2>
+<p>xv6文件系统实现被组织成为了7层，如图8.1。<br>
+disk层在virtio硬件上读写块数据。<br>
+buffer层缓存了磁盘块，并且同步访问他们，来确保同一时间只有一个内核进程能够修改任意一个块上存放的数据。<br>
+logging层允许更高层去包装几个块的更新到一个事务之中，并确保数据块被原子地更新以面对崩溃（例如：所有块操作要么被更新要么没有更新）。<br>
+inode层提供了个人文件，每个文件都被表述为一个inode，拥有一个独立的数字i。<br>
+directory层实现了每个文件夹作为一个特殊种类的文件，它的内容是一系列目录条目，每一个目录条目都包含了文件名和 i-number。<br>
+pathname层提供了分级的路径名，比如 <code>/usr/rtm/xv6/fs.c</code>，并且能够实现他们的递归查询。<br>
+file descriptor层抽象了许多unix资源(如: 管道，设备，文件等等)，通过系统调用接口，简化了应用程序员的开发成本。</p>
+<p>磁盘硬件设备通常表达磁盘上的数据通过一系列被标号的512-byte的数据块(也被称作扇区): 0扇区是第一个 512 字节，1扇区是下一个，等等。<br>
+一个操作系统在它的文件系统上使用的块的大小可能与扇区的大小存在差异，但是通常块大小是扇区大小的倍数。<br>
+xv6持有了在类型<code>struct buf</code>的对象中保存了它已经读入到内存块的副本。<br>
+数据存放在这样的数据结构中有时与磁盘不同步: 他可能还没有被从磁盘中读入(磁盘正忙，还没有返回扇区的内容)，或者它可能被软件更新了但未写入磁盘。</p>
+<p>文件系统必须对inode和内容块在磁盘上的存放有一个计划。为了做到这一点，xv6将磁盘划分为了几个区域，如图8.2所示。<br>
+文件系统不使用0块（它持有了引导扇区）。<br>
+1号块被称作<code>superblock</code>，它存放了文件系统的元数据(以块为单位的文件系统的大小，数据块数，inode数，和日志中的块数)。<br>
+2号块开始存放了日志，日志之后就是许多inode，每个block有很多inode。<br>
+紧随其后的就是bitmap块，它跟踪记录了哪些块被使用了。<br>
+剩下的块就是数据块了。每个数据块都在bitmap块中被标记了空闲状态或是否持有一个文件或目录内容。<br>
+超级块将被分区软件填充，叫做mkfs，这将构建一个最初的文件系统。</p>
+<p>这一章后面将讨论每一层，从缓存开始。注意需要精心选择低层的抽象来使得高层更易于设计。</p>
+<h2 id="82-buffer-cache-layer"><a class="markdownIt-Anchor" href="#82-buffer-cache-layer"></a> 8.2 Buffer cache layer</h2>
+<p>缓存层有两个工作：</p>
+<ol>
+<li>同步磁盘块数据的访问以确保一个块在内存中只有一个副本，并且同一时间只能有一个内核线程使用这个副本。</li>
+<li>缓存热点块，以便于不再需要缓慢地从磁盘上再读取。这个代码在<code>bio.c</code>中。</li>
+</ol>
+<p>缓存层导出的主要接口就是<code>bread</code>和<code>bwrite</code>；前者获取了一个<code>buf</code>，包含了一个可以在内存中读取或修改的磁盘块，后者将修改后的缓冲区写入对应的磁盘块。内核线程必须在使用完成后，通过调用<code>brelse</code>释放缓冲区。<br>
+缓冲层对每个缓存块都使用了<code>sleep-lock</code>来确保同一时间每个buffer（或者说每个磁盘块）只有一个线程使用。<code>bread</code>方法返回了一个加锁的buffer，并且调用<code>brelse</code>可以释放该锁。</p>
+<p>让我们回到缓存层。缓存层有一个固定数目的缓冲区来持有磁盘块，这意味着如果文件系统请求获取一个不在缓存中的块，则缓冲层必须回收当前持有的一些其他的缓存块。缓存层将会为新块回收最近最少使用的缓存块。假设最近最少使用的缓存区不大可能不久后被再次使用。</p>
+<h2 id="83-code-buffer-cache"><a class="markdownIt-Anchor" href="#83-code-buffer-cache"></a> 8.3 Code: Buffer cache</h2>
+<p>缓冲区缓存是一个双向链表。函数<code>binit</code>会在<code>main</code>函数中被调用<code>(kernel/main.c:27)</code>，在静态数组<code>buf</code>使用<code>NBUF</code>个缓冲区初始化链表<code>(kernel/bio.c:43-52)</code>。访问这个缓冲区缓存都需要通过<code>bcache.head</code>来引用这个链表，而不是使用<code>buf</code>数组。</p>
+<p>每个缓冲区有两个状态字段分配给它。<code>valid</code>字段标识了缓冲区包含了一个块的副本。<code>disk</code>字段标识来这个缓冲区的内容已经被提交到磁盘。该缓冲区可随时更改（例如：从磁盘写数据到<code>data</code>）。</p>
+<p><code>bread</code>(kernel/bio.c:93)调用了<code>bget</code>来根据指定的扇区获取一个缓冲区(kernel/bio.c:97)。如果这个缓冲区需要从磁盘读入，<code>bread</code>将会在返回缓冲区之前调用<code>virtio_disk_rw</code>。</p>
+<p><code>bget</code>(kernel/bio.c:59)函数将扫描缓冲区列表通过传入设备和扇区号，返回相应的缓冲区(kernel/bio.c:65-73)。如果存在这么一个缓冲区，<code>bget</code>将为这个缓冲区获得<code>sleep-lock</code>。<code>bget</code>将返回一个带锁的缓冲区。</p>
+<p>如果给定的扇区没有被缓存，<code>bget</code>必须需要创建一个缓冲区，可能会复用其他已经持有不同扇区的缓冲区。这将再次扫描缓冲区列表，寻找没有被使用的缓冲区（b-&gt;refcnt = 0；引用计数为0时）。</p>
+<h2 id="815-real-world"><a class="markdownIt-Anchor" href="#815-real-world"></a> 8.15 Real world</h2>
+<p>缓冲区缓存在现实世界的操作系统中是明显要比xv6的更加复杂，但是它也是为了两个相同的目的：缓存和同步地访问磁盘。<code>xv6</code>的缓冲区缓存，就像是<code>V6</code>的一样，使用了一个简单的<code>LRU</code>淘汰策略；还有许多更复杂的被实现的策略，每一种策略都适用于某些情况而不适用于另一种情况。一个更加有效的LRU缓存将忽视链表，而使用一个哈希表去寻找，使用一个堆实现LRU淘汰。现代的缓冲区缓存通常被集成到了虚拟内存系统来支持内存映射的文件<code>memory-mapped file</code>。</p>
+<p><code>xv6</code>的日志系统是效率低下的。一个提交不能和文件系统的系统调用并发地发生。即使某个块仅仅只有很少的字节被改变，系统也需要记录整个块。它执行同步的日志写入，一次一个块，每个块都可能需要获取整个磁盘轮转时间。真正的日志系统将解决这些问题。</p>
+<p>日志并不是仅有的提供崩溃恢复的手段。早期的文件系统在重启时候使用了一种清理器来检查每个文件，目录，块，inode free list，寻找解决他们的不一致性。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/7f88/">https://zhangzqs.cn/posts/7f88/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/880c/" title="Docker快速部署prometheus+grafana监控体系"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Docker快速部署prometheus+grafana监控体系</div></div></a></div><div class="next-post pull-right"><a href="/posts/949/" title="[论文翻译] Review of FAT data structure of FAT32 file system"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">[论文翻译] Review of FAT data structure of FAT32 file system</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#81-overview"><span class="toc-number">1.</span> <span class="toc-text"> 8.1 Overview</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#82-buffer-cache-layer"><span class="toc-number">2.</span> <span class="toc-text"> 8.2 Buffer cache layer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#83-code-buffer-cache"><span class="toc-number">3.</span> <span class="toc-text"> 8.3 Code: Buffer cache</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#815-real-world"><span class="toc-number">4.</span> <span class="toc-text"> 8.15 Real world</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '5ce667ec9e8da587f828c883551fff10',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

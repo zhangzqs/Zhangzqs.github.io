@@ -1,0 +1,357 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>敏捷开发之Scrum框架 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="敏捷开发Scrum开发模式   Scrum与传统瀑布模式开发的区别  Plan 瀑布模式开发通常要花几个月时间来规划产品  Build 再花几个月时间研发产品  Test &amp;amp; Review 接着进行产品的测试与评审  Deploy 最后发布产品 ​		瀑布模式的重点在于要求每个活动的结果都必"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/10f2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '敏捷开发之Scrum框架',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-10 15:40:15'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">敏捷开发之Scrum框架<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/软件工程/敏捷开发/Scrum.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-10T07:40:15.000Z" title="发表于 2021-10-10 15:40:15">2021-10-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-10T07:40:15.000Z" title="更新于 2021-10-10 15:40:15">2021-10-10</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="敏捷开发之Scrum框架"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/10f2/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><p>敏捷开发Scrum开发模式</p>
+<span id="more"></span>
+<h2 id="scrum与传统瀑布模式开发的区别"><a class="markdownIt-Anchor" href="#scrum与传统瀑布模式开发的区别"></a> Scrum与传统瀑布模式开发的区别</h2>
+<h6 id="plan"><a class="markdownIt-Anchor" href="#plan"></a> Plan</h6>
+<p>瀑布模式开发通常要花几个月时间来规划产品</p>
+<h6 id="build"><a class="markdownIt-Anchor" href="#build"></a> Build</h6>
+<p>再花几个月时间研发产品</p>
+<h6 id="test-review"><a class="markdownIt-Anchor" href="#test-review"></a> Test &amp; Review</h6>
+<p>接着进行产品的测试与评审</p>
+<h6 id="deploy"><a class="markdownIt-Anchor" href="#deploy"></a> Deploy</h6>
+<p>最后发布产品</p>
+<p>​		瀑布模式的重点在于要求每个活动的结果都必须经过验证，并且只有经过验证之后才能作为后续开发的基础，这使得瀑布模型特别重视模型与文档，因为这是在可执行代码产生之前唯一能够用来验证的东西，所以瀑布模型被看做是“文档驱动”的，即按照文档的划分、产生和验证来规划、组织和控制开发活动。</p>
+<p>​		如果市场需求或技术环境发生了变化，那么此时研发出的产品很可能无法满足市场需求，瀑布模式的开发在遇到这种变化时会出现很多问题。</p>
+<p>​		首先，产品规划必须早于后续工作之前完成，在绝大多数案例中，规划环节结束时，并没有完全理解项目，但研发工作已经完成了。通常情况下，整个项目必须送回规划阶段，然后从头再来，否则研发人员就会因为不明白产品规划而受到批评。这种情况会反复出现，比如研发完成后，进行产品测试，发现问题就要重新开发，有时甚至需要重新规划产品。</p>
+<p>​		同理，在瀑布模型的其他环节，也可能会出现上述同样的问题。这很可能会导致整个产品发布时间推迟，短则几个月，长则数年。</p>
+<h2 id="敏捷开发"><a class="markdownIt-Anchor" href="#敏捷开发"></a> 敏捷开发</h2>
+<h3 id="敏捷宣言"><a class="markdownIt-Anchor" href="#敏捷宣言"></a> 敏捷宣言</h3>
+<ul>
+<li>个体和交互胜于过程和工具</li>
+<li>可以工作的软件胜于面面俱到的文档</li>
+<li>客户合作胜于合同谈判</li>
+<li>响应变化胜于遵循计划</li>
+</ul>
+<h3 id="敏捷开发的过程方法"><a class="markdownIt-Anchor" href="#敏捷开发的过程方法"></a> 敏捷开发的过程方法</h3>
+<ul>
+<li>极限编程(XP)</li>
+<li>Scrum</li>
+<li>特性驱动开发(FDD)</li>
+<li>自适应软件开发(ASD)</li>
+<li>…</li>
+</ul>
+<h3 id="scrum框架"><a class="markdownIt-Anchor" href="#scrum框架"></a> Scrum框架</h3>
+<p>Scrum一词来自英式橄榄球(Rugby)比赛，敏捷软件开发团队好比一支橄榄球队：</p>
+<ul>
+<li>他们有明确的最高目标，每时每刻都在朝着目标努力</li>
+<li>他们熟悉最佳实践，高度自我管理，高度协作，高度灵活地面对各种挑战</li>
+</ul>
+<p>而当我们使用Scrum来实施敏捷开发时，情况就不同了，整个项目会分解成为几个不同的小部分。</p>
+<p>首先，我们围绕最小化的可行产品的特性进行产品规划，然后将最小的可行产品制作出来。接下来，我们将测试和评审这个产品，直到准备发布。</p>
+<h2 id="轻松scrum之旅敏捷开发故事"><a class="markdownIt-Anchor" href="#轻松scrum之旅敏捷开发故事"></a> 《轻松scrum之旅：敏捷开发故事》</h2>
+<h3 id="第-4-章-sprint-1新手上路"><a class="markdownIt-Anchor" href="#第-4-章-sprint-1新手上路"></a> 第 4 章    Sprint 1——新手上路</h3>
+<p>1．当开始研发新产品或者已有产品的新模块时，由于各方面的原因，整个团队没有能力在 Sprint 的开始就做出一份非常详实的计划，因此，采用“照明弹”策略绝对不失为一个好办法。</p>
+<p>2．对于每一个 Story，要尽可能了解它的需求。</p>
+<p>3．在开发过程中，为了提高交流的效率，要尽量避免把精力浪费在不必要的文档上，取而代之的是要提倡团队之间面对面的直接交流。</p>
+<p>4．在实际工作中，Scrum 提倡团队自我管理，在任务分配时每个人都可以按自己的兴趣来选择任务。</p>
+<p>5．团队成员的技能培训是要在做 Sprint 计划时就考虑在内的。</p>
+<p>6．虽然每日 Scrum 会议的持续时间会根据整个团队的大小而有所不同，但是，请不要超过 15 分钟。</p>
+<p>7．经理应该充分信任开发团队，不该把每日 Scrum 会议当成每日汇报。</p>
+<p>8．在 Scrum 工具的使用上，一定要确保每天都进行准确的更新，只有这样才能让团队的其他成员以及项目经理掌握及时、准确的项目进度信息。</p>
+<p>9．通过 Burndown Chart，Scrum 将给项目带来更多的可视性。</p>
+<p>10．每日 Scrum 会议举行的时间应该在早晨还是下午？</p>
+<p>11．在每日 Scrum 会议上不要过多地讨论技术难题的细节，如果有团队成员遇到无法解决的困难时，Scrum Master 应该将其记录下来，会后再调配资源去解决。</p>
+<p>12．Scrum 如何解决开发与测试工作同步的问题？</p>
+<p>13．每个 Sprint 结束后，最基本的目标是得到一个可以工作的产品。Sprint 结束时的 Sprint 评审会议和 Sprint 回顾会议都至关重要。</p>
+<h3 id="第-5-章-sprint-2计划与变化"><a class="markdownIt-Anchor" href="#第-5-章-sprint-2计划与变化"></a> 第 5 章    Sprint 2——计划与变化</h3>
+<p>14．在 Sprint 计划会议中，Scrum  Master 应该主动与 Product  Owner 一起制定和讨论这个 Sprint 的工作。</p>
+<p>15．在 Sprint 计划会议中，Scrum Master 不应该抛弃团队成员，团队成员必须全体参与到计划的讨论中去，并且及时对不明白的地方以及用户需求等进行提问。</p>
+<p>16．采用 Wiki 进行文档管理。</p>
+<p>17．在 Sprint 计划会议中应该如何制定具体的计划？</p>
+<p>18．在 Sprint 进行过程中，遇到临时的员工变化，比如请假，应该怎么办？</p>
+<p>19．在 Sprint 计划会议中，应该如何更准确地估计每个 Task 的时间？应该怎样用计划扑克来估计时间？</p>
+<p>20．在 Scrum 中，例如调试机器、准备开发环境这样的任务的工作量也应该体现在 Sprint 的工作分配中。</p>
+<p>21．关于 Scrum 团队大小的讨论。</p>
+<p>22．Scrum 与 XP 以及其他一些敏捷方法的关系是怎样的？</p>
+<p>23．每日 Scrum 会议为什么需要团队成员站着开，而不能坐着？</p>
+<p>24．每日 Scrum 会议需要每天进行，而不能因为每天的任务相似就不召开。Scrum Master 应该在每日会议中敏锐地发现问题，并积极地鼓励团队成员进行讨论。</p>
+<p>25．作为一个 Scrum Master，对于自己上司临时安排的非 Sprint 计划的任务，应该尽量提前在 Sprint 的计划阶段就留出一定的缓冲时间用于处理这些事情，应该尽量协调安排好，避免过多非 Sprint 计划的任务出现。</p>
+<p>26．作为一个 Scrum Master，应该如何有效地向经理汇报项目进程？</p>
+<p>27．Scrum 不鼓励加班。</p>
+<p>28．对于不好演示的功能，可以用运行测试用例等其他方式在 Sprint 评审会议中进行展示。</p>
+<h3 id="第-6-章-sprint-3深入-scrum"><a class="markdownIt-Anchor" href="#第-6-章-sprint-3深入-scrum"></a> 第 6 章    Sprint 3——深入 Scrum</h3>
+<p>29．创造一个敏捷的工作环境，让每个 Scrum 团队成员都坐在一起工作。</p>
+<p>30．敏捷开发的思想之一也包括避免不必要的浪费，在做 Sprint 计划时应该放弃实现一些不必要的功能。</p>
+<p>31．如何制定一个 Sprint 的目标？</p>
+<p>32．Sprint 计划会议需要团队成员事先进行很充分的准备。</p>
+<p>33．测试应如何介入 Sprint 中？</p>
+<p>34．尝试“结对编程”。</p>
+<p>35．在敏捷开发中，应该尽可能地寻找有效的工具提高效率。“工欲善其事，必先利其器。”</p>
+<p>36．对于异地团队，增强沟通是最关键的。初期最好的沟通方式是面对面的交流。核心人员最好能进行一些面对面的接触。</p>
+<p>37．Scrum  Master 的职责之一是在完成日常工作的同时，还需要随时帮助团队成员排除障碍。</p>
+<p>38．测试人员应该融入 Scrum 团队，这样做有利于开发团队与测试团队之间的沟通，以共同保证产品的质量。</p>
+<p>39．Scrum 强调团队协作，并且在业绩评定上一直都是以整个团队的成果来衡量的，这似乎对团队中的某些成员不太公平，毕竟术业有专攻。这种情况下应该怎样衡量每个人的绩效价值呢？</p>
+<p>40．由于团队成员的每个个体在技能、精力、经验上的差别，所以必然会导致效率的差别。那么，应该如何消除这种差别带来的问题？</p>
+<p>41．对于项目进行中有可能影响项目结果和交付日期的突发事件，绝不能隐瞒，而是应当从客户的立场出发，告诉客户实情，并在现有的条件下尽可能满足客户的需求，同时为客户提供多个解决方案作为备选。</p>
+<h3 id="第-8-章-scrum-4最后的冲刺"><a class="markdownIt-Anchor" href="#第-8-章-scrum-4最后的冲刺"></a> 第 8 章    Scrum 4——最后的冲刺</h3>
+<p>42．在一个 Sprint 结束和新一个 Sprint 开始的中间，应该有一定的缓冲时间。</p>
+<p>43．采用 Scrum 回顾模板“团队听诊工具”进行 Scrum 回顾。</p>
+<p>44．利用演示工具有效地传递 Sprint 需求。</p>
+<p>45．采用 Scrum 后的新部门组织结构。</p>
+<p>46．推荐敏捷工具 IBM Rational Team Concert。</p>
+<p>47．如果测试人员不习惯自身的角色转换，应该鼓励他们转变思维方式，主动参与开发过程。</p>
+<p>48．关于性能测试的介入时机问题，常见的做法是在第 N+1 个迭代测试第 N 个迭代的功能。</p>
+<p>49．测试新功能前要对老功能做回归测试，以保证新功能不会破坏老功能。</p>
+<p>50．关于自动化测试，应该尽力而为，但不能急于求成。</p>
+<p>51．一个产品的成功与否需要市场来检验。在产品正式发布之前，如果能有客户尽早地参与到开发过程中进来，无疑会增加成功的砝码。</p>
+<p>52．Scrum 强调在一个 Sprint 中团队的稳定，一个 Sprint 中间的人员变动会对Sprint 不利，即使加进来足够多的人往往也不能起到提高效率的作用。</p>
+<p>53．如何管理素质较低的团队？</p>
+<p>54．传统的软件管理体系 CMM/CMMI 的理念与 Scrum 的关系。</p>
+<p>55．持续集成的实践。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/10f2/">https://zhangzqs.cn/posts/10f2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91/">敏捷开发</a></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/f458/" title="轻松Scrum之旅读后感"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">轻松Scrum之旅读后感</div></div></a></div><div class="next-post pull-right"><a href="/posts/457b/" title="First/Follow/Firstvt/Lastvt集合"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">First/Follow/Firstvt/Lastvt集合</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#scrum%E4%B8%8E%E4%BC%A0%E7%BB%9F%E7%80%91%E5%B8%83%E6%A8%A1%E5%BC%8F%E5%BC%80%E5%8F%91%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.</span> <span class="toc-text"> Scrum与传统瀑布模式开发的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#plan"><span class="toc-number">1.0.0.0.1.</span> <span class="toc-text"> Plan</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#build"><span class="toc-number">1.0.0.0.2.</span> <span class="toc-text"> Build</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#test-review"><span class="toc-number">1.0.0.0.3.</span> <span class="toc-text"> Test &amp; Review</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#deploy"><span class="toc-number">1.0.0.0.4.</span> <span class="toc-text"> Deploy</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text"> 敏捷开发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%8F%E6%8D%B7%E5%AE%A3%E8%A8%80"><span class="toc-number">2.1.</span> <span class="toc-text"> 敏捷宣言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91%E7%9A%84%E8%BF%87%E7%A8%8B%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text"> 敏捷开发的过程方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#scrum%E6%A1%86%E6%9E%B6"><span class="toc-number">2.3.</span> <span class="toc-text"> Scrum框架</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%BB%E6%9D%BEscrum%E4%B9%8B%E6%97%85%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91%E6%95%85%E4%BA%8B"><span class="toc-number">3.</span> <span class="toc-text"> 《轻松scrum之旅：敏捷开发故事》</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC-4-%E7%AB%A0-sprint-1%E6%96%B0%E6%89%8B%E4%B8%8A%E8%B7%AF"><span class="toc-number">3.1.</span> <span class="toc-text"> 第 4 章    Sprint 1——新手上路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC-5-%E7%AB%A0-sprint-2%E8%AE%A1%E5%88%92%E4%B8%8E%E5%8F%98%E5%8C%96"><span class="toc-number">3.2.</span> <span class="toc-text"> 第 5 章    Sprint 2——计划与变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC-6-%E7%AB%A0-sprint-3%E6%B7%B1%E5%85%A5-scrum"><span class="toc-number">3.3.</span> <span class="toc-text"> 第 6 章    Sprint 3——深入 Scrum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC-8-%E7%AB%A0-scrum-4%E6%9C%80%E5%90%8E%E7%9A%84%E5%86%B2%E5%88%BA"><span class="toc-number">3.4.</span> <span class="toc-text"> 第 8 章    Scrum 4——最后的冲刺</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '2feec2acf2285236e847fca78eaa5189',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

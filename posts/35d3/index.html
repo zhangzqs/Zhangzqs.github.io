@@ -1,0 +1,751 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SIT-board-远程交互式白板的实现 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本作品为七牛云2022年1024创作节校园黑客马拉松参赛作品   需求分析  基本绘图功能 作为一个在线协作白板，离线的本地化的白板是一切功能的前提。本地白板中需要包含所有白板绘图相关的基本功能。  分页展示 白板需要支持分页显示，每一页都有其独立标题，用户能够切换当前页面，增加新页面，删除非当前"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/35d3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SIT-board-远程交互式白板的实现',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-29 11:07:58'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">SIT-board-远程交互式白板的实现<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/项目开发/SIT-board-远程交互式白板的实现.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-11-29T03:07:58.000Z" title="发表于 2022-11-29 11:07:58">2022-11-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-11-29T03:07:58.000Z" title="更新于 2022-11-29 11:07:58">2022-11-29</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">10.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>39分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SIT-board-远程交互式白板的实现"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/35d3/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><blockquote>
+<p><code>本作品为七牛云2022年1024创作节校园黑客马拉松参赛作品</code></p>
+</blockquote>
+<h1 id="需求分析"><a class="markdownIt-Anchor" href="#需求分析"></a> 需求分析</h1>
+<h2 id="基本绘图功能"><a class="markdownIt-Anchor" href="#基本绘图功能"></a> 基本绘图功能</h2>
+<p>作为一个在线协作白板，离线的本地化的白板是一切功能的前提。本地白板中需要包含所有白板绘图相关的基本功能。</p>
+<h3 id="分页展示"><a class="markdownIt-Anchor" href="#分页展示"></a> 分页展示</h3>
+<p>白板需要支持<strong>分页显示</strong>，每一页都有其<strong>独立标题</strong>，用户能够<strong>切换当前页面，增加新页面，删除非当前页面</strong>，需要保证项目<strong>至少存在一页</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">left to right direction</span><br><span class="line"></span><br><span class="line">usecase 使用分页 as usePage</span><br><span class="line">User --&gt; usePage</span><br><span class="line">    usecase 切换当前页面 as switchPage</span><br><span class="line">    usecase 增加新页面 as addPage</span><br><span class="line">    usecase 删除非当前页 as deletePage</span><br><span class="line">    usePage &lt;-- switchPage: &lt;&lt;extends&gt;&gt; </span><br><span class="line">    usePage &lt;-- addPage: &lt;&lt;extends&gt;&gt; </span><br><span class="line">    usePage &lt;-- deletePage: &lt;&lt;extends&gt;&gt;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<h3 id="创建图元"><a class="markdownIt-Anchor" href="#创建图元"></a> 创建图元</h3>
+<p>用户可以在白板上创建<strong>各式各样的图形元素</strong>，至少需要包含<strong>直线、矩形、椭圆、文本框、自由路径</strong>的绘制等等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">left to right direction</span><br><span class="line">usecase 创建图形元素 as createComponent</span><br><span class="line">User --&gt; createComponent</span><br><span class="line">    usecase 创建直线 as createLine </span><br><span class="line">    usecase 创建矩形 as createRect </span><br><span class="line">    usecase 创建椭圆 as createOval</span><br><span class="line">    usecase 创建文本框 as createText</span><br><span class="line">    usecase 创建自由路径 as createPath </span><br><span class="line">    createComponent &lt;-- createLine: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    createComponent &lt;-- createRect: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    createComponent &lt;-- createOval: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    createComponent &lt;-- createText: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    createComponent &lt;-- createPath: &lt;&lt;extends&gt;&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="操作历史"><a class="markdownIt-Anchor" href="#操作历史"></a> 操作历史</h3>
+<p>用户能够操作历史线，实现<strong>回滚</strong>与<strong>重做</strong>功能。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">left to right direction</span><br><span class="line">usecase 操作历史 as controlHistory</span><br><span class="line">User --&gt; controlHistory</span><br><span class="line">    usecase 回滚 as undo</span><br><span class="line">    usecase 重做 as redo</span><br><span class="line">    controlHistory &lt;-- undo: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    controlHistory &lt;-- redo: &lt;&lt;extends&gt;&gt; </span><br></pre></td></tr></table></figure>
+<h3 id="工程化"><a class="markdownIt-Anchor" href="#工程化"></a> 工程化</h3>
+<p>白板若要真正具备实用价值，必然需要实现持久化存储，用户能够<strong>保存</strong>当前白板工程文件，<strong>打开载入</strong>一个白板工程文件，<strong>另存为</strong>白板工程文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">left to right direction</span><br><span class="line">usecase 操作工程文件 as project </span><br><span class="line">User --&gt; project</span><br><span class="line">    usecase 保存工程 as save </span><br><span class="line">    usecase 另存为工程 as saveAs </span><br><span class="line">    usecase 打开工程 as open</span><br><span class="line">    project &lt;-- save: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    project &lt;-- saveAs: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    project &lt;-- open: &lt;&lt;extends&gt;&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="操作图元"><a class="markdownIt-Anchor" href="#操作图元"></a> 操作图元</h3>
+<p>添加的图形元素的各个属性需要支持<strong>再编辑</strong>，如选中直线能够修改其<strong>线宽、颜色</strong>，选中文本框能够修改其<strong>对齐方式， 背景，边框</strong>等等。</p>
+<p>每个添加的图形都需要能够支持<strong>移动、缩放、旋转</strong>等变换。</p>
+<p>每个添加的图形还需要能够支持<strong>修改层叠关系和删除图形</strong>的操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">left to right direction</span><br><span class="line"></span><br><span class="line">usecase 操作图形 as controlCompoonent</span><br><span class="line">User --&gt; controlCompoonent</span><br><span class="line">    usecase 编辑图形元素 as editComponent</span><br><span class="line">    controlCompoonent &lt;-- editComponent: &lt;&lt;extends&gt;&gt;</span><br><span class="line">        usecase 编辑直线 as editLine</span><br><span class="line">        editComponent &lt;-- editLine: &lt;&lt;extends&gt;&gt;</span><br><span class="line">            usecase 修改线宽 as modifyLineWidth</span><br><span class="line">            usecase 修改颜色 as modifyLineColor</span><br><span class="line">            editLine &lt;-- modifyLineWidth: &lt;&lt;extends&gt;&gt;</span><br><span class="line">            editLine &lt;-- modifyLineColor: &lt;&lt;extends&gt;&gt;</span><br><span class="line"></span><br><span class="line">        usecase 编辑文本框 as editText</span><br><span class="line">        editComponent &lt;-- editText: &lt;&lt;extends&gt;&gt;</span><br><span class="line">            usecase 修改对齐方式 as modifyTextAlign</span><br><span class="line">            usecase 修改背景颜色 as modifyBackgroundColor</span><br><span class="line">            usecase 修改边框属性 as modiifyBorder</span><br><span class="line">            editText &lt;-- modifyTextAlign: &lt;&lt;extends&gt;&gt;</span><br><span class="line">            editText &lt;-- modifyBackgroundColor: &lt;&lt;extends&gt;&gt;</span><br><span class="line">            editText &lt;-- modiifyBorder: &lt;&lt;extends&gt;&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    usecase 变换图形 as transform</span><br><span class="line">    controlCompoonent &lt;-- transform: &lt;&lt;extends&gt;&gt;</span><br><span class="line">        usecase 移动图形 as move </span><br><span class="line">        usecase 缩放图形 as scale </span><br><span class="line">        usecase 旋转图形 as rotate</span><br><span class="line">        transform &lt;-- move: &lt;&lt;extends&gt;&gt;</span><br><span class="line">        transform &lt;-- scale: &lt;&lt;extends&gt;&gt;</span><br><span class="line">        transform &lt;-- rotate: &lt;&lt;extends&gt;&gt;</span><br><span class="line"></span><br><span class="line">    usecase 修改层叠关系 as modifyStack</span><br><span class="line">    controlCompoonent &lt;-- modifyStack: &lt;&lt;extends&gt;&gt;</span><br><span class="line">        usecase 置顶 as bringToTop</span><br><span class="line">        usecase 置底 as bringToBottom</span><br><span class="line">        modifyStack &lt;-- bringToTop: &lt;&lt;extends&gt;&gt;</span><br><span class="line">        modifyStack &lt;-- bringToBottom: &lt;&lt;extends&gt;&gt;</span><br><span class="line"></span><br><span class="line">    usecase 删除图形 as delete</span><br><span class="line">    controlCompoonent &lt;-- delete: &lt;&lt;extends&gt;&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="扩展绘图功能"><a class="markdownIt-Anchor" href="#扩展绘图功能"></a> 扩展绘图功能</h2>
+<h3 id="富文本展示"><a class="markdownIt-Anchor" href="#富文本展示"></a> 富文本展示</h3>
+<p>支持一定的展示富文本的功能，如支持<strong>HTML文档</strong>和<strong>Markdown文档</strong>。</p>
+<h3 id="图片展示"><a class="markdownIt-Anchor" href="#图片展示"></a> 图片展示</h3>
+<p>支持插入<strong>位图</strong>并能够修改其<strong>填充方式</strong>。</p>
+<p>支持插入<strong>矢量图</strong>并能够修改其<strong>填充方式</strong>，<strong>覆盖颜色</strong>等操作。</p>
+<h3 id="插入附件"><a class="markdownIt-Anchor" href="#插入附件"></a> 插入附件</h3>
+<p>支持插入附件类型，用户可上传文件并生成外链到白板内并支持再次下载已上传的附件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">left to right direction</span><br><span class="line"></span><br><span class="line">usecase 创建导入第三方素材 as importAssets</span><br><span class="line">User --&gt; importAssets</span><br><span class="line">    usecase 导入渲染富文本 as showRichText</span><br><span class="line">    importAssets &lt;-- showRichText: &lt;&lt;extends&gt;&gt;</span><br><span class="line">        usecase 导入渲染HTML文档 as showHtml</span><br><span class="line">        usecase 导入渲染Markdown文档 as showMD</span><br><span class="line">        showRichText &lt;-- showHtml: &lt;&lt;extends&gt;&gt;</span><br><span class="line">        showRichText &lt;-- showMD: &lt;&lt;extends&gt;&gt;</span><br><span class="line"></span><br><span class="line">    usecase 导入显示位图 as showImage</span><br><span class="line">    importAssets &lt;-- showImage: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    usecase 导入显示矢量图 as showSvg</span><br><span class="line">    importAssets &lt;-- showSvg: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    usecase 导入上传附件文件 as uploadFile</span><br><span class="line">    importAssets &lt;-- uploadFile: &lt;&lt;extends&gt;&gt;</span><br><span class="line">    usecase 下载已上传的附件文件 as downloadFile</span><br><span class="line">    importAssets &lt;-- downloadFile: &lt;&lt;extends&gt;&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="多人协同功能"><a class="markdownIt-Anchor" href="#多人协同功能"></a> 多人协同功能</h2>
+<h3 id="创建与加入房间"><a class="markdownIt-Anchor" href="#创建与加入房间"></a> 创建与加入房间</h3>
+<p>每个人都可以一键<strong>快速创建</strong>一个白板，创建者称为该房间的<strong>主持人</strong>。</p>
+<p>主持人进入白板后可<strong>点击复制当前房间ID</strong>并分享给其他人。</p>
+<p>其他人<strong>输入房间ID</strong>即可加入该白板所在的房间，加入房间的人称为该房间的一个<strong>成员</strong>。</p>
+<h3 id="协作与只读模式"><a class="markdownIt-Anchor" href="#协作与只读模式"></a> 协作与只读模式</h3>
+<p>房间中的白板分为<strong>协作模式</strong>和<strong>只读模式</strong>：</p>
+<p><strong>只有主持人</strong>可随时修改白板模式。</p>
+<h4 id="只读模式"><a class="markdownIt-Anchor" href="#只读模式"></a> 只读模式</h4>
+<p>在只读模式下，所有成员均<strong>无法编辑</strong>且视角和页面必须与房间主持人保持<strong>同步跟随</strong>。</p>
+<h4 id="协作模式"><a class="markdownIt-Anchor" href="#协作模式"></a> 协作模式</h4>
+<p>在协作模式下，所有成员都具有自己的<strong>独立视角</strong>和<strong>独立的页面</strong>，均可实现<strong>独立编辑</strong>。</p>
+<h3 id="uml用例分析"><a class="markdownIt-Anchor" href="#uml用例分析"></a> UML用例分析</h3>
+<p>从多人协同功能中我们可抽取出三种<strong>角色actor</strong>，分别为<strong>主持人，普通成员，用户</strong>，其中<strong>主持人与普通成员均为用户</strong>，用户能够使用所有基本和扩展功能，主持人与普通成员均有自身<strong>特有</strong>的功能。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">left to right direction</span><br><span class="line"></span><br><span class="line">actor 主持人 as Owner</span><br><span class="line">Owner --|&gt; User</span><br><span class="line">usecase 创建进入白板房间 as createAndEnter</span><br><span class="line">usecase 复制房间id as copyId</span><br><span class="line">usecase 修改白板模式 as modifyMode</span><br><span class="line">Owner --&gt; createAndEnter</span><br><span class="line">Owner --&gt; copyId</span><br><span class="line">Owner --&gt; modifyMode</span><br><span class="line"></span><br><span class="line">actor 普通成员 as Member </span><br><span class="line">Member --|&gt; User </span><br><span class="line">usecase 加入白板房间 as enter </span><br><span class="line">usecase 查看同步画板 as look </span><br><span class="line">Member --&gt; enter </span><br><span class="line">Member --&gt; look</span><br></pre></td></tr></table></figure>
+<p>最终完整的功能性需求的UML用例图可总结如下：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-12-02-22-39-45-image.png" alt></p>
+<h2 id="非功能性需求"><a class="markdownIt-Anchor" href="#非功能性需求"></a> 非功能性需求</h2>
+<h3 id="跨平台"><a class="markdownIt-Anchor" href="#跨平台"></a> 跨平台</h3>
+<p>白板需要实现跨平台，目前用户场景的设备或运行环境主要分为以下环境：</p>
+<p>PC桌面端：Windows，MacOS，Linux</p>
+<p>移动端：Android，iOS</p>
+<p>网页端：Web</p>
+<p>考虑到目前本人手头上已有的设备，暂时只优化<strong>Windows端</strong>与<strong>Android端</strong>的使用体验，其他端如Linux，MacOS，iOS，Web端尽可能实现。跨平台要求除了能够实现基本的运行外，还需分别为<strong>PC端键鼠</strong>和<strong>移动端触屏</strong>进行单独的适配以实现更好的用户体验，如PC端使用<strong>滚轮缩放视图</strong>，移动端使用<strong>手势缩放视图</strong>，PC端需要适配<strong>鼠标右键弹出菜单</strong>，移动端适配<strong>长按弹出菜单</strong>。</p>
+<h3 id="性能需求"><a class="markdownIt-Anchor" href="#性能需求"></a> 性能需求</h3>
+<p>尽量降低多人协同场景下的<strong>网络延迟</strong>，尽量降低软件中潜在的<strong>性能问题</strong>。</p>
+<p>这意味着我们需要设计一些较巧妙的算法来避免相对暴力的解决方案。如使用<strong>diff算法</strong>实现增量同步，<strong>优化序列化反序列化开销</strong>等手段。</p>
+<h3 id="可维护与可扩展性"><a class="markdownIt-Anchor" href="#可维护与可扩展性"></a> 可维护与可扩展性</h3>
+<p>随着白板的<strong>功能演进</strong>，白板中的图形元素未来必然会<strong>持续丰富</strong>，需要支持良好的可扩展性以实现更加方便地<strong>扩展白板</strong>具备的功能。</p>
+<p>考虑到其实我们这个白板系统完全可抽取出独立的<strong>白板SDK</strong>供第三方软件进行直接接入使用，故需要尽可能的抽象并开放出白板中<strong>公共的可定制化的接口</strong>，以便于第三方软件可借助白板SDK灵活<strong>定制和扩展</strong>白板的新功能。</p>
+<p>故我们可以实现一套插件系统，扩展新功能时仅<strong>新增插件代码</strong>和<strong>添加插件注册点代码</strong>而不是需要到处修改代码，良好地符合了开闭原则。</p>
+<h1 id="开发方案选择"><a class="markdownIt-Anchor" href="#开发方案选择"></a> 开发方案选择</h1>
+<p>出于跨平台的考虑，目前较热门的技术分别是<strong>Web开发</strong>和<strong>Flutter客户端开发</strong>，考虑到团队已掌握技术栈的熟练程度，最终选择了<strong>Flutter客户端开发</strong>。</p>
+<p>起初，我们尝试使用Flutter的<strong>CustomPaint</strong>这个控件基于<strong>Canvas</strong>进行自绘。也实现了像矩形，文本框，直线等基本图元的绘制。后来我们发现，为了优化用户体验，我们需要在Canvas绘制好的图形上再自己绘制很多ui元素，还需要手动实现将Canvas的全局事件分发各个图元交互事件，这其实已经类似自己写了一个GUI框架了，感觉会相当麻烦，出于时间和精力的考虑，暂时放弃这种自己造轮子的想法。</p>
+<p>经过调研发现，原来在Web领域有<strong>Konva</strong>和<strong>Fabric.js</strong>这样的Canvas绘图框架，完全能够满足绘图需求。可惜Flutter生态里缺乏类似框架（或许以后有功夫可以自己造一个类似框架）。</p>
+<p>实际上，Flutter自身就是基于<strong>Skia2D绘图引擎</strong>通过自绘实现的一套GUI框架，一切控件的底层均归结到基本的<strong>skia绘图指令</strong>。于是我想，Flutter本身这不就是我们要找的绘图框架吗？假如我们直接依靠<strong>Flutter自身的控件系统</strong>完成白板系统，那么既省时省力又可以相当灵活地拥抱Flutter生态下的任何ui组件库。</p>
+<h1 id="白板组件设计实现"><a class="markdownIt-Anchor" href="#白板组件设计实现"></a> 白板组件设计实现</h1>
+<h2 id="白板容器"><a class="markdownIt-Anchor" href="#白板容器"></a> 白板容器</h2>
+<p>为了使用Flutter自身的控件系统实现白板的大体框架，我们首先面临的需求如下：</p>
+<p><strong>设计一个布局容器</strong>，满足如下需求：</p>
+<ol>
+<li>
+<p>无限大的，可自由拖动，缩放可见视角</p>
+</li>
+<li>
+<p>某个控件位置由一个绝对坐标来定位</p>
+</li>
+<li>
+<p>其中的每个孩子需要有一定的尺寸约束，尺寸约束包含了最大尺寸和最小尺寸，用于实现图元的大小控制。</p>
+</li>
+</ol>
+<p>实际上在Flutter中有一个叫做Stack的组件，Flutter中的Stack控件可基于父容器的边缘位置的偏移量实现定位。Flutter中还自带另一个组件InteractiveViewer可实现对某个Widget进行手势缩放与拖动，若将两者进行结合不就能实现我们的预期效果了吗？</p>
+<p>完成Stack布局代码如下，可以放置三个尺寸为(100,100)的盒子并且坐标分别为(0,0), (120,100),(50,50)颜色分别为红色，绿色，黄色。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyWidget</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Container(</span><br><span class="line">      child: Stack(</span><br><span class="line">          children: [</span><br><span class="line">              Positioned(</span><br><span class="line">                  left: <span class="number">0</span>,</span><br><span class="line">                  top: <span class="number">0</span>,</span><br><span class="line">                  child: Container(</span><br><span class="line">                      width: <span class="number">100</span>,</span><br><span class="line">                      height: <span class="number">100</span>,</span><br><span class="line">                      color: Colors.red,</span><br><span class="line">                  ),</span><br><span class="line">              ),</span><br><span class="line">              Positioned(</span><br><span class="line">                  left: <span class="number">120</span>,</span><br><span class="line">                  top: <span class="number">100</span>,</span><br><span class="line">                  child: Container(</span><br><span class="line">                      width: <span class="number">100</span>,</span><br><span class="line">                      height: <span class="number">100</span>,</span><br><span class="line">                      color: Colors.green,</span><br><span class="line">                  ),</span><br><span class="line">              ),</span><br><span class="line">              Positioned(</span><br><span class="line">                  left: <span class="number">50</span>,</span><br><span class="line">                  top: <span class="number">50</span>,</span><br><span class="line">                  child: Container(</span><br><span class="line">                      width: <span class="number">100</span>,</span><br><span class="line">                      height: <span class="number">100</span>,</span><br><span class="line">                      color: Colors.yellow,</span><br><span class="line">                  ),</span><br><span class="line">              ),</span><br><span class="line">          ],</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时运行结果如下：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-11-30-06-05-17-image.png" alt></p>
+<p>在外层再套一个InteractiveViewer即可实现可自由缩放平移的效果了</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyInteractiveWidget</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Sizedbox.expand(</span><br><span class="line">      child: InteractiveViewer(</span><br><span class="line">        child: MyWidget(),</span><br><span class="line">      );</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-11-30-06-07-25-image.png" alt></p>
+<p>但是此时我们会发现这里的Viewer的视角其实仅限于其原始的父容器尺寸的可视范围，并无法实现无限大的范围，此时我们再为InteractiveViewer设置一个属性为</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">boundaryMargin: <span class="keyword">const</span> EdgeInsets.all(<span class="built_in">double</span>.infinity),</span><br></pre></td></tr></table></figure>
+<p>即可实现无限大的平移缩放效果了。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-11-30-06-13-58-image.png" alt></p>
+<p>为了方便观察，将调试模式中的控件边框打开，从运行结果我们可以看出，整个Stack的大小其实还是原来的Stack所占据的父容器空间的大小，并没有发生任何改变。</p>
+<p>若将红色盒子的left和right分别设为-50, -50，则呈现如下效果：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-11-30-06-18-01-image.png" alt></p>
+<p>可以发现红色盒子越界部分将被裁剪。</p>
+<p>我们可以设置Stack组件的clipBehavior属性以取消默认的裁剪行为</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clipBehavior: Clip.none,</span><br></pre></td></tr></table></figure>
+<p>看起来现在一切都很完美了，我们拥有了一个看起来是无限大的布局容器，能够进行的自由平移，缩放。</p>
+<p>现在让我们为每个矩形尝试添加事件监听器GestureDetector()，修改MyWidget代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyWidget</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Stack(</span><br><span class="line">      clipBehavior: Clip.none,</span><br><span class="line">      children: [</span><br><span class="line">        [<span class="number">-50.0</span>, <span class="number">-50.0</span>, <span class="number">100.0</span>, <span class="number">100.0</span>, Colors.red, <span class="string">&#x27;红色&#x27;</span>],</span><br><span class="line">        [<span class="number">120.0</span>, <span class="number">100.0</span>, <span class="number">100.0</span>, <span class="number">100.0</span>, Colors.green, <span class="string">&#x27;绿色&#x27;</span>],</span><br><span class="line">        [<span class="number">50.0</span>, <span class="number">50.0</span>, <span class="number">100.0</span>, <span class="number">100.0</span>, Colors.yellow, <span class="string">&#x27;黄色&#x27;</span>],</span><br><span class="line">      ].map((e) &#123;</span><br><span class="line">        <span class="keyword">return</span> Positioned(</span><br><span class="line">          left: e[<span class="number">0</span>] <span class="keyword">as</span> <span class="built_in">double</span>,</span><br><span class="line">          top: e[<span class="number">1</span>] <span class="keyword">as</span> <span class="built_in">double</span>,</span><br><span class="line">          child: GestureDetector(</span><br><span class="line">            onPanDown: (d) &#123;</span><br><span class="line">              <span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$&#123;e[<span class="number">5</span>]&#125;</span>被按下: <span class="subst">$&#123;d.localPosition&#125;</span>&#x27;</span>);</span><br><span class="line">            &#125;,</span><br><span class="line">            child: Container(</span><br><span class="line">              width: e[<span class="number">2</span>] <span class="keyword">as</span> <span class="built_in">double</span>,</span><br><span class="line">              height: e[<span class="number">3</span>] <span class="keyword">as</span> <span class="built_in">double</span>,</span><br><span class="line">              color: e[<span class="number">4</span>] <span class="keyword">as</span> Color,</span><br><span class="line">            ),</span><br><span class="line">          ),</span><br><span class="line">        );</span><br><span class="line">      &#125;).toList(),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时我们会发现红色越界部分始终无法响应任何触摸事件，这不符合我们的需求。有关这个问题，我们可以在flutter官方仓库中的issues中找到相关讨论</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/issues/19445">https://github.com/flutter/flutter/issues/19445</a></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-11-30-06-47-56-image.png" alt></p>
+<p>这个问题在Github上有相当激烈的讨论，大概原因就是如果hitTest不对超出边界的点击事件进行<strong>预判断并裁剪</strong>，那么会相当地耗性能。我们可以通过<strong>重构代码的方式来避免</strong>这个越界裁剪的问题。</p>
+<p>经过研究，我们发现了这个点击裁剪原来是对于所有继承于RenderBox抽象类的一个默认行为。一种较为优雅的解决方案，就是通过<strong>继承RenderStack类</strong>并<strong>重写hitTest</strong>删除边界裁剪代码，再创建自己的Stack组件<strong>继承</strong>自Stack组件并<strong>重写</strong>其中的<strong>createRenderObject</strong>方法为自己的重写的<strong>RenderStack</strong>。</p>
+<p>如下代码即为前后的核心代码的改动</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">bool</span> hitTest(BoxHitTestResult result, &#123;<span class="keyword">required</span> Offset position&#125;) &#123;</span><br><span class="line">    <span class="comment">// 原本的RenderBox的点击判定的源码需要进行box边界裁剪</span></span><br><span class="line">    <span class="comment">// if (_size!.contains(position)) &#123;</span></span><br><span class="line">    <span class="comment">//   if (hitTestChildren(result, position: position) || hitTestSelf(position)) &#123;</span></span><br><span class="line">    <span class="comment">//     result.add(BoxHitTestEntry(this, position));</span></span><br><span class="line">    <span class="comment">//     return true;</span></span><br><span class="line">    <span class="comment">//   &#125;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 修改后的代码</span></span><br><span class="line">    <span class="keyword">if</span> (hitTestChildren(result, position: position) || hitTestSelf(position)) &#123;</span><br><span class="line">      result.add(BoxHitTestEntry(<span class="keyword">this</span>, position));</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>项目中有关白板容器组件的实现如下在代码路径：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/SIT-board/board_front/tree/master/lib/component/interactive_infinity_layout">board_front/lib/component/interactive_infinity_layout at master · SIT-board/board_front (github.com)</a></p>
+<p>该组件完全可分离为一个独立的flutter package供任何第三方项目所使用。</p>
+<h2 id="白板存储结构设计"><a class="markdownIt-Anchor" href="#白板存储结构设计"></a> 白板存储结构设计</h2>
+<p>既然我们白板显示的内容完全是基于Flutter自身的控件系统完成开发的，那么白板中的<strong>一个个图形元素</strong>自然就是<strong>一个个Widget</strong>。在传统的Flutter App开发中，这些ui控件的状态信息要么是由外部数据传入一个StatelessWidget组件，要么是StatefulWidget组件中自己维护自己的状态变量。</p>
+<p>考虑到由于这些白板及白板元素的状态数据需要支持持久化操作，需要支持<strong>序列化反序列化</strong>操作，需要支持<strong>diff操作</strong>等等，故我们需要将需要这些操作的状态变量分离出一个独立的Data类单独存放。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RectModelData</span> </span>&#123;</span><br><span class="line">    Offset position;</span><br><span class="line">    Size size;</span><br><span class="line">    Color color;</span><br><span class="line"></span><br><span class="line">    RectModelData(<span class="keyword">this</span>.position, <span class="keyword">this</span>.size, <span class="keyword">this</span>.color);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">factory</span> RectModelData.createDefault() =&gt; RectModelData(</span><br><span class="line">        position: Offset(<span class="number">0</span>, <span class="number">0</span>), </span><br><span class="line">        size: Size(<span class="number">100</span>, <span class="number">100</span>), </span><br><span class="line">        color: Colors.blue,</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">factory</span> RectModelData.fromJson(<span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="built_in">dynamic</span>&gt; json) =&gt; RectModelData(</span><br><span class="line">        position: ((e)=&gt;Offset(e[<span class="number">0</span>], e[<span class="number">1</span>]))(json[<span class="string">&#x27;offset&#x27;</span>]),</span><br><span class="line">        size: ((e)=&gt;Size(e[<span class="number">0</span>], e[<span class="number">1</span>]))(json[<span class="string">&#x27;size&#x27;</span>]),</span><br><span class="line">        color: Color(json[<span class="string">&#x27;color&#x27;</span>]),</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="built_in">dynamic</span>&gt; toJson() =&gt; &lt;<span class="built_in">String</span>, <span class="built_in">dynamic</span>&gt;&#123;</span><br><span class="line">        <span class="string">&#x27;position&#x27;</span>: [position.dx, position.dy],</span><br><span class="line">        <span class="string">&#x27;size&#x27;</span>: [size.dx, size.dy],</span><br><span class="line">        <span class="string">&#x27;color&#x27;</span>: color.value,</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码为典型的json_model序列化反序列化代码，由于flutter不支持<strong>运行时反射</strong>机制，故必须写出上述这种代码，可以看出这种代码较为繁琐且无趣。</p>
+<p>不过事实上我们也是能够使用第三方的代码生成工具去根据json生成上述代码，flutter官方也提供了一种叫做<strong>build_runner</strong>的代码分析与生成工具，能够实现通过编写第三方插件实现这种代码的生成。</p>
+<p>当我们编写diff算法时，我们接收到其他人发来的白板数据更新信息，这种更新信息能够精确到具体的<strong>model中的某一个字段</strong>，故我们还需要实现<strong>修改某个key对应的值</strong>这种操作。一个<strong>暴力</strong>的解决方案就是先<strong>整体model序列化</strong>本地存储的数据，经过修改某个字段后再<strong>整体model反序列化</strong>回去。不难发现这种实现方案的<strong>时间空间开销</strong>很明显具有相当大的优化空间，但是由于flutter不支持反射，故难以实现根据字符串名修改某个字段的值和类型。</p>
+<p>那么是否能够自己编写build_runner代码生成工具来通过<strong>编译期生成代码实现反射</strong>呢？这从理论上感觉应该可行，不过我们想到了另一种解决方案：</p>
+<p>其实我们直接将所有状态变量存储在<strong>HashMap</strong>里不就行了？看起来完全没有必要定义一个单独的数据类再实现序列化和反序列化和根据字符串修改字段等方法，直接使用HashMap，构造Widget时再去读取HashMap里的值不就行了？于是我们的数据类可改造为以下写法：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapData</span> </span>&#123;</span><br><span class="line">    <span class="built_in">Map</span> map;</span><br><span class="line">    HashMapData(<span class="keyword">this</span>.map);</span><br><span class="line">    <span class="built_in">String</span> toJsonString() =&gt; jsonEncode(toJson());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RectModelData</span> <span class="keyword">extends</span> <span class="title">HashMapData</span></span>&#123;</span><br><span class="line">    Offset <span class="keyword">get</span> position =&gt; ((e) =&gt; Offset(e[<span class="number">0</span>], e[<span class="number">1</span>]))(map[<span class="string">&#x27;position&#x27;</span>] ??= [<span class="number">0</span>, <span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 上述一行代码等价于下面繁琐的代码</span></span><br><span class="line">    <span class="comment">// Offset get position &#123;</span></span><br><span class="line">    <span class="comment">//    var p = map[&#x27;position&#x27;];</span></span><br><span class="line">    <span class="comment">//    if(p == null) &#123;</span></span><br><span class="line">    <span class="comment">//        var p1 = [0, 0];</span></span><br><span class="line">    <span class="comment">//        map[&#x27;position&#x27;] = p1;</span></span><br><span class="line">    <span class="comment">//        p = p1;</span></span><br><span class="line">    <span class="comment">//    &#125;</span></span><br><span class="line">    <span class="comment">//    return Offset(p[0], p[1]);</span></span><br><span class="line">    <span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> position(Offset v) =&gt; map[<span class="string">&#x27;position&#x27;</span>] = [v.dx, v.dy];</span><br><span class="line"></span><br><span class="line">    Size <span class="keyword">get</span> size =&gt; ((e) =&gt; Size(e[<span class="number">0</span>], e[<span class="number">1</span>]))(map[<span class="string">&#x27;size&#x27;</span>] ??= [<span class="number">0</span>, <span class="number">0</span>]);</span><br><span class="line">    <span class="keyword">set</span> size(Size v) =&gt; map[<span class="string">&#x27;size&#x27;</span>] = [v.width, v.height];</span><br><span class="line"></span><br><span class="line">    Color <span class="keyword">get</span> color =&gt; Color(map[<span class="string">&#x27;color&#x27;</span>] ??= Color.blue.value);</span><br><span class="line">    <span class="keyword">set</span> color(Color v) =&gt; map[<span class="string">&#x27;color&#x27;</span>] = v.value;</span><br><span class="line"></span><br><span class="line">    RectModelData(<span class="keyword">super</span>.map);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">factory</span> RectModelData.createDefault() =&gt; RectModelData(&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上，这就相当于对HashMap进行了一层<strong>封装抽象</strong>，基于HashMap抽象出该图形元素的数据读写类。这就像c语言结构体的底层存储是原始的二进制内存数据，但是上层的使用经过了<strong>结构化抽象</strong>。</p>
+<p>此时我们仍然像之前一样可以使用这个数据类，但是完全不再需要使用build_runner生成序列化反序列化代码，因为底层直接就是一个HashMap，序列化可以直接使用底层的map，反序列化直接构造该数据类即可，当我们需要根据字符串修改某个特定的值时，也能够轻松直接修改底层的map中的数据。</p>
+<h2 id="白板数据结构设计"><a class="markdownIt-Anchor" href="#白板数据结构设计"></a> 白板数据结构设计</h2>
+<p>我们采用<strong>自底向上</strong>的分析方式对数据结构的设计进行分析。首先，我们称一个个的图形元素为模型Model。</p>
+<h3 id="commonmodeldata"><a class="markdownIt-Anchor" href="#commonmodeldata"></a> CommonModelData</h3>
+<p>首先根据需求分析，我们的每个图形都能够支持<strong>移动，缩放，旋转</strong>的变换，能够<strong>修改图层层叠关系</strong>，故可抽取如下公共属性：</p>
+<p>其中constraints属性有四个分量表示了其尺寸缩放的最大与最小尺寸</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">CommonModelData &#123;</span><br><span class="line">  // 旋转角</span><br><span class="line">  angle: double</span><br><span class="line">  // 位置，分别为x,y坐标</span><br><span class="line">  position: array&lt;double&gt;[2]</span><br><span class="line">  // 大小，分别为width与height</span><br><span class="line">  size: array&lt;double&gt;[2]</span><br><span class="line">  // 层叠关系，越大越靠前</span><br><span class="line">  index: int</span><br><span class="line">  // 约束关系，由minWidth,maxWidth,minHeight,minWidth四个分量构成</span><br><span class="line">  // 用于确定该模型能够拉伸的最大与最小尺寸</span><br><span class="line">  constraints: array&lt;double&gt;[4]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="specialmodeldata"><a class="markdownIt-Anchor" href="#specialmodeldata"></a> SpecialModelData</h3>
+<p>SpecialModelData类型是一个泛指类型，不同类型的Model具有不同的data类型，其存放了图形元素自身的内部特有的属性。</p>
+<h4 id="rectmodeldata"><a class="markdownIt-Anchor" href="#rectmodeldata"></a> RectModelData</h4>
+<p>RectModelData类型为矩形元素的特有数据，根据需求分析，存在文本框这种图形元素，故我们可以直接将文本框和矩形组件合并为一种图形元素。</p>
+<p>故我们可抽象出如下的矩形/文本框的数据结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">RectModelData &#123;</span><br><span class="line">  // 背景颜色</span><br><span class="line">  color: Color</span><br><span class="line">  // 背景形状 0表示矩形，1表示圆形</span><br><span class="line">  backgroundShape: int</span><br><span class="line">  // 边框属性</span><br><span class="line">  boarder: BorderModelData &#123;</span><br><span class="line">    // 边框颜色</span><br><span class="line">    color: Color</span><br><span class="line">    // 边框的宽度</span><br><span class="line">    width: double</span><br><span class="line">    // 边框的圆角半径</span><br><span class="line">    radius: double</span><br><span class="line">  &#125;</span><br><span class="line">  // 矩形内部的文本属性</span><br><span class="line">  text: TextModelData &#123;</span><br><span class="line">    // 文字内容</span><br><span class="line">    content: string</span><br><span class="line">    // 文字颜色</span><br><span class="line">    color: Color</span><br><span class="line">    // 文字大小</span><br><span class="line">    fontSize: double</span><br><span class="line">    // 对齐方式</span><br><span class="line">    // 水平对齐有三个方式分别为左对齐，居中对齐，右对齐</span><br><span class="line">    // 分别对应数字-1,0,-1</span><br><span class="line">    // 垂直对齐有三个方式分别为上对齐，居中对齐，右对齐</span><br><span class="line">    // 分别对应数字-1,0,-1</span><br><span class="line">    // 水平与垂直对齐对应的数字即为最终alignment的值</span><br><span class="line">    alignment: array&lt;int&gt;[2]</span><br><span class="line">    // 是否加粗</span><br><span class="line">    bold: bool</span><br><span class="line">    // 是否斜体</span><br><span class="line">    italic: bool</span><br><span class="line">    // 是否下划线</span><br><span class="line">    underline: bool</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="freestylemodeldata"><a class="markdownIt-Anchor" href="#freestylemodeldata"></a> FreeStyleModelData</h4>
+<p>FreeStyleModelData为自由画板插件的数据类型定义，考虑到需求分析中能够绘制自由曲线，故设计该图形元素为自由绘制的画板。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">FreeStyleModelData &#123;</span><br><span class="line">  // 路径id列表</span><br><span class="line">  pathIdList: array&lt;int&gt;</span><br><span class="line">  // 路径字典</span><br><span class="line">  pathMap: map&lt;int, FreeStylePathModelData&gt;</span><br><span class="line">  // 路径颜色</span><br><span class="line">  backgroundColor: Color</span><br><span class="line">  // 当前画笔状态属性</span><br><span class="line">  paint: Paint</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Paint &#123;</span><br><span class="line">  // 画笔颜色</span><br><span class="line">  color: Color</span><br><span class="line">  // 画笔宽度</span><br><span class="line">  stokeWidth: double</span><br><span class="line">  // 抗锯齿</span><br><span class="line">  isAntiAlias: bool</span><br><span class="line">&#125;</span><br><span class="line">FreeStylePathModelData &#123;</span><br><span class="line">  // 路径id</span><br><span class="line">  id: int</span><br><span class="line">  // 路径点,分别对应x,y坐标</span><br><span class="line">  points: array&lt;array&lt;double&gt;[2]&gt;</span><br><span class="line">  // 路径画笔</span><br><span class="line">  paint: Paint</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="其他图形元素类型"><a class="markdownIt-Anchor" href="#其他图形元素类型"></a> 其他图形元素类型</h4>
+<p>同样还有其他图形元素的特有的数据结构，具体可参考代码 <a target="_blank" rel="noopener" href="https://github.com/SIT-board/board_front/tree/master/lib/component/board/plugins">component/board/plugins</a> 中data.dart的定义与实现。</p>
+<h3 id="model"><a class="markdownIt-Anchor" href="#model"></a> Model</h3>
+<p>Model类型定义了某个白板中的模型，其数据类型定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Model &#123;</span><br><span class="line">  // 模型id</span><br><span class="line">  id: int</span><br><span class="line">  // 模型类型</span><br><span class="line">  type: string</span><br><span class="line">  // 模型数据，由模型类型决定不同数据类型</span><br><span class="line">  data: &lt;SpecialModelData&gt;</span><br><span class="line">  // 模型公共属性</span><br><span class="line">  common: CommonModelData</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="boardviewmodel"><a class="markdownIt-Anchor" href="#boardviewmodel"></a> BoardViewModel</h3>
+<p>BoardViewModel定义了一个白板的视图模型，一个白板可看做由若干个模型的集合及视角数据所构成。</p>
+<p>视角数据可由一个4x4矩阵所表示。</p>
+<blockquote>
+<p>为什么是4x4矩阵？</p>
+<p>在Flutter中一切ui元素均可定义在三维空间中的某个平面，这样我们便可以方便地对某个ui元素进行更丰富的三维变换了，例如我们可以实现三维空间中绕x,y,z轴的旋转，可以实现x, y, z轴上的平移等变换。</p>
+<p>3x3矩阵实际上只能够描述任意三维空间图形的线性变换，如缩放，旋转，错切等。</p>
+<p>4x4矩阵实际上可以描述任意三维空间下图形的仿射变换，能够在线性变换的基础上外加实现平移变换。</p>
+</blockquote>
+<p>白板数据结构定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BoardViewModel &#123;</span><br><span class="line">  // 视口变换矩阵, 为4x4矩阵</span><br><span class="line">  viewerTransform: array&lt;double&gt;[16]</span><br><span class="line">  // 模型id列表</span><br><span class="line">  modelIdList: array&lt;int&gt;</span><br><span class="line">  // 模型字典</span><br><span class="line">  modelMap: map&lt;int, Model&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="boardpageviewmodel"><a class="markdownIt-Anchor" href="#boardpageviewmodel"></a> BoardPageViewModel</h3>
+<p>根据需求分析中，白板需要支持分页展示，且每一页均有独立标题，那么BoardPageViewModel数据类型定义了某一页的数据，数据定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BoardPageViewModel &#123;</span><br><span class="line">  // 页面标题</span><br><span class="line">  title: string</span><br><span class="line">  // 页面id</span><br><span class="line">  pageId: int</span><br><span class="line">  // 白板数据</span><br><span class="line">  board: BoardViewModel</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="boardpagesetviewmodel"><a class="markdownIt-Anchor" href="#boardpagesetviewmodel"></a> BoardPageSetViewModel</h3>
+<p>根据需求分析中，白板能够实现分页展示，能够切换当前页面，故需要存储当前页面的id，设计数据结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BoardPageSetViewModel &#123;</span><br><span class="line">  // 页面数</span><br><span class="line">  pageIdList: array&lt;int&gt;</span><br><span class="line">  // 页面字典，存储了所有页面信息</span><br><span class="line">  pageMap: map&lt;string, BoardPageViewModel&gt;</span><br><span class="line">  // 当前页面id</span><br><span class="line">  currentPageId: int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="sbp文件"><a class="markdownIt-Anchor" href="#sbp文件"></a> SBP文件</h3>
+<p>sbp文件为SIT-board的工程文件。实际上sbp文件就是以文本形式存放的最顶层BoardPageSetViewModel对象的json序列化格式。</p>
+<blockquote>
+<p>或许可以重构成二进制方式存放的更加紧凑的文件格式，或者直接使用BSON库。</p>
+</blockquote>
+<h1 id="jsondiff算法设计实现"><a class="markdownIt-Anchor" href="#jsondiff算法设计实现"></a> JsonDiff算法设计实现</h1>
+<p><strong>Diff</strong>算法可通过比较计算得到某个对象在不同状态之间的差异，还可将这种差异应用到前一个状态上来计算得出后一个状态。我们将该差异记做一个补丁<strong>patch</strong></p>
+<p>Diff算法的基本运算规则如下：</p>
+<p>初始状态：State0 = {}</p>
+<p>目标状态：State1 = {e1:1, e2:2}</p>
+<p>目标到初始的差异：Patch1 = State1 – State0 = {add: {e1:1, e2:2}}</p>
+<p>若已知差异补丁：Patch2 = {update: {e1:2}, remove: {e2}}</p>
+<p>计算可得目标状态：State2 = State1 + Patch2 = {e1: 2}</p>
+<p>以上过程可得出UML状态图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@startuml E</span><br><span class="line">[*] --&gt; State0</span><br><span class="line">State0--&gt; State1: add: e1 = 1,e2=2</span><br><span class="line">State1: e1=1 \ne2=2</span><br><span class="line"></span><br><span class="line">State1 --&gt; State2: update: e1 = 2 \n remove e2</span><br><span class="line">State2: e1=2</span><br><span class="line"></span><br><span class="line">State2 --&gt; State3: remove: e1</span><br><span class="line"></span><br><span class="line">State2 &lt;-- State3: add: e1 = 2</span><br><span class="line">State1 &lt;-- State2: update: e1 = 1 \n add: e2 = 2</span><br><span class="line">State0 &lt;-- State1: remove: e1,e2</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<h1 id="undoredo算法设计实现"><a class="markdownIt-Anchor" href="#undoredo算法设计实现"></a> UndoRedo算法设计实现</h1>
+<p>那么我们是如何基于Diff算法实现UndoRedo的呢？</p>
+<h3 id="方案一"><a class="markdownIt-Anchor" href="#方案一"></a> 方案一</h3>
+<p>当新增数据时，即State0转换到State1后，我们计算出其Patch1，</p>
+<p>State0—&gt;State1</p>
+<p>State0 = {}，State1 = {e1:1, e2:2}</p>
+<p>Patch1 = State1 - State0 = {add: {e1:1, e2:2}}</p>
+<p>我们将Patch1放入一个栈S1中。</p>
+<blockquote>
+<p>S1: Patch1</p>
+</blockquote>
+<p>再从State1转换到State2，计算出Patch2 = {update: {e1:2}, remove: {e2}}</p>
+<p>我们将Patch2放入栈S1中</p>
+<blockquote>
+<p>S1: Patch1 Patch2</p>
+</blockquote>
+<p>再从State2转换到State3，计算出Patch3 = { remove: {e1} }</p>
+<p>我们将Patch3放入栈S1中</p>
+<blockquote>
+<p>S1: Patch1 Patch2 Patch3</p>
+</blockquote>
+<p>此时已经存在了三个Patch了。</p>
+<p>当我们需要执行Undo撤销操作时，我们需要弹出栈顶的Patch并<strong>反向计算</strong>出<strong>Patch的逆</strong>，一个Patch的逆实际上为其逆变换。比如Patch1的<strong>add</strong>的属性将变为<strong>remove</strong>的属性。然后我们在<strong>当前状态</strong>上应用<strong>Patch的逆</strong>实际上就实现了<strong>Undo操作</strong>。</p>
+<p>Patch1的逆: -Patch1 = {remove: {e1:1, e2:2}}</p>
+<p>Undo操作: State0 = State1 + (-Patch1)</p>
+<p>Redo操作: State1 = State0 + Patch1</p>
+<blockquote>
+<p>注意：为了保证每一步的Patch均为可逆的，故我们需要存放一些冗余数据，如记录remove操作仍需记录remove的状态变量的状态值，这样可直接计算出remove对应的逆操作add操作。</p>
+</blockquote>
+<p>为了实现Redo操作，我们Undo时弹出栈的的那个Patch也不能够丢弃，它将进入另一个<strong>栈S2</strong>中用于实现Redo操作。</p>
+<p>当我们当前状态处于State3时，此时无法继续redo，但是能够undo。</p>
+<h4 id="流程"><a class="markdownIt-Anchor" href="#流程"></a> 流程</h4>
+<p>于是我们进行Undo撤销操作，此时状态为State3，目标状态为State2，我们undo操作流程如下：</p>
+<ol>
+<li>
+<p>从S1中弹出栈顶的Patch3</p>
+</li>
+<li>
+<p>计算出-Patch3</p>
+</li>
+<li>
+<p>-Patch3应用到当前状态后得到State2 = State3 + (-Patch3)</p>
+</li>
+<li>
+<p>将Patch3加入<strong>栈S2</strong></p>
+</li>
+</ol>
+<p>此时又可以undo又可以redo，此时的状态为State2，目标状态为State3，我们的redo操作流程如下：</p>
+<ol>
+<li>
+<p>从S2中弹出栈顶的Patch3</p>
+</li>
+<li>
+<p>Patch3应用到当前状态后得到State3 = State2 + Patch3</p>
+</li>
+<li>
+<p>将Patch3加入<strong>栈S1</strong></p>
+</li>
+</ol>
+<p>我们可以得出如下判定条件：</p>
+<p>可实现Undo：<strong>S1不为空</strong></p>
+<p>可实现Redo：<strong>S2不为空</strong></p>
+<p>若栈S1和栈S2均不为空，即做了若干操作过后进行撤销到一半，若此时发生了新的变更，则UML状态图上将会出现非线性的<strong>分支branch</strong>。那么这种情况如何处理呢？目前采取的策略是新操作将会<strong>清空S2栈</strong>。</p>
+<h3 id="方案二"><a class="markdownIt-Anchor" href="#方案二"></a> 方案二</h3>
+<p>还有第二种方式为使用双向链表来实现Undo Redo。起初存在一个<strong>CurrentState指针</strong>指向链表的<strong>头结点</strong>，当我们每次发生变更后新增的Patch将插入到CurrentState指针的下一条位置，并且CurrentState指针向后移动指向本次变更新增的Patch。</p>
+<p>当我们进行Undo操作时，我们仅需要取得CurrentState指针指向的Patch，并将该Patch的逆应用到当前状态，然后CurrentState指针后退，即可实现Undo操作。</p>
+<p>当我们进行Redo操作时，我们需要前进CurrentState指针到后继Patch并将其应用到当前状态，即可实现Redo操作。</p>
+<p>我们可以得出如下判定条件：</p>
+<p>可实现Undo：<strong>CurrentState未指向头结点</strong></p>
+<p>可实现Redo：<strong>CurrentState未指向尾节点</strong></p>
+<p>在本项目中，我们是使用了顺序存储的列表+索引值来实现这些操作。CurrentState为一个int值的索引。当CurrentState == -1时代表指向了头结点。</p>
+<h3 id="package"><a class="markdownIt-Anchor" href="#package"></a> Package</h3>
+<p>我们已将其算法封装为一个独立的package可随时被任何第三方项目所引用。</p>
+<p>这是它的单元测试用例。</p>
+<p>首先初始化一个空的state，使用我们封装的UndoRedoManager类包裹state</p>
+<p>初始状态State0下，既不能撤销又不能重做。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> state = &#123;&#125;;</span><br><span class="line"><span class="keyword">final</span> urm = UndoRedoManager(state);</span><br><span class="line">expect(urm.canUndo, isFalse);</span><br><span class="line">expect(urm.canRedo, isFalse);</span><br></pre></td></tr></table></figure>
+<p>当状态发生改变到达State1时，能够撤销但仍不能重做。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">state[<span class="string">&#x27;e1&#x27;</span>]=<span class="number">1</span>; </span><br><span class="line">state[<span class="string">&#x27;e2&#x27;</span>]=<span class="number">2</span>;</span><br><span class="line">urm.store();</span><br><span class="line">expect(urm.canUndo, isTrue);</span><br><span class="line">expect(urm.canRedo, isFalse);</span><br></pre></td></tr></table></figure>
+<p>当撤销状态State1时，回到了最初状态State0，无法继续撤销但能够进行重做。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">urm.undo();</span><br><span class="line">expect(state[<span class="string">&#x27;e1&#x27;</span>], equals(<span class="keyword">null</span>));</span><br><span class="line">expect(urm.canUndo, isFalse);</span><br><span class="line">expect(urm.canRedo, isTrue);</span><br></pre></td></tr></table></figure>
+<p>当重做时，回到了State1状态，此时能够撤销但不能重做</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">urm.redo();</span><br><span class="line">expect(state[<span class="string">&#x27;e1&#x27;</span>], equals(<span class="number">1</span>));</span><br><span class="line">expect(urm.canUndo, isTrue);</span><br><span class="line">expect(urm.canRedo, isFalse);</span><br></pre></td></tr></table></figure>
+<h1 id="白板数据同步方案设计实现"><a class="markdownIt-Anchor" href="#白板数据同步方案设计实现"></a> 白板数据同步方案设计实现</h1>
+<p>那么我们是如何基于Diff算法实现分布式场景下的同步呢？</p>
+<h2 id="基于话题的发布订阅通信模型"><a class="markdownIt-Anchor" href="#基于话题的发布订阅通信模型"></a> 基于话题的发布订阅通信模型</h2>
+<p>本项目最初设计讨论时候，我们发现其实这个多人协同的场景实际上就是一种分布式状态同步的场景，首先我们需要解决各个节点之间的通信问题：</p>
+<ol>
+<li>
+<p>每个用户都是作为一个分布式节点去接收中心服务器上的白板状态数据变更</p>
+</li>
+<li>
+<p>每个分布式节点也可将变更上传至服务器并发送到其他各个分布式节点上</p>
+</li>
+</ol>
+<h3 id="basemessage"><a class="markdownIt-Anchor" href="#basemessage"></a> BaseMessage</h3>
+<p>首先设计各个节点之间通信的基本消息类型。</p>
+<ol>
+<li>
+<p>各个节点具备一个唯一的uuid字符串</p>
+</li>
+<li>
+<p>节点要加入的房间也具备一个唯一的uuid字符串。</p>
+</li>
+</ol>
+<p>定义一个BaseMessage消息类型，节点之间的所有通信的消息包必须为BaseMessage消息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">BaseMessage &#123;</span><br><span class="line">    ts: DateTime</span><br><span class="line">    topic: String</span><br><span class="line">    publisher: String</span><br><span class="line">    sendTo: String</span><br><span class="line">    data: any</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="话题设计"><a class="markdownIt-Anchor" href="#话题设计"></a> 话题设计</h3>
+<p>每个节点在某个房间均具备如下行为：</p>
+<ol>
+<li>
+<p>每个节点都能够send一个BaseMessage对象到另一个uuid为sendTo的节点上。</p>
+</li>
+<li>
+<p>每个节点都能够register一个回调函数去接收其他节点传送过来的BaseMessage对象。</p>
+</li>
+<li>
+<p>每个节点都能够broadcast一个BaseMessage对象到所有的其他节点上。</p>
+</li>
+</ol>
+<p>于是我们发现这些节点通信的行为实际上完全就可以使用基于话题的发布订阅的机制来实现。</p>
+<ol>
+<li>
+<p>向某个房间的某节点send一个消息实际上可发布话题<code>$&#123;roomId&#125;/node/$&#123;otherNodeId&#125;/$&#123;topic&#125;</code></p>
+</li>
+<li>
+<p>向某个房间中发布广播消息可发布话题<code>$&#123;roomId&#125;/broadcast/$&#123;topic&#125;</code></p>
+</li>
+<li>
+<p>房间中的每个节点必须订阅以<code>$&#123;roomId&#125;/node/$&#123;userNodeId&#125;/</code>开头的所有话题</p>
+</li>
+<li>
+<p>房间中的每个节点必须订阅以<code>$&#123;roomId&#125;/broadcast/</code>开头的所有话题</p>
+</li>
+</ol>
+<p>此时，一个房间里的用户之间便能够进行<strong>一对一通信</strong>及<strong>广播通信</strong>了。</p>
+<h3 id="mqtt通信"><a class="markdownIt-Anchor" href="#mqtt通信"></a> MQTT通信</h3>
+<p>此时我们突然想到，MQTT通信机制不就是这样的一种典型的话题通信的方式么？我们应该完全可以纯前端app直接连接一个MQTT服务器完成基本的分布式通信的目标，而无需重新基于WebSocket再造一遍话题通信的轮子。</p>
+<p>而且如果前端直接使用MQTT作为分布式同步的通信方式，用户使用起来就像是使用一些开源软件那样，其中提供的那些需要后端提供支持的服务可通过自己配置任意的第三方服务器而实现。如类似于Typora，一些VSCode插件那样写Markdown时候可以自己在设置中配置图床服务器。我们的白板用户也可以自行配置任何第三方MQTT服务器，图床服务器地址等等。</p>
+<p>此处列举了一些免费公共MQTT服务器地址，可直接在我们的白板中配置使用这些免费公共的服务器</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>Broker 地址</th>
+<th>TCP</th>
+<th>TLS</th>
+<th>WebSocket</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EMQ X</td>
+<td><a target="_blank" rel="noopener" href="http://broker.emqx.io">broker.emqx.io</a></td>
+<td>1883</td>
+<td>8883</td>
+<td>8083,8084</td>
+</tr>
+<tr>
+<td>EMQ X（国内）</td>
+<td><a target="_blank" rel="noopener" href="http://broker-cn.emqx.io">broker-cn.emqx.io</a></td>
+<td>1883</td>
+<td>8883</td>
+<td>8083,8084</td>
+</tr>
+<tr>
+<td>Eclipse</td>
+<td><a target="_blank" rel="noopener" href="http://mqtt.eclipseprojects.io">mqtt.eclipseprojects.io</a></td>
+<td>1883</td>
+<td>8883</td>
+<td>80, 443</td>
+</tr>
+<tr>
+<td>Mosquitto</td>
+<td><a target="_blank" rel="noopener" href="http://test.mosquitto.org">test.mosquitto.org</a></td>
+<td>1883</td>
+<td>8883, 8884</td>
+<td>80</td>
+</tr>
+<tr>
+<td>HiveMQ</td>
+<td><a target="_blank" rel="noopener" href="http://broker.hivemq.com">broker.hivemq.com</a></td>
+<td>1883</td>
+<td>N/A</td>
+<td>8000</td>
+</tr>
+</tbody>
+</table>
+<h3 id="在线列表与个性化信息"><a class="markdownIt-Anchor" href="#在线列表与个性化信息"></a> 在线列表与个性化信息</h3>
+<p>在实际使用中，我们还会遇到以下的场景需求：</p>
+<ol>
+<li>
+<p>查看当前房间在线的用户数与用户列表</p>
+</li>
+<li>
+<p>辨别当前主持人的是谁</p>
+</li>
+<li>
+<p>每个用户能修改自身昵称等个性化信息</p>
+</li>
+</ol>
+<p>为此我们设计了一个特殊的广播消息叫做<strong>report广播</strong>消息：</p>
+<ol>
+<li>
+<p>所有加入该房间的用户均需要按照一定的时间间隔循环广播<code>$&#123;roomId&#125;/broadcast/report</code>消息</p>
+</li>
+<li>
+<p>所有加入该房间的用户均订阅<code>$&#123;roomId&#125;/broadcast/report</code>消息，此时我们可以：</p>
+<ol>
+<li>
+<p>获取到BaseMessage中的publisher，data，ts字段，data字段可设为个性化信息，这里我们使用字符串类型表示用户自定义的昵称username</p>
+</li>
+<li>
+<p>更新Map &lt; DateTime, String &gt;  _onlineUserIdMap，即_onlineUserIdMap[message.ts] = message.publisher，这里的key为最近一次的report消息的时间</p>
+</li>
+<li>
+<p>更新Map &lt; String, String &gt; _onlineUsernameMap 数据，即_onlineUsernameMap[message.publisher] = message.data，这里的key为发布者的uuid</p>
+</li>
+<li>
+<p>过滤_onlineUserIdMap得出满足约束<code>当前时间 - 最近一次report时间 &lt; 指定超时时间</code>的所有键值对，其中的values就表示当前在线的用户的uuid所构成的列表</p>
+</li>
+<li>
+<p>根据用户的uuid再次查询_onlineUsernameMap即可查询到用户的自定义昵称等个性化信息</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="分布式同步"><a class="markdownIt-Anchor" href="#分布式同步"></a> 分布式同步</h2>
+<p>同步分为两类角色，第一类为Owner，第二类为Member</p>
+<ul>
+<li>
+<p>Owner为会议主持人，其拥有的model为标准的完整model。</p>
+</li>
+<li>
+<p>Member为会议成员，其拥有的model需要从owner处获取。</p>
+</li>
+</ul>
+<p>当Member加入会议时，其需要拿到完整的白板数据，需要先发起广播消息请求需要白板数据，若在等待时间内Member收到了Owner发来的，后续Member将不停地接收Owner的diff结果的Patch包来更新自身的model数据。</p>
+<p>若在规定超时时间内Member未收到白板数据的响应，则判定该房间不存在。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@startuml D</span><br><span class="line">Member -&gt; Owner: 发起请求</span><br><span class="line">...等待响应...</span><br><span class="line">alt [未收到响应数据]</span><br><span class="line">    Member -&gt; Member: 房间号不存在</span><br><span class="line">else [收到全量数据]</span><br><span class="line">    Owner -&gt; Member: 全量数据</span><br><span class="line">    loop Owner数据存在更新</span><br><span class="line">        Owner -&gt; Member: 增量补丁</span><br><span class="line">        Member -&gt; Member: 变更本地数据</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<h2 id="主持人离场"><a class="markdownIt-Anchor" href="#主持人离场"></a> 主持人离场</h2>
+<p>整个分布式同步的通信图中，存在若干个中心，每个中心就是一个个的Owner，它与各个Member之间进行分布式通信。</p>
+<p>当主持人离场或意外掉线后，该房间将被销毁。</p>
+<p>当然，由于我们不存在后端服务，故此处的销毁并非显式的销毁api调用。这里的销毁仅仅只是一种逻辑上的概念。实际上，其余Member节点的report的onlineUserId列表中发现若主持人的最新report时间超过了给定的超时时间，则判定为主持人已离场，Member可自动退出房间。</p>
+<blockquote>
+<p>PS: 由于每个人拥有的白板数据均为完整的白板数据，故若主持人掉线，其他成员事实上也是有能力通过投票选举主持人等方式实现转移主持人身份来达到继续维持房间的效果，出于时间原因，该功能暂未实现，目前若主持人离场，会议将自动结束。</p>
+</blockquote>
+<h1 id="插件化方案设计实现"><a class="markdownIt-Anchor" href="#插件化方案设计实现"></a> 插件化方案设计实现</h1>
+<h2 id="场景概述"><a class="markdownIt-Anchor" href="#场景概述"></a> 场景概述</h2>
+<p>我们的模型Model的数据类型定义如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> ModelType &#123;</span><br><span class="line">    rect, freeStyle, ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Model &#123;</span><br><span class="line">  <span class="comment">// 模型id</span></span><br><span class="line">  id: <span class="built_in">int</span></span><br><span class="line">  <span class="comment">// 模型类型</span></span><br><span class="line">  type: ModelType</span><br><span class="line">  <span class="comment">// 模型数据，由模型类型决定不同数据类型</span></span><br><span class="line">  data: <span class="built_in">dynamic</span></span><br><span class="line">  <span class="comment">// 模型公共属性</span></span><br><span class="line">  common: CommonModelData</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要渲染该模型，则可能在某个Widget组件中需要写出如下代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Widget buildModelWidget(Model model) &#123;</span><br><span class="line">    <span class="keyword">switch</span>(model.type) &#123;</span><br><span class="line">        <span class="keyword">case</span> ModelType.rect:</span><br><span class="line">            <span class="keyword">return</span> RectModelWidget(model.data <span class="keyword">as</span> RectModelData);</span><br><span class="line">        <span class="keyword">case</span> ModelType.freeStyle:</span><br><span class="line">            <span class="keyword">return</span> FreeStyleModelWidget(model.data <span class="keyword">as</span> FreeStyleModelData);</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">throw</span> UnimplementionError();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要设计每个不同类型模型的编辑器的ui界面，可能需要写出下列代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Widget buildModelEditorWidget(Model model) &#123;</span><br><span class="line">    <span class="keyword">switch</span>(model.type) &#123;</span><br><span class="line">        <span class="keyword">case</span> ModelType.rect:</span><br><span class="line">            <span class="keyword">return</span> RectModelEditorWidget(model.data <span class="keyword">as</span> RectModelData);</span><br><span class="line">        <span class="keyword">case</span> ModelType.freeStyle:</span><br><span class="line">            <span class="keyword">return</span> FreeStyleModelEditorWidget(model.data <span class="keyword">as</span> FreeStyleModelData);</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">throw</span> UnimplementionError();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们还需要在右键中的“添加模型“菜单显示模型元素列表，在故需要知道该模型的文字显示，可能需要写出如下代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">String</span> buildModelInMenuText(<span class="built_in">String</span> modelType) &#123;</span><br><span class="line">    <span class="keyword">switch</span>(modelType) &#123;</span><br><span class="line">        <span class="keyword">case</span> ModelType.rect:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&#x27;矩形&#x27;</span>;</span><br><span class="line">        <span class="keyword">case</span> ModelType.freeStyle:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&#x27;自由画板&#x27;</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">throw</span> UnimplementionError();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="问题概述"><a class="markdownIt-Anchor" href="#问题概述"></a> 问题概述</h2>
+<p>考虑到我们的需求中需要支持很多丰富的图形元素，且未来也有可能需要扩展出更多的未知的图形元素，每当我们扩展新图形时，均需要修改上述的<strong>模型渲染组件</strong>，<strong>模型编辑器</strong>组件，<strong>菜单项</strong>等代码中的switch分支，且这些组件还分布在不同的代码文件，不同类，不同函数中，这将会对扩展新图形带来很多麻烦，并不符合<strong>开闭原则</strong>。</p>
+<h2 id="抽象插件接口"><a class="markdownIt-Anchor" href="#抽象插件接口"></a> 抽象插件接口</h2>
+<p>于是我们就考虑将上述不同种类的模型具有不同的行为实现抽象出来定义成一组抽象接口，形成插件化接口，使得这些不同的模型的行为职责内聚到各自插件类中，提高了内聚性，降低了白板本身与白板插件代码的耦合度。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ModelPluginInterface</span> </span>&#123;</span><br><span class="line">    <span class="built_in">String</span> getTypeName(); <span class="comment">// 获取该插件的type</span></span><br><span class="line">    <span class="built_in">String</span> getInMenuName(); <span class="comment">// 获取该插件在菜单中的名称</span></span><br><span class="line">    <span class="comment">// 该模型的渲染视图构造</span></span><br><span class="line">    Widget buildModelView(Model model, EvventBus&lt;BoardEvent&gt; eventBus);</span><br><span class="line">    <span class="comment">// 该模型的编辑器视图构造</span></span><br><span class="line">    Widget buildModelEditor(Model model, EvventBus&lt;BoardEvent&gt; eventBus);</span><br><span class="line">    <span class="comment">// 创建该类模型时的默认数据类</span></span><br><span class="line">    Model buildDefault();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过定义不同的实现类来实现他们自身的这些行为。</p>
+<h2 id="实现插件接口"><a class="markdownIt-Anchor" href="#实现插件接口"></a> 实现插件接口</h2>
+<p>我们定义一个Markdown插件为插件样例</p>
+<h3 id="data"><a class="markdownIt-Anchor" href="#data"></a> Data</h3>
+<p>首先定义Markdown图元的数据类定义：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MarkdownModelData</span> <span class="keyword">extends</span> <span class="title">HashMapData</span> </span>&#123;</span><br><span class="line">  MarkdownModelData(<span class="keyword">super</span>.map);</span><br><span class="line">  <span class="built_in">String</span> <span class="keyword">get</span> markdown =&gt; map[<span class="string">&#x27;markdown&#x27;</span>] ??= <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  <span class="keyword">set</span> markdown(<span class="built_in">String</span> v) =&gt; map[<span class="string">&#x27;markdown&#x27;</span>] = v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="view"><a class="markdownIt-Anchor" href="#view"></a> View</h3>
+<p>定义该Model的渲染组件</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MarkdownModelWidget</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> MarkdownModelData data;</span><br><span class="line">  <span class="keyword">const</span> MarkdownModelWidget(&#123;Key? key, <span class="keyword">required</span> <span class="keyword">this</span>.data&#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Markdown(data: data.markdown);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="editor"><a class="markdownIt-Anchor" href="#editor"></a> Editor</h3>
+<p>定义该Model的编辑器组件</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MarkdownModelEditor</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> Model model;</span><br><span class="line">  <span class="keyword">final</span> EventBus&lt;BoardEventName&gt; eventBus;</span><br><span class="line">  <span class="keyword">const</span> MarkdownModelEditor(&#123;</span><br><span class="line">    Key? key,</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">this</span>.model,</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">this</span>.eventBus,</span><br><span class="line">  &#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line">  <span class="keyword">void</span> refreshModel() =&gt; eventBus.publish(BoardEventName.refreshModel, model.id);</span><br><span class="line">  <span class="keyword">void</span> saveState() =&gt; eventBus.publish(BoardEventName.saveState);</span><br><span class="line">  MarkdownModelData <span class="keyword">get</span> modelData =&gt; MarkdownModelData(model.data);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">final</span> controller = TextEditingController();</span><br><span class="line">    controller.text = modelData.markdown;</span><br><span class="line">    controller.addListener(() &#123;</span><br><span class="line">      modelData.markdown = controller.text;</span><br><span class="line">      refreshModel();</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> TextField(</span><br><span class="line">      minLines: <span class="number">100</span>,</span><br><span class="line">      maxLines: <span class="keyword">null</span>,</span><br><span class="line">      controller: controller,</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="entry"><a class="markdownIt-Anchor" href="#entry"></a> Entry</h3>
+<p>定义Markdown插件的入口类</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MarkdownModelPlugin</span> <span class="keyword">implements</span> <span class="title">BoardModelPluginInterface</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Model buildDefaultAddModel(&#123;<span class="keyword">required</span> <span class="built_in">int</span> modelId, <span class="keyword">required</span> Offset position&#125;) &#123;</span><br><span class="line">    <span class="keyword">return</span> Model(&#123;&#125;)</span><br><span class="line">      ..id = modelId</span><br><span class="line">      ..common = (CommonModelData(&#123;&#125;)..position = position)</span><br><span class="line">      ..type = modelTypeName</span><br><span class="line">      ..data = (MarkdownModelData(&#123;&#125;)..markdown = <span class="string">&#x27;# HelloWorld&#x27;</span>).map;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget buildModelEditor(Model model, EventBus&lt;BoardEventName&gt; eventBus) &#123;</span><br><span class="line">    <span class="keyword">return</span> MarkdownModelEditor(eventBus: eventBus, model: model);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget buildModelView(Model model, EventBus&lt;BoardEventName&gt; eventBus) &#123;</span><br><span class="line">    <span class="keyword">return</span> MarkdownModelWidget(data: MarkdownModelData(model.data));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">String</span> <span class="keyword">get</span> inMenuName =&gt; <span class="string">&#x27;Markdown文档&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">String</span> <span class="keyword">get</span> modelTypeName =&gt; <span class="string">&#x27;markdown&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="注册插件接口"><a class="markdownIt-Anchor" href="#注册插件接口"></a> 注册插件接口</h2>
+<p>那么白板怎样使用这些插件呢？我们需要引入一个插件容器去注册管理这些插件，定义一个简单的插件容器如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BoardModelPluginManager</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, BoardModelPluginInterface&gt; _plugins = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 构造一个插件管理器</span></span><br><span class="line">  BoardModelPluginManager(&#123;</span><br><span class="line">    <span class="built_in">List</span>&lt;BoardModelPluginInterface&gt; initialPlugins = <span class="keyword">const</span> [],</span><br><span class="line">  &#125;) &#123;</span><br><span class="line">    initialPlugins.forEach(registerPlugin);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 注册一个插件类</span></span><br><span class="line">  <span class="keyword">void</span> registerPlugin(BoardModelPluginInterface plugin) &#123;</span><br><span class="line">    <span class="built_in">String</span> typeName = plugin.modelTypeName;</span><br><span class="line">    <span class="keyword">if</span> (_plugins.containsKey(typeName)) &#123;</span><br><span class="line">      <span class="comment">// 同一个插件重复注册</span></span><br><span class="line">      <span class="keyword">if</span> (_plugins[typeName] == plugin) <span class="keyword">return</span>;</span><br><span class="line">      <span class="comment">// 不同插件但是类型名称相同，抛异常</span></span><br><span class="line">      <span class="keyword">throw</span> Exception(<span class="string">&#x27;Board model plugin has been registered <span class="subst">$typeName</span>&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    _plugins[typeName] = plugin;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 通过一个type获取插件</span></span><br><span class="line">  BoardModelPluginInterface getPluginByModelType(<span class="built_in">String</span> modelType) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!_plugins.containsKey(modelType)) &#123;</span><br><span class="line">      <span class="keyword">throw</span> Exception(<span class="string">&#x27;Plugin name: <span class="subst">$modelType</span> not be registered&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _plugins[modelType]!;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 获取插件名称列表</span></span><br><span class="line">  <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; getPluginNameList() =&gt; _plugins.keys.toList();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>于是我们可以创建一个插件管理器对象并传入各个插件的定义并在构造白板对象时传入插件管理器</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">BoardBodyWidget(</span><br><span class="line">    eventBus: eventBus,</span><br><span class="line">    boardViewModel: pageSetViewModel.currentPage.board,</span><br><span class="line">    pluginManager: BoardModelPluginManager(</span><br><span class="line">        initialPlugins: [</span><br><span class="line">          RectModelPlugin(),</span><br><span class="line">          LineModelPlugin(),</span><br><span class="line">          OvalModelPlugin(),</span><br><span class="line">          SvgModelPlugin(),</span><br><span class="line">          PlantUMLModelPlugin(),</span><br><span class="line">          ImageModelPlugin(),</span><br><span class="line">          AttachmentModelPlugin(),</span><br><span class="line">          FreeStyleModelPlugin(),</span><br><span class="line">          HtmlModelPlugin(),</span><br><span class="line">          MarkdownModelPlugin(),</span><br><span class="line">          SubBoardModelPlugin(),</span><br><span class="line">        ],</span><br><span class="line">   ),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h2 id="插件化设计uml"><a class="markdownIt-Anchor" href="#插件化设计uml"></a> 插件化设计UML</h2>
+<p>最终插件化的设计UML类图如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">@startuml C</span><br><span class="line">interface ModelPluginInterface &#123;</span><br><span class="line">    + String getTypeName()</span><br><span class="line">    + String getInMenuName()</span><br><span class="line">    + Widget buildModelView()</span><br><span class="line">    + Widget buildModelEditor()</span><br><span class="line">    + Model buildDefault()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class ModelPluginManager&#123;</span><br><span class="line">    + void registerPlugin(PluginInterface plugin)</span><br><span class="line">    + ModelPluginInterface getPluginByTypeName(String typeName)</span><br><span class="line">    + List&lt;String&gt; getPluginTypeNameList()</span><br><span class="line">&#125;</span><br><span class="line">class RectPlugin &#123;</span><br><span class="line">    + String getTypeName()</span><br><span class="line">    + String getInMenuName()</span><br><span class="line">    + Widget buildModelView()</span><br><span class="line">    + Widget buildModelEditor()</span><br><span class="line">    + Model buildDefault()</span><br><span class="line">&#125;</span><br><span class="line">&#x27; 实现</span><br><span class="line">RectPlugin ..|&gt; ModelPluginInterface </span><br><span class="line"></span><br><span class="line">class ImagePlugin &#123;</span><br><span class="line">    + String getTypeName()</span><br><span class="line">    + String getInMenuName()</span><br><span class="line">    + Widget buildModelView()</span><br><span class="line">    + Widget buildModelEditor()</span><br><span class="line">    + Model buildDefault()</span><br><span class="line">&#125;</span><br><span class="line">&#x27; 实现</span><br><span class="line">ImagePlugin ..|&gt; ModelPluginInterface</span><br><span class="line"></span><br><span class="line">class Menu&#123;&#125;</span><br><span class="line">&#x27; 关联</span><br><span class="line">Menu --&gt; ModelPluginManager</span><br><span class="line"></span><br><span class="line">class BoardView&#123;&#125;</span><br><span class="line">BoardView --&gt; ModelPluginManager</span><br><span class="line"></span><br><span class="line">class Main&#123;&#125;</span><br><span class="line">&#x27; 关联</span><br><span class="line">Main --&gt; ModelPluginManager</span><br><span class="line">ModelPluginManager --&gt; ModelPluginInterface</span><br><span class="line">Main --&gt; RectPlugin</span><br><span class="line">Main --&gt; ImagePlugin</span><br><span class="line"></span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<p>从UML类图中可以看到，这里的BoardView类为高层模块，插件类实现作为低层模块，两者并没有直接的依赖关系，而是共同依赖了一个<code>ModelPluginInterface</code>的抽象，以一个中间层<code>ModelPluginManager</code>联系了起来，这符合了<strong>依赖倒置原则</strong>。</p>
+<p>当我们面临新的图形元素的扩展需求时，仅仅只是增加了一个插件的实现类，在Main中构造这些插件类并传入<code>ModelPluginManager</code>中轻松实现了图元类型的扩展，这符合了<strong>开闭原则</strong>。</p>
+<h2 id="插件化设计总结"><a class="markdownIt-Anchor" href="#插件化设计总结"></a> 插件化设计总结</h2>
+<p>我们通过抽象出公共接口来实现了一种插件化的设计，符合了开闭原则和依赖倒置原则，内聚了图形元素的行为职责到插件类。不过，当前我们的插件化系统仅仅只能算是一种静态的插件化系统，并不算是一个动态插件化系统，若要实现一个动态插件化系统，我们还需要考虑插件的生命周期，插件的加载与卸载等。</p>
+<blockquote>
+<p>由于Flutter阉割了Dart关于反射与动态化相关的特性，故目前难以实现动态插件化。不过由于我们已经将模型插件的编辑器Editor与视图View的渲染抽象成了Widget组件，将模型插件的数据Data抽象为了HashMap，故仅需引入一种脚本引擎能够动态构造出Widget对象和HashMap即可为动态插件化带来可能。这就属于Flutter动态化相关的知识了。</p>
+</blockquote>
+<h1 id="项目展示"><a class="markdownIt-Anchor" href="#项目展示"></a> 项目展示</h1>
+<h2 id="在线运行"><a class="markdownIt-Anchor" href="#在线运行"></a> 在线运行</h2>
+<p><a target="_blank" rel="noopener" href="https://sit-board.github.io/">https://sit-board.github.io/</a></p>
+<p>注意：受限于时间精力，故未针对Web端做平台相关的适配，可能很多功能在Web端无法使用，若需要完整体验，请下载Release中的客户端进行体验。</p>
+<p>Web端仅作为快速体验为目的，请以实际桌面端或移动端平台为准。</p>
+<p>浏览器端右键或长按时可能会弹出剪切板权限提示，这是因为软件支持复制粘贴图形对象到本机剪切板。</p>
+<h2 id="视频demo演示"><a class="markdownIt-Anchor" href="#视频demo演示"></a> 视频Demo演示</h2>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Wd4y1b7rc/">https://www.bilibili.com/video/BV1Wd4y1b7rc/</a></p>
+<h2 id="使用说明"><a class="markdownIt-Anchor" href="#使用说明"></a> 使用说明</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/SIT-board/board_front/blob/master/docs/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.md">board_front/使用说明.md</a></p>
+<h2 id="项目截图"><a class="markdownIt-Anchor" href="#项目截图"></a> 项目截图</h2>
+<h3 id="白板主界面"><a class="markdownIt-Anchor" href="#白板主界面"></a> 白板主界面</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-12-07-13-32-29-image.png" alt></p>
+<h3 id="白板设置"><a class="markdownIt-Anchor" href="#白板设置"></a> 白板设置</h3>
+<img title src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-12-07-13-32-19-image.png" alt data-align="inline">
+<h3 id="本地白板"><a class="markdownIt-Anchor" href="#本地白板"></a> 本地白板</h3>
+<p>如图展示了<strong>矩形/文本框插件，椭圆插件，图片插件，自由画板插件，PlantUML插件，Markdown插件，子画板插件</strong>的渲染，其中子画板插件为画板本身，类似于网页中的iframe标签元素，且比例为竖屏时自动适配移动端ui。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-12-07-13-40-07-image.png" alt></p>
+<h3 id="多人协同"><a class="markdownIt-Anchor" href="#多人协同"></a> 多人协同</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/35d3/2022-12-07-13-45-43-image.png" alt></p>
+<h1 id="仓库地址"><a class="markdownIt-Anchor" href="#仓库地址"></a> 仓库地址</h1>
+<p>Github 组织地址 <a target="_blank" rel="noopener" href="https://github.com/SIT-board">https://github.com/SIT-board</a></p>
+<p>项目仓库地址 <a target="_blank" rel="noopener" href="https://github.com/SIT-board/board_front">https://github.com/SIT-board/board_front</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/35d3/">https://zhangzqs.cn/posts/35d3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/949/" title="[论文翻译] Review of FAT data structure of FAT32 file system"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">[论文翻译] Review of FAT data structure of FAT32 file system</div></div></a></div><div class="next-post pull-right"><a href="/posts/1a73/" title="大整数求幂模"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">大整数求幂模</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text"> 需求分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%BB%98%E5%9B%BE%E5%8A%9F%E8%83%BD"><span class="toc-number">1.1.</span> <span class="toc-text"> 基本绘图功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E9%A1%B5%E5%B1%95%E7%A4%BA"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 分页展示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%9B%BE%E5%85%83"><span class="toc-number">1.1.2.</span> <span class="toc-text"> 创建图元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%8E%86%E5%8F%B2"><span class="toc-number">1.1.3.</span> <span class="toc-text"> 操作历史</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E5%8C%96"><span class="toc-number">1.1.4.</span> <span class="toc-text"> 工程化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%9B%BE%E5%85%83"><span class="toc-number">1.1.5.</span> <span class="toc-text"> 操作图元</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E7%BB%98%E5%9B%BE%E5%8A%9F%E8%83%BD"><span class="toc-number">1.2.</span> <span class="toc-text"> 扩展绘图功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%8C%E6%96%87%E6%9C%AC%E5%B1%95%E7%A4%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 富文本展示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E5%B1%95%E7%A4%BA"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 图片展示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E9%99%84%E4%BB%B6"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 插入附件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E4%BA%BA%E5%8D%8F%E5%90%8C%E5%8A%9F%E8%83%BD"><span class="toc-number">1.3.</span> <span class="toc-text"> 多人协同功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%8A%A0%E5%85%A5%E6%88%BF%E9%97%B4"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 创建与加入房间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E4%BD%9C%E4%B8%8E%E5%8F%AA%E8%AF%BB%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 协作与只读模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AA%E8%AF%BB%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.2.1.</span> <span class="toc-text"> 只读模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.2.2.</span> <span class="toc-text"> 协作模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uml%E7%94%A8%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.3.3.</span> <span class="toc-text"> UML用例分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E5%8A%9F%E8%83%BD%E6%80%A7%E9%9C%80%E6%B1%82"><span class="toc-number">1.4.</span> <span class="toc-text"> 非功能性需求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%A8%E5%B9%B3%E5%8F%B0"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 跨平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E9%9C%80%E6%B1%82"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 性能需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E7%BB%B4%E6%8A%A4%E4%B8%8E%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="toc-number">1.4.3.</span> <span class="toc-text"> 可维护与可扩展性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E6%96%B9%E6%A1%88%E9%80%89%E6%8B%A9"><span class="toc-number">2.</span> <span class="toc-text"> 开发方案选择</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%99%BD%E6%9D%BF%E7%BB%84%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text"> 白板组件设计实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%99%BD%E6%9D%BF%E5%AE%B9%E5%99%A8"><span class="toc-number">3.1.</span> <span class="toc-text"> 白板容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%99%BD%E6%9D%BF%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.2.</span> <span class="toc-text"> 白板存储结构设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%99%BD%E6%9D%BF%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.3.</span> <span class="toc-text"> 白板数据结构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#commonmodeldata"><span class="toc-number">3.3.1.</span> <span class="toc-text"> CommonModelData</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#specialmodeldata"><span class="toc-number">3.3.2.</span> <span class="toc-text"> SpecialModelData</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rectmodeldata"><span class="toc-number">3.3.2.1.</span> <span class="toc-text"> RectModelData</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#freestylemodeldata"><span class="toc-number">3.3.2.2.</span> <span class="toc-text"> FreeStyleModelData</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%9B%BE%E5%BD%A2%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.3.2.3.</span> <span class="toc-text"> 其他图形元素类型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#model"><span class="toc-number">3.3.3.</span> <span class="toc-text"> Model</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#boardviewmodel"><span class="toc-number">3.3.4.</span> <span class="toc-text"> BoardViewModel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#boardpageviewmodel"><span class="toc-number">3.3.5.</span> <span class="toc-text"> BoardPageViewModel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#boardpagesetviewmodel"><span class="toc-number">3.3.6.</span> <span class="toc-text"> BoardPageSetViewModel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sbp%E6%96%87%E4%BB%B6"><span class="toc-number">3.3.7.</span> <span class="toc-text"> SBP文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#jsondiff%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text"> JsonDiff算法设计实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#undoredo%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text"> UndoRedo算法设计实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80"><span class="toc-number">5.0.1.</span> <span class="toc-text"> 方案一</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B"><span class="toc-number">5.0.1.1.</span> <span class="toc-text"> 流程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C"><span class="toc-number">5.0.2.</span> <span class="toc-text"> 方案二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#package"><span class="toc-number">5.0.3.</span> <span class="toc-text"> Package</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%99%BD%E6%9D%BF%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E6%96%B9%E6%A1%88%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.</span> <span class="toc-text"> 白板数据同步方案设计实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E8%AF%9D%E9%A2%98%E7%9A%84%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%9E%8B"><span class="toc-number">6.1.</span> <span class="toc-text"> 基于话题的发布订阅通信模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#basemessage"><span class="toc-number">6.1.1.</span> <span class="toc-text"> BaseMessage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%9D%E9%A2%98%E8%AE%BE%E8%AE%A1"><span class="toc-number">6.1.2.</span> <span class="toc-text"> 话题设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mqtt%E9%80%9A%E4%BF%A1"><span class="toc-number">6.1.3.</span> <span class="toc-text"> MQTT通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E5%88%97%E8%A1%A8%E4%B8%8E%E4%B8%AA%E6%80%A7%E5%8C%96%E4%BF%A1%E6%81%AF"><span class="toc-number">6.1.4.</span> <span class="toc-text"> 在线列表与个性化信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%90%8C%E6%AD%A5"><span class="toc-number">6.2.</span> <span class="toc-text"> 分布式同步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%8C%81%E4%BA%BA%E7%A6%BB%E5%9C%BA"><span class="toc-number">6.3.</span> <span class="toc-text"> 主持人离场</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E5%8C%96%E6%96%B9%E6%A1%88%E8%AE%BE%E8%AE%A1%E5%AE%9E%E7%8E%B0"><span class="toc-number">7.</span> <span class="toc-text"> 插件化方案设计实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E6%A6%82%E8%BF%B0"><span class="toc-number">7.1.</span> <span class="toc-text"> 场景概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%A6%82%E8%BF%B0"><span class="toc-number">7.2.</span> <span class="toc-text"> 问题概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%BD%E8%B1%A1%E6%8F%92%E4%BB%B6%E6%8E%A5%E5%8F%A3"><span class="toc-number">7.3.</span> <span class="toc-text"> 抽象插件接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%8F%92%E4%BB%B6%E6%8E%A5%E5%8F%A3"><span class="toc-number">7.4.</span> <span class="toc-text"> 实现插件接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#data"><span class="toc-number">7.4.1.</span> <span class="toc-text"> Data</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#view"><span class="toc-number">7.4.2.</span> <span class="toc-text"> View</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#editor"><span class="toc-number">7.4.3.</span> <span class="toc-text"> Editor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#entry"><span class="toc-number">7.4.4.</span> <span class="toc-text"> Entry</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E6%8F%92%E4%BB%B6%E6%8E%A5%E5%8F%A3"><span class="toc-number">7.5.</span> <span class="toc-text"> 注册插件接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E5%8C%96%E8%AE%BE%E8%AE%A1uml"><span class="toc-number">7.6.</span> <span class="toc-text"> 插件化设计UML</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E5%8C%96%E8%AE%BE%E8%AE%A1%E6%80%BB%E7%BB%93"><span class="toc-number">7.7.</span> <span class="toc-text"> 插件化设计总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%B1%95%E7%A4%BA"><span class="toc-number">8.</span> <span class="toc-text"> 项目展示</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E8%BF%90%E8%A1%8C"><span class="toc-number">8.1.</span> <span class="toc-text"> 在线运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%86%E9%A2%91demo%E6%BC%94%E7%A4%BA"><span class="toc-number">8.2.</span> <span class="toc-text"> 视频Demo演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="toc-number">8.3.</span> <span class="toc-text"> 使用说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%88%AA%E5%9B%BE"><span class="toc-number">8.4.</span> <span class="toc-text"> 项目截图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BD%E6%9D%BF%E4%B8%BB%E7%95%8C%E9%9D%A2"><span class="toc-number">8.4.1.</span> <span class="toc-text"> 白板主界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BD%E6%9D%BF%E8%AE%BE%E7%BD%AE"><span class="toc-number">8.4.2.</span> <span class="toc-text"> 白板设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E7%99%BD%E6%9D%BF"><span class="toc-number">8.4.3.</span> <span class="toc-text"> 本地白板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%BA%BA%E5%8D%8F%E5%90%8C"><span class="toc-number">8.4.4.</span> <span class="toc-text"> 多人协同</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%93%E5%BA%93%E5%9C%B0%E5%9D%80"><span class="toc-number">9.</span> <span class="toc-text"> 仓库地址</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '0ee053bbc66420752a39de23614bb607',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Hive环境搭建 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="环境准备 Hive需要依赖如下环境  集群的拓扑如下   安装MySQL  安装MySQL 123456789101112# 安装mysql的yum源yum install wgetwget https:&amp;#x2F;&amp;#x2F;repo.mysql.com&amp;#x2F;mysql80-community-release-el7-"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/5862/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Hive环境搭建',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-04-25 17:20:02'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Hive环境搭建<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/大数据/Hive环境搭建.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-25T06:30:02.000Z" title="发表于 2022-04-25 14:30:02">2022-04-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-04-25T09:20:02.000Z" title="更新于 2022-04-25 17:20:02">2022-04-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Hive环境搭建"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/5862/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><h1 id="环境准备"><a class="markdownIt-Anchor" href="#环境准备"></a> 环境准备</h1>
+<p>Hive需要依赖如下环境</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5862/2022-04-25-14-32-15-image.png" alt></p>
+<p>集群的拓扑如下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5862/2022-04-25-14-32-43-image.png" alt></p>
+<h1 id="安装mysql"><a class="markdownIt-Anchor" href="#安装mysql"></a> 安装MySQL</h1>
+<h2 id="安装mysql-2"><a class="markdownIt-Anchor" href="#安装mysql-2"></a> 安装MySQL</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装mysql的yum源</span></span><br><span class="line">yum install wget</span><br><span class="line">wget https://repo.mysql.com/mysql80-community-release-el7-1.noarch.rpm</span><br><span class="line">yum install mysql80-community-release-el7-1.noarch.rpm</span><br><span class="line">yum update -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装mysql</span></span><br><span class="line">yum install mysql-community-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置mysql的开机自启</span></span><br><span class="line">systemctl start mysqld</span><br><span class="line">systemctl <span class="built_in">enable</span> mysqld</span><br></pre></td></tr></table></figure>
+<h2 id="安装踩坑"><a class="markdownIt-Anchor" href="#安装踩坑"></a> 安装踩坑</h2>
+<p>我这里安装报错提示如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">warning: /var/cache/yum/x86_64/7/mysql80-community/packages/mysql-community-common-8.0.28-1.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID 3a79bd29: NOKEY</span><br><span class="line">Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">The GPG keys listed for the &quot;MySQL 8.0 Community Server&quot; repository are already installed but they are not correct for this package.</span><br><span class="line">Check that the correct key URLs are configured for this repository.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> Failing package is: mysql-community-common-8.0.28-1.el7.x86_64</span><br><span class="line"> GPG Keys are configured as: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql</span><br></pre></td></tr></table></figure>
+<p>具体原因不明确，直接用以下命令绕过GPG验证</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install mysql-community-server --nogpgcheck</span><br></pre></td></tr></table></figure>
+<h2 id="登录到mysql"><a class="markdownIt-Anchor" href="#登录到mysql"></a> 登录到MySQL</h2>
+<p><code>cat /var/log/mysqld.log</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# cat /var/log/mysqld.log</span><br><span class="line">2022-04-25T07:22:42.969583Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.28) initializing of server in progress as process 52213</span><br><span class="line">2022-04-25T07:22:42.987672Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.</span><br><span class="line">2022-04-25T07:22:43.426894Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.</span><br><span class="line">2022-04-25T07:22:45.853037Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: Tu9&amp;xtetlynf</span><br><span class="line">2022-04-25T07:22:52.474308Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.28) starting as process 52262</span><br><span class="line">2022-04-25T07:22:52.490859Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.</span><br><span class="line">2022-04-25T07:22:52.673778Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.</span><br><span class="line">2022-04-25T07:22:53.295166Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.</span><br><span class="line">2022-04-25T07:22:53.295239Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.</span><br><span class="line">2022-04-25T07:22:53.371308Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: &#x27;::&#x27; port: 33060, socket: /var/run/mysqld/mysqlx.sock</span><br><span class="line">2022-04-25T07:22:53.371379Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: &#x27;8.0.28&#x27;  socket: &#x27;/var/lib/mysql/mysql.sock&#x27;  port: 3306  MySQL Community Server - GPL.</span><br></pre></td></tr></table></figure>
+<p>可以找到初始密码为<code>Tu9&amp;xtetlynf</code></p>
+<p>登录到mysql使用命令<code>mysql -u root -p</code></p>
+<h2 id="修改密码规则"><a class="markdownIt-Anchor" href="#修改密码规则"></a> 修改密码规则</h2>
+<p>默认密码规则比较复杂，为了方便修改密码规则等级</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> validate_password.policy<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> validate_password.length<span class="operator">=</span><span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>但是我这里又出错了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; set global validate_password.policy=0;</span><br><span class="line">ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.</span><br></pre></td></tr></table></figure>
+<p>第一次使用输入任何命令都会提示需要修改密码，但是默认密码规则太复杂，需要调整密码规则，但是调整依旧需要先修改密码，所以我们只能先修改个复杂密码，直接把初始密码的后两位改了</p>
+<p><code>alter user user() identified by &quot;Tu9&amp;xtetly00&quot;;</code></p>
+<p>然后再调整密码规则等级</p>
+<p>现在就可以修改一个简单点的密码了<br>
+<code>alter user user() identified by &quot;123456&quot;;</code></p>
+<h2 id="外网访问"><a class="markdownIt-Anchor" href="#外网访问"></a> 外网访问</h2>
+<p>配置允许外网ip通过root用户访问</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">use mysql;</span><br><span class="line"><span class="comment">-- 更新host字段</span></span><br><span class="line"><span class="keyword">update</span> <span class="keyword">user</span> <span class="keyword">set</span> host <span class="operator">=</span> <span class="string">&#x27;%&#x27;</span> <span class="keyword">where</span> <span class="keyword">user</span> <span class="operator">=</span> <span class="string">&#x27;root&#x27;</span>;</span><br><span class="line"><span class="comment">-- 查看修改结果</span></span><br><span class="line"><span class="keyword">select</span> host <span class="keyword">user</span> <span class="keyword">from</span> <span class="keyword">user</span>;</span><br><span class="line"><span class="comment">-- 刷新生效</span></span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select host,user user from user;</span><br><span class="line">+-----------+------------------+</span><br><span class="line">| host      | user             |</span><br><span class="line">+-----------+------------------+</span><br><span class="line">| %         | root             |</span><br><span class="line">| localhost | mysql.infoschema |</span><br><span class="line">| localhost | mysql.session    |</span><br><span class="line">| localhost | mysql.sys        |</span><br><span class="line">+-----------+------------------+</span><br><span class="line">4 rows in set (0.01 sec)</span><br></pre></td></tr></table></figure>
+<h1 id="安装hive"><a class="markdownIt-Anchor" href="#安装hive"></a> 安装Hive</h1>
+<h2 id="下载hive"><a class="markdownIt-Anchor" href="#下载hive"></a> 下载Hive</h2>
+<p>这是下载页面</p>
+<p><a target="_blank" rel="noopener" href="https://www.apache.org/dyn/closer.cgi/hive/">Apache Downloads</a></p>
+<p>我这里下载hive 3.1.3的版本</p>
+<p><a target="_blank" rel="noopener" href="https://dlcdn.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz">apache-hive-3.1.3-bin.tar.gz</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://dlcdn.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gzhttps://dlcdn.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz</span><br></pre></td></tr></table></figure>
+<h2 id="解压hive"><a class="markdownIt-Anchor" href="#解压hive"></a> 解压Hive</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf apache-hive-3.1.3-bin.tar.gz</span><br><span class="line"><span class="built_in">mv</span> apache-hive-3.1.3-bin /opt</span><br></pre></td></tr></table></figure>
+<h2 id="修改hive配置文件"><a class="markdownIt-Anchor" href="#修改hive配置文件"></a> 修改Hive配置文件</h2>
+<p>进入hive安装目录的conf文件夹下</p>
+<h3 id="编辑hive-envsh"><a class="markdownIt-Anchor" href="#编辑hive-envsh"></a> <a target="_blank" rel="noopener" href="http://xn--hive-env-8c2vp91j.sh">编辑hive-env.sh</a></h3>
+<p>从模板复制一份</p>
+<p><code>cp hive-env.sh.template hive-env.sh</code></p>
+<p>添加一行</p>
+<p><code>export HADOOP_HOME=/opt/hadoop-3.1.4</code></p>
+<h3 id="创建hive-sitexml"><a class="markdownIt-Anchor" href="#创建hive-sitexml"></a> 创建hive-site.xml</h3>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;?xml-stylesheet type=<span class="string">&quot;text/xsl&quot;</span> href=<span class="string">&quot;configuration.xsl&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Hive临时文件 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.exec.scratchdir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://master:8020/user/hive/tmp<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Hive仓库文件 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.metastore.warehouse.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://master:8020/user/hive/warehouse<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Hive日志文件 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.querylog.location<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://master:8020/user/hive/log<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- MySQL配置 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://master:3306/hive?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;&amp;useSSL=false&amp;allowPublicKeyRetrieval=true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.cj.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置mysql的jdbc驱动"><a class="markdownIt-Anchor" href="#配置mysql的jdbc驱动"></a> 配置MySQL的jdbc驱动</h3>
+<p>下载MySQL的jdbc驱动</p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/downloads/connector/j/">MySQL :: Download Connector/J</a></p>
+<p>解压得到文件<code>mysql-connector-java-8.0.28.jar</code></p>
+<p>移动到hive的lib文件夹</p>
+<p><code>cp mysql-connector-java-8.0.28.jar /opt/apache-hive-3.1.3-bin/lib/</code></p>
+<h3 id="配置环境变量"><a class="markdownIt-Anchor" href="#配置环境变量"></a> 配置环境变量</h3>
+<p>编辑/etc/profile文件，添加</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> HIVE_HOME=/opt/apache-hive-3.1.3-bin</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HIVE</span>/bin</span><br></pre></td></tr></table></figure>
+<h3 id="将hive的guava库与hadoop保持一致"><a class="markdownIt-Anchor" href="#将hive的guava库与hadoop保持一致"></a> 将Hive的Guava库与Hadoop保持一致</h3>
+<p>删除Hive自带的Guava库</p>
+<p><code>rm -rf $HIVE_HOME/lib/guava-19.0.jar</code></p>
+<p>复制Hadoop的Guava库到Hive中</p>
+<p><code>cp $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar $HIVE_HOME/lib/</code></p>
+<h3 id="初始化元数据表"><a class="markdownIt-Anchor" href="#初始化元数据表"></a> 初始化元数据表</h3>
+<p><code>schematool -dbType mysql -initSchema</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Initialization script completed</span><br><span class="line">schemaTool completed</span><br></pre></td></tr></table></figure>
+<p>看到这个就说明初始化好了</p>
+<h3 id="启动元数据服务"><a class="markdownIt-Anchor" href="#启动元数据服务"></a> 启动元数据服务</h3>
+<p><code>hive --service metastore &amp;</code></p>
+<h1 id="运行hive"><a class="markdownIt-Anchor" href="#运行hive"></a> 运行Hive</h1>
+<p>现在就可以进入hive shell命令行了</p>
+<p><code>hive shell</code></p>
+<h2 id="踩坑"><a class="markdownIt-Anchor" href="#踩坑"></a> 踩坑</h2>
+<p>随便输入各命令显示大量的日志信息</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5862/2022-04-25-16-54-00-image.png" alt></p>
+<p>参考这篇文章</p>
+<p><a target="_blank" rel="noopener" href="http://www.xueai8.com/blog/10">关于hive shell 中夹杂大量日志信息的问题 (xueai8.com)</a></p>
+<p>不过本人使用的hbase 2.4.11已经移除了log4j，被reload4j替代，同理这里直接把reload修改后缀使其不生效即可。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5862/2022-04-25-17-01-46-image.png" alt></p>
+<p>现在shell就清净了</p>
+<h1 id="hive实现词频统计"><a class="markdownIt-Anchor" href="#hive实现词频统计"></a> Hive实现词频统计</h1>
+<h2 id="创建文件"><a class="markdownIt-Anchor" href="#创建文件"></a> 创建文件</h2>
+<p>本地新建文件<code>/root/test.txt</code></p>
+<p>内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">I am a student</span><br><span class="line">I learn hadoop</span><br><span class="line">I learn MapReduce</span><br></pre></td></tr></table></figure>
+<h2 id="创建数据库与数据表"><a class="markdownIt-Anchor" href="#创建数据库与数据表"></a> 创建数据库与数据表</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> database test;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> words(text string);</span><br></pre></td></tr></table></figure>
+<h2 id="加载并查看数据"><a class="markdownIt-Anchor" href="#加载并查看数据"></a> 加载并查看数据</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">load data <span class="keyword">local</span> inpath <span class="string">&#x27;/root/test.txt&#x27;</span> overwrite <span class="keyword">into</span> <span class="keyword">table</span> words;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> words;</span><br></pre></td></tr></table></figure>
+<p>输出结果如下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">hive<span class="operator">&gt;</span> load data <span class="keyword">local</span> inpath <span class="string">&#x27;/root/test.txt&#x27;</span> overwrite <span class="keyword">into</span> <span class="keyword">table</span> words;</span><br><span class="line">Loading data <span class="keyword">to</span> <span class="keyword">table</span> default.words</span><br><span class="line">OK</span><br><span class="line"><span class="type">Time</span> taken: <span class="number">1.828</span> seconds</span><br><span class="line"></span><br><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> words;</span><br><span class="line">OK</span><br><span class="line">I am a student</span><br><span class="line">I learn hadoop</span><br><span class="line">I learn MapReduce</span><br><span class="line"><span class="type">Time</span> taken: <span class="number">3.729</span> seconds, Fetched: <span class="number">3</span> <span class="type">row</span>(s)</span><br></pre></td></tr></table></figure>
+<h2 id="词频统计"><a class="markdownIt-Anchor" href="#词频统计"></a> 词频统计</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> word, <span class="built_in">count</span>(word) <span class="keyword">as</span> wordcount </span><br><span class="line"><span class="keyword">FROM</span>(<span class="keyword">SELECT</span> explode (split(text, <span class="string">&#x27; &#x27;</span>)) <span class="keyword">as</span> word</span><br><span class="line">     <span class="keyword">FROM</span> words) <span class="keyword">as</span> tmp</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> word;</span><br></pre></td></tr></table></figure>
+<p>输出结果如下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">SELECT</span> word, <span class="built_in">count</span>(word) <span class="keyword">as</span> wordcount</span><br><span class="line">    <span class="operator">&gt;</span> <span class="keyword">FROM</span>(<span class="keyword">SELECT</span> explode (split(text, <span class="string">&#x27; &#x27;</span>)) <span class="keyword">as</span> word</span><br><span class="line">    <span class="operator">&gt;</span>      <span class="keyword">FROM</span> words) <span class="keyword">as</span> tmp</span><br><span class="line">    <span class="operator">&gt;</span> <span class="keyword">GROUP</span> <span class="keyword">BY</span> word;</span><br><span class="line"></span><br><span class="line">Query ID <span class="operator">=</span> root_20220425171959_28a278a7<span class="number">-511</span>b<span class="number">-46</span>c7<span class="operator">-</span>bcbd<span class="operator">-</span>babc03c6acce</span><br><span class="line">Total jobs <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">Launching Job <span class="number">1</span> <span class="keyword">out</span> <span class="keyword">of</span> <span class="number">1</span></span><br><span class="line">Number <span class="keyword">of</span> reduce tasks <span class="keyword">not</span> specified. Estimated <span class="keyword">from</span> input data size: <span class="number">1</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> change the average load <span class="keyword">for</span> a reducer (<span class="keyword">in</span> bytes):</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.bytes.per.reducer<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> limit the maximum number <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.max<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> <span class="keyword">set</span> a constant number <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> mapreduce.job.reduces<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line">Starting Job <span class="operator">=</span> job_1650876267702_0001, Tracking URL <span class="operator">=</span> http:<span class="operator">/</span><span class="operator">/</span>master:<span class="number">8088</span><span class="operator">/</span>proxy<span class="operator">/</span>application_1650876267702_0001<span class="operator">/</span></span><br><span class="line">Kill Command <span class="operator">=</span> <span class="operator">/</span>opt<span class="operator">/</span>hadoop<span class="number">-3.1</span><span class="number">.4</span><span class="operator">/</span>bin<span class="operator">/</span>mapred job  <span class="operator">-</span>kill job_1650876267702_0001</span><br><span class="line">Hadoop job information <span class="keyword">for</span> Stage<span class="number">-1</span>: number <span class="keyword">of</span> mappers: <span class="number">1</span>; number <span class="keyword">of</span> reducers: <span class="number">1</span></span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">17</span>:<span class="number">20</span>:<span class="number">22</span>,<span class="number">861</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span></span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">17</span>:<span class="number">20</span>:<span class="number">39</span>,<span class="number">686</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span>, Cumulative CPU <span class="number">12.0</span> sec</span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">17</span>:<span class="number">20</span>:<span class="number">51</span>,<span class="number">175</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>, Cumulative CPU <span class="number">18.24</span> sec</span><br><span class="line">MapReduce Total cumulative CPU <span class="type">time</span>: <span class="number">18</span> seconds <span class="number">240</span> msec</span><br><span class="line">Ended Job <span class="operator">=</span> job_1650876267702_0001</span><br><span class="line">MapReduce Jobs Launched:</span><br><span class="line">Stage<span class="operator">-</span>Stage<span class="number">-1</span>: Map: <span class="number">1</span>  Reduce: <span class="number">1</span>   Cumulative CPU: <span class="number">18.24</span> sec   HDFS Read: <span class="number">9102</span> HDFS Write: <span class="number">223</span> SUCCESS</span><br><span class="line">Total MapReduce CPU <span class="type">Time</span> Spent: <span class="number">18</span> seconds <span class="number">240</span> msec</span><br><span class="line"></span><br><span class="line">OK</span><br><span class="line">I       <span class="number">3</span></span><br><span class="line">MapReduce       <span class="number">1</span></span><br><span class="line">a       <span class="number">1</span></span><br><span class="line">am      <span class="number">1</span></span><br><span class="line">hadoop  <span class="number">1</span></span><br><span class="line">learn   <span class="number">2</span></span><br><span class="line">student <span class="number">1</span></span><br><span class="line"><span class="type">Time</span> taken: <span class="number">53.971</span> seconds, Fetched: <span class="number">7</span> <span class="type">row</span>(s)</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/5862/">https://zhangzqs.cn/posts/5862/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/27a6/" title="Spark环境搭建"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spark环境搭建</div></div></a></div><div class="next-post pull-right"><a href="/posts/a279/" title="Leetcode-398-随机数索引"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Leetcode-398-随机数索引</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text"> 环境准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%85mysql"><span class="toc-number">2.</span> <span class="toc-text"> 安装MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85mysql-2"><span class="toc-number">2.1.</span> <span class="toc-text"> 安装MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E8%B8%A9%E5%9D%91"><span class="toc-number">2.2.</span> <span class="toc-text"> 安装踩坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%99%BB%E5%BD%95%E5%88%B0mysql"><span class="toc-number">2.3.</span> <span class="toc-text"> 登录到MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81%E8%A7%84%E5%88%99"><span class="toc-number">2.4.</span> <span class="toc-text"> 修改密码规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AE"><span class="toc-number">2.5.</span> <span class="toc-text"> 外网访问</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%85hive"><span class="toc-number">3.</span> <span class="toc-text"> 安装Hive</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BDhive"><span class="toc-number">3.1.</span> <span class="toc-text"> 下载Hive</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%8E%8Bhive"><span class="toc-number">3.2.</span> <span class="toc-text"> 解压Hive</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9hive%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">3.3.</span> <span class="toc-text"> 修改Hive配置文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%BE%91hive-envsh"><span class="toc-number">3.3.1.</span> <span class="toc-text"> 编辑hive-env.sh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAhive-sitexml"><span class="toc-number">3.3.2.</span> <span class="toc-text"> 创建hive-site.xml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmysql%E7%9A%84jdbc%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.3.3.</span> <span class="toc-text"> 配置MySQL的jdbc驱动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">3.3.4.</span> <span class="toc-text"> 配置环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86hive%E7%9A%84guava%E5%BA%93%E4%B8%8Ehadoop%E4%BF%9D%E6%8C%81%E4%B8%80%E8%87%B4"><span class="toc-number">3.3.5.</span> <span class="toc-text"> 将Hive的Guava库与Hadoop保持一致</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%85%83%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="toc-number">3.3.6.</span> <span class="toc-text"> 初始化元数据表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E5%85%83%E6%95%B0%E6%8D%AE%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.3.7.</span> <span class="toc-text"> 启动元数据服务</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%90%E8%A1%8Chive"><span class="toc-number">4.</span> <span class="toc-text"> 运行Hive</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91"><span class="toc-number">4.1.</span> <span class="toc-text"> 踩坑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#hive%E5%AE%9E%E7%8E%B0%E8%AF%8D%E9%A2%91%E7%BB%9F%E8%AE%A1"><span class="toc-number">5.</span> <span class="toc-text"> Hive实现词频统计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6"><span class="toc-number">5.1.</span> <span class="toc-text"> 创建文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="toc-number">5.2.</span> <span class="toc-text"> 创建数据库与数据表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E5%B9%B6%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE"><span class="toc-number">5.3.</span> <span class="toc-text"> 加载并查看数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%8D%E9%A2%91%E7%BB%9F%E8%AE%A1"><span class="toc-number">5.4.</span> <span class="toc-text"> 词频统计</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: 'a4692ee6f617e153691bc5233e6d89e9',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

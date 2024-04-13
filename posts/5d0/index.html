@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>淘宝架构的演进 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本文作为朱栩老师的上课笔记 原文如下， 淘宝技术架构演进之路 - 云+社区 - 腾讯云 (tencent.com)  基本概念   分布式系统 一个系统的多个模块在不同服务器上部署   高可用 系统中部分节点失效，其他节点能够代替它继续完成服务，可认为系统具有高可用性。   集群 一个特定领域的软件"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/5d0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '淘宝架构的演进',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-16 14:17:31'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">淘宝架构的演进<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/软件工程/系统架构/淘宝架构的演进.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-03T06:53:31.000Z" title="发表于 2022-03-03 14:53:31">2022-03-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-16T06:17:31.000Z" title="更新于 2022-05-16 14:17:31">2022-05-16</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="淘宝架构的演进"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/5d0/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><p>本文作为朱栩老师的上课笔记</p>
+<p>原文如下，</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1511594">淘宝技术架构演进之路 - 云+社区 - 腾讯云 (tencent.com)</a></p>
+<h2 id="基本概念"><a class="markdownIt-Anchor" href="#基本概念"></a> 基本概念</h2>
+<ul>
+<li>
+<p><strong>分布式系统</strong></p>
+<p><strong>一个</strong>系统的多个模块在<strong>不同</strong>服务器上部署</p>
+</li>
+<li>
+<p><strong>高可用</strong></p>
+<p>系统中部分节点失效，其他节点能够代替它继续完成服务，可认为系统具有高可用性。</p>
+</li>
+<li>
+<p><strong>集群</strong></p>
+<p>一个特定领域的软件部署在多台服务器上并作为一个整体提供一类服务。</p>
+</li>
+<li>
+<p><strong>负载均衡</strong></p>
+<p>请求发送到系统时，通过某些方式把请求均匀分发到多个节点上，使系统中每个节点能够均匀的处理请求负载，则可认为系统是负载均衡的。</p>
+</li>
+<li>
+<p><strong>代理</strong></p>
+<ul>
+<li>
+<p>正向代理</p>
+<p>系统内访问外部网络时，通过一个统一的代理服务器把请求转发出去，从外部看来该请求就是代理服务器发出的，此时代理服务器实现了正向的代理。</p>
+</li>
+<li>
+<p>反向代理</p>
+<p>外部请求进入系统时，代理服务器把该请求转发到系统内的某个服务器，从外部看来，该请求的处理者就是代理服务器，此时代理服务器实现了反向代理。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="架构演进"><a class="markdownIt-Anchor" href="#架构演进"></a> 架构演进</h2>
+<h3 id="架构0-单机架构"><a class="markdownIt-Anchor" href="#架构0-单机架构"></a> 架构0 单机架构</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/2022-03-03-15-51-13-image.png" alt></p>
+<p>一个非常普通，非常简单的单机架构，只有一台服务器主机，Tomcat与数据库放在同一台服务器上。</p>
+<p>随着用户数的增长，单机应对并发读写数据库的场景成为瓶颈。</p>
+<p>单机架构的服务器升级只能基于硬件升级，即垂直扩展。但是垂直扩展的程度有局限性，当升级到一定程度时，升级额外投入的成本将变得越来越高，甚至可能最后提升1倍性能需要投入10倍成本。</p>
+<h3 id="架构1-tomcat与数据库分开部署"><a class="markdownIt-Anchor" href="#架构1-tomcat与数据库分开部署"></a> 架构1 Tomcat与数据库分开部署</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/2022-03-03-15-51-01-image.png" alt></p>
+<p>一般来说，Web服务器更多侧重CPU密集型应用，而数据库服务器更多侧重于IO密集型应用。若将两者分离，则可以分别针对其应用特点进行特定硬件的优化升级，两者都可继续垂直扩展。</p>
+<p>于是架构1将Tomcat服务器与数据库服务器分开到两台服务器主机，两者通信由原来的单机进程间通信转变为多机网络通信。</p>
+<p>往往用户的一次数据库查询伴随这多次的关联查询，随着用户数的增长，<strong>并发读写数据库</strong>成为了瓶颈。</p>
+<h3 id="架构2-引入本地缓存和分布式缓存"><a class="markdownIt-Anchor" href="#架构2-引入本地缓存和分布式缓存"></a> 架构2 引入本地缓存和分布式缓存</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/2022-03-03-16-10-35-image.png" alt></p>
+<p>于是架构2引入了<strong>本地缓存</strong>和<strong>分布式缓存</strong>，</p>
+<p>当用户查询数据库后，将数据缓存在服务器中，当用户下一次查询时，直接使用缓存数据，避免了再次查询数据库。<br>
+    由于本地缓存需要消耗大量的内存，当用户数增长后，服务器内存将会成为瓶颈，垂直扩展服务器需要升级硬件的成本较高。<br>
+    于是引入了分布式缓存服务器，该服务器主要特点就是内存大，当用户一定时间未使用该数据，那么说明该数据较冷，可将其放入分布式缓存服务器中，而且该缓存服务器可动态水平扩展，这又可以大幅度削减数据库访问。<br>
+    使用<strong>memcached</strong>作为本地缓存，使用了<strong>redis</strong>作为了分布式缓存。</p>
+<p>此时，数据库这里的瓶颈暂时得到满足，但是随着用户数的增长，并发压力主要落在了单机的Web服务器，用户的响应逐步变慢。</p>
+<h3 id="架构3-引入反向代理实现负载均衡"><a class="markdownIt-Anchor" href="#架构3-引入反向代理实现负载均衡"></a> 架构3 引入反向代理实现负载均衡</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/2022-03-03-16-23-34-image.png" alt></p>
+<p>引入了<strong>Nginx</strong>反向代理实现Tomcat服务器的<strong>负载均衡</strong></p>
+<p>在多台服务器上分别部署Tomcat，使用反向代理软件(Nginx)把请求均匀分发到每个Tomcat中。这样Tomcat服务器的水平扩展能力将大大提高。<br>
+        此处假设Tomcat最多支持100个并发，Nginx最多支持50000个并发，那么理论上Nginx把请求分发到500个Tomcat上，就能抗住50000个并发。</p>
+<p>WebServer水平扩展后，还需要考虑session共享的问题，当用户第一次访问在1号服务器完成登陆后，下一次请求被分发到其他服务器也要确定用户已登陆的状态，这个session数据将保存在分布式缓存中完成Web服务器间的<strong>session共享</strong>。</p>
+<p>由于使用了多台Web服务器，此时Tomcat本地缓存就不太合适了，一般就考虑放到分布式缓存中，此时整个架构中的Tomcat节点就不具备保存用户状态的职责，仅作为单纯的<strong>计算节点</strong>，服务器可随时补充或撤离，此时系统具备很高的灵活性。</p>
+<p>随着用户数的增长，并发量增长意味着更多的请求穿透到数据库，缓存机制只能减缓数据库的压力，不能从根本解决数据库的并发压力，单机数据库的瓶颈最终一定会产生。</p>
+<h3 id="架构4-数据库读写分离"><a class="markdownIt-Anchor" href="#架构4-数据库读写分离"></a> 架构4 数据库读写分离</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/2022-03-03-16-41-50-image.png" alt></p>
+<p>考虑到在架构3中将Tomcat转变为单纯的计算节点后可以大大提高其水平扩展能力，可考虑对数据库也添加一定的水平扩展能力。</p>
+<p>通过统计分析可得，实际上大部分场景下，数据库的读取操作的频率远远高于写入的频率，所以可考虑扩展几份数据库只用来读取，只针对主数据库执行写入操作，当主数据库写入完毕后，同步更新所有用于只读的数据库，实现了数据库的读写分离，在一定程度上实现了读操作的水平扩展能力。</p>
+<p>读库可以有多个，通过同步机制把写库的数据同步到读库，对于需要查询最新写入数据场景，可通过在缓存中多写一份，通过缓存获得最新数据。</p>
+<p>其中涉及的技术包括：</p>
+<ul>
+<li>Mycat，它是数据库中间件，可通过它来组织数据库的分离读写和分库分表，客户端通过它来访问下层数据库</li>
+<li>还会涉及数据同步，数据一致性的问题。</li>
+</ul>
+<p>随着业务的变多，不同业务的访问量差距较大，不同业务直接竞争数据库（主要体现在写数据库上），相互影响性能。</p>
+<h3 id="架构5-数据库按业务分库"><a class="markdownIt-Anchor" href="#架构5-数据库按业务分库"></a> 架构5 数据库按业务分库</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/2022-05-14-11-03-50-image.png" alt></p>
+<p>开始分库，按业务拆分，使得业务之间的数据库资源竞争大大降低，但是这可能会损失一些数据一致性的要求。同时这样也很难直接对跨业务的表做关联分析，需要使用其他途径解决。</p>
+<p>随着业务的增长，单机写库还是最终达到瓶颈。</p>
+<h3 id="架构6-大表拆分为小表"><a class="markdownIt-Anchor" href="#架构6-大表拆分为小表"></a> 架构6 大表拆分为小表</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515133616580.png" alt="image-20220515133616580"></p>
+<p>​		如类似话费查询，支付记录查询等账单查询通常是按月查询，这就是把数据库的大表继续划分成多张小表，查询时根据业务需求路由到某张表中。也可以使用hash，如对数据进行hash分桶，分别路由到相应的表中。</p>
+<p>​		只要实时操作的表数据量足够小，请求能够均匀分发到多台服务器上的小表，数据库就能通过水平扩展提高性能。</p>
+<p>​		如前面所说的Mycat数据库中间件就支持大表拆分为小表情况下的访问控制。</p>
+<p>​		这种做法缺点就是增加了数据库运维难度，对DBA要求较高。</p>
+<p>​		这种设计已经算是较为简陋的分布式数据库了，但是这只是一个逻辑的数据库整体，数据库里不同的组成部分是由不同的组件单独来实现的，如分库分表的管理和请求分发，由Mycat实现，SQL的解析由单机的数据库实现，读写分离可能由网关和消息队列来实现，查询结果的汇总可能由数据库接口层来实现等等，这种架构其实是MPP（大规模并行处理）架构的一类实现。</p>
+<p>​		当数据库与服务器都有一定的水平扩展能力后，发现Nginx仍然为单体架构，无法实现多Nginx的负载均衡。</p>
+<h3 id="架构7-使用lvs或f5来使多个nginx负载均衡"><a class="markdownIt-Anchor" href="#架构7-使用lvs或f5来使多个nginx负载均衡"></a> 架构7 使用LVS或F5来使多个Nginx负载均衡</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515174048641.png" alt="image-20220515174048641"></p>
+<p>​		新增一个LVS（Linux虚拟服务器），能够直接在第四层传输层对TCP协议进行负载均衡，而Nginx是基于第七层应用层的http协议的负载均衡，故可以使用LVS对nginx进行负载均衡。</p>
+<p>​		F5是一种专门用于负载均衡的硬件，性能比LVS高，但是价格贵。</p>
+<p>​		LVS是单机软件，若LVS所在服务器宕机，则导致整个后端无法访问，故需要增加备用节点。</p>
+<p>​		可使用keepalived软件模拟出虚拟IP，然后把虚拟IP绑定到多台LVS服务器上，浏览器访问虚拟IP时，会被路由器重定向到真实的LVS服务器，当主LVS服务器宕机时，keepalived软件会自动更新路由器中的路由表，把虚拟IP重定向到另外一台正常的LVS服务器，从而达到LVS服务器高可用的效果。</p>
+<p>​		此处需要注意的是，上图中从Nginx层到Tomcat层这样画并不代表全部Nginx都转发请求到全部的Tomcat，在实际使用时，可能会是几个Nginx下面接一部分的Tomcat，这些Nginx之间通过keepalived实现高可用，其他的Nginx接另外的Tomcat，这样可接入的Tomcat数量就能成倍的增加。</p>
+<p>​		由于LVS也是单机的，随着并发数增长到几十万时，LVS服务器最终会达到瓶颈，此时用户数达到千万甚至上亿级别，用户分布在不同的地区，与服务器机房距离不同，导致了访问的延迟会明显不同</p>
+<h3 id="架构8-通过dns轮询实现机房间的负载均衡"><a class="markdownIt-Anchor" href="#架构8-通过dns轮询实现机房间的负载均衡"></a> 架构8 通过DNS轮询实现机房间的负载均衡</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515181652784.png" alt="image-20220515181652784"></p>
+<p>​		每个DNS服务器可配置一个域名对于多个IP地址，每个IP地址对应不同机房的虚拟IP地址</p>
+<p>​		当用户访问<code>www.taobao.com</code>时，DNS服务器使用轮询或其他策略来选择某个IP返回给用户</p>
+<p>​		这种方式可以实现机房间的负载均衡，至此系统可以做到跨机房级别的水平扩展</p>
+<p>​		至此，系统入口处的请求并发量不再是问题</p>
+<p>​		随着数据的丰富程度和业务的发展，检索，分析需求越来越丰富，单靠传统数据库无法解决如此丰富的需求。</p>
+<h3 id="架构9-引入nosql数据库和搜索引擎等技术"><a class="markdownIt-Anchor" href="#架构9-引入nosql数据库和搜索引擎等技术"></a> 架构9 引入NoSQL数据库和搜索引擎等技术</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515183631851.png" alt="image-20220515183631851"></p>
+<p>​		当传统数据库数据达到一定规模后，一切特殊场景的复杂查询便不再适用了。如统计报表等场景在大量数据的情况下不一定能在可接受的时间内跑出结果。</p>
+<p>​		对于全文检索，可变数据结构等场景，传统数据库并不使用，所以需要针对特定场景引入合适的解决方案。</p>
+<ul>
+<li>对于海量文件数据的存储，可通过分布式文件系统HDFS解决</li>
+<li>对于Key-Value类型的数据，可通过HBase和Redis等方案解决</li>
+<li>对于全文检索的场景，可通过搜索引擎如ElasticSearch去解决</li>
+<li>对于多维分析的场景，可通过Kylin或Druid等方案解决</li>
+</ul>
+<p>​		当然，这么做会导致系统需要引入更多的组件，将会提高系统的复杂度，不同组件需要进行数据同步，需要考虑一致性问题，需要有更多运维手段去管理这些组件等等。</p>
+<p>​		引入更多组件解决了丰富的需求，业务维度能够极大扩充，随之而来的是一个应用中包含了太多的业务代码，业务的迭代变得困难。</p>
+<h3 id="架构10-大应用拆分为小应用"><a class="markdownIt-Anchor" href="#架构10-大应用拆分为小应用"></a> 架构10 大应用拆分为小应用</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515225624855.png" alt="image-20220515225624855"></p>
+<p>​		按业务划分应用代码，使单个应用单一职责，各个应用相互之间可以独立升级迭代。这时候应用之间需要一些公共配置，可以使用分布式配置中心Zookeeper解决。</p>
+<p>​		不同应用之间存在公共模块，由应用单独管理会导致当公共模块升级时，所有应用代码都要统一升级。</p>
+<h3 id="架构11-复用的功能抽离成微服务"><a class="markdownIt-Anchor" href="#架构11-复用的功能抽离成微服务"></a> 架构11 复用的功能抽离成微服务</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515225939088.png" alt="image-20220515225939088"></p>
+<p>​		如用户管理，订单，支付，鉴权等功能在多个应用中都存在，故可将这些功能的代码单独抽离出一个服务来管理，即微服务。应用与服务之间通过HTTP,TCP,RPC等多种方式来访问公共服务，每个服务都可以由单独的团队来管理。</p>
+<p>​		此外，还可以通过Dubbo、SpringCloud等框架实现服务治理、限流、熔断、降级等功能来提高服务的稳定性和可用性。</p>
+<p>​		不同服务的接口访问方式不同，用于代码需要适配多种访问方式才能使用服务。此外，应用访问服务，服务之间也相互访问，调用链将变得非常复杂，逻辑较为混乱。</p>
+<h3 id="架构12-引入企业服务总线esb屏蔽服务接口的访问差异"><a class="markdownIt-Anchor" href="#架构12-引入企业服务总线esb屏蔽服务接口的访问差异"></a> 架构12 引入企业服务总线ESB屏蔽服务接口的访问差异</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515231655977.png" alt="image-20220515231655977"></p>
+<p>​		通过ESB统一进行访问协议转换，应用统一通过ESB来访问后端服务，服务与服务之间也通过ESB来相互调用，以此降低系统的耦合程度。这种单个应用拆分为多个应用，公共服务单独抽取出来来管理，并使用企业消息总线来解除服务之间耦合问题的架构，就是所谓的SOA（面向服务）架构，这种架构与微服务架构容易混淆，因为表现形式十分相似。个人理解，微服务架构更多是指把系统里的公共服务抽取出来单独运维管理的思想，而SOA架构则是指一种拆分服务并使服务接口访问变得统一的架构思想，SOA架构中包含了微服务的思想。</p>
+<p>​		业务不断发展，应用和服务都会不断变多，应用和服务的部署变得复杂，同一台服务器上部署多个服务还要解决运行环境冲突的问题，此外，对于如大促这类需要动态扩缩容的场景，需要水平扩展服务的性能，就需要在新增的服务上准备运行环境，部署服务等，运维将变得十分困难</p>
+<h3 id="架构13-引入容器化技术实现运行环境隔离与动态服务管理"><a class="markdownIt-Anchor" href="#架构13-引入容器化技术实现运行环境隔离与动态服务管理"></a> 架构13 引入容器化技术实现运行环境隔离与动态服务管理</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515233132038.png" alt="image-20220515233132038"></p>
+<p>​		目前最流行的容器化技术是Docker，最流行的容器管理服务是Kubernetes(K8S)，应用/服务可以打包为Docker镜像，通过K8S来动态分发和部署镜像。Docker镜像可理解为一个能运行你的应用/服务的最小的操作系统，里面放着应用/服务的运行代码，运行环境根据实际的需要设置好。把整个“操作系统”打包为一个镜像后，就可以分发到需要部署相关服务的机器上，直接启动Docker镜像就可以把服务起起来，使服务的部署和运维变得简单。</p>
+<p>​		在大促的之前，可以在现有的机器集群上划分出服务器来启动Docker镜像，增强服务的性能，大促过后就可以关闭镜像，对机器上的其他服务不造成影响（在3.14节之前，服务运行在新增机器上需要修改系统配置来适配服务，这会导致机器上其他服务需要的运行环境被破坏）。</p>
+<p>​		使用容器化技术后服务动态扩缩容问题得以解决，但是机器还是需要公司自身来管理，在非大促的时候，还是需要闲置着大量的机器资源来应对大促，机器自身成本和运维成本都极高，资源利用率低</p>
+<h3 id="架构14-以云平台承载系统"><a class="markdownIt-Anchor" href="#架构14-以云平台承载系统"></a> 架构14 以云平台承载系统</h3>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/5d0/image-20220515234313902.png" alt="image-20220515234313902"></p>
+<p>​		系统可部署到公有云上，利用公有云的海量机器资源，解决动态硬件资源的问题，在大促的时间段里，在云平台中临时申请更多的资源，结合Docker和K8S来快速部署服务，在大促结束后释放资源，真正做到按需付费，资源利用率大大提高，同时大大降低了运维成本。</p>
+<p>​		所谓的云平台，就是把海量机器资源，通过统一的资源管理，抽象为一个资源整体，在之上可按需动态申请硬件资源（如CPU、内存、网络等），并且之上提供通用的操作系统，提供常用的技术组件（如Hadoop技术栈，MPP数据库等）供用户使用，甚至提供开发好的应用，用户不需要关系应用内部使用了什么技术，就能够解决需求（如音视频转码服务、邮件服务、个人博客等）。在云平台中会涉及如下几个概念：</p>
+<ul>
+<li>IaaS：基础设施即服务。对应于上面所说的机器资源统一为资源整体，可动态申请硬件资源的层面；</li>
+<li>PaaS：平台即服务。对应于上面所说的提供常用的技术组件方便系统的开发和维护；</li>
+<li>SaaS：软件即服务。对应于上面所说的提供开发好的应用或服务，按功能或性能要求付费。</li>
+</ul>
+<p>​		至此，以上所提到的从高并发访问问题，到服务的架构和系统实施的层面都有了各自的解决方案，但同时也应该意识到，在上面的介绍中，其实是有意忽略了诸如跨机房数据同步、分布式事务实现等等的实际问题，这些问题以后有机会再拿出来单独讨论</p>
+<h2 id="参考文献"><a class="markdownIt-Anchor" href="#参考文献"></a> 参考文献</h2>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1511594">淘宝技术架构演进之路</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/5d0/">https://zhangzqs.cn/posts/5d0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/4db3/" title="Linux下优雅地通过docker-easyconnect实现内网访问"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Linux下优雅地通过docker-easyconnect实现内网访问</div></div></a></div><div class="next-post pull-right"><a href="/posts/cd29/" title="初步了解Python字节码"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">初步了解Python字节码</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text"> 基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B"><span class="toc-number">2.</span> <span class="toc-text"> 架构演进</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%840-%E5%8D%95%E6%9C%BA%E6%9E%B6%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text"> 架构0 单机架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%841-tomcat%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BC%80%E9%83%A8%E7%BD%B2"><span class="toc-number">2.2.</span> <span class="toc-text"> 架构1 Tomcat与数据库分开部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%842-%E5%BC%95%E5%85%A5%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98"><span class="toc-number">2.3.</span> <span class="toc-text"> 架构2 引入本地缓存和分布式缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%843-%E5%BC%95%E5%85%A5%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%AE%9E%E7%8E%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">2.4.</span> <span class="toc-text"> 架构3 引入反向代理实现负载均衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%844-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="toc-number">2.5.</span> <span class="toc-text"> 架构4 数据库读写分离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%845-%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8C%89%E4%B8%9A%E5%8A%A1%E5%88%86%E5%BA%93"><span class="toc-number">2.6.</span> <span class="toc-text"> 架构5 数据库按业务分库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%846-%E5%A4%A7%E8%A1%A8%E6%8B%86%E5%88%86%E4%B8%BA%E5%B0%8F%E8%A1%A8"><span class="toc-number">2.7.</span> <span class="toc-text"> 架构6 大表拆分为小表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%847-%E4%BD%BF%E7%94%A8lvs%E6%88%96f5%E6%9D%A5%E4%BD%BF%E5%A4%9A%E4%B8%AAnginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">2.8.</span> <span class="toc-text"> 架构7 使用LVS或F5来使多个Nginx负载均衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%848-%E9%80%9A%E8%BF%87dns%E8%BD%AE%E8%AF%A2%E5%AE%9E%E7%8E%B0%E6%9C%BA%E6%88%BF%E9%97%B4%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">2.9.</span> <span class="toc-text"> 架构8 通过DNS轮询实现机房间的负载均衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%849-%E5%BC%95%E5%85%A5nosql%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E7%AD%89%E6%8A%80%E6%9C%AF"><span class="toc-number">2.10.</span> <span class="toc-text"> 架构9 引入NoSQL数据库和搜索引擎等技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%8410-%E5%A4%A7%E5%BA%94%E7%94%A8%E6%8B%86%E5%88%86%E4%B8%BA%E5%B0%8F%E5%BA%94%E7%94%A8"><span class="toc-number">2.11.</span> <span class="toc-text"> 架构10 大应用拆分为小应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%8411-%E5%A4%8D%E7%94%A8%E7%9A%84%E5%8A%9F%E8%83%BD%E6%8A%BD%E7%A6%BB%E6%88%90%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-number">2.12.</span> <span class="toc-text"> 架构11 复用的功能抽离成微服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%8412-%E5%BC%95%E5%85%A5%E4%BC%81%E4%B8%9A%E6%9C%8D%E5%8A%A1%E6%80%BB%E7%BA%BFesb%E5%B1%8F%E8%94%BD%E6%9C%8D%E5%8A%A1%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%AE%BF%E9%97%AE%E5%B7%AE%E5%BC%82"><span class="toc-number">2.13.</span> <span class="toc-text"> 架构12 引入企业服务总线ESB屏蔽服务接口的访问差异</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%8413-%E5%BC%95%E5%85%A5%E5%AE%B9%E5%99%A8%E5%8C%96%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB%E4%B8%8E%E5%8A%A8%E6%80%81%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="toc-number">2.14.</span> <span class="toc-text"> 架构13 引入容器化技术实现运行环境隔离与动态服务管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%8414-%E4%BB%A5%E4%BA%91%E5%B9%B3%E5%8F%B0%E6%89%BF%E8%BD%BD%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.15.</span> <span class="toc-text"> 架构14 以云平台承载系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">3.</span> <span class="toc-text"> 参考文献</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '06625c5e3cbfb3d45cf21c5fbd5018d3',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

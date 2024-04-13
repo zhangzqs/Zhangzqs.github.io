@@ -1,0 +1,539 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>[手册翻译]微软FAT文件系统手册 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Overview and Purpose This document describes the on-media FAT file system format. This document is written to help guide development of FAT implement"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/23b1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '[手册翻译]微软FAT文件系统手册',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-07-10 10:32:00'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">[手册翻译]微软FAT文件系统手册<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/论文翻译/Microsoft-FAT-Specification.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-07-10T02:32:00.000Z" title="发表于 2022-07-10 10:32:00">2022-07-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-07-10T02:32:00.000Z" title="更新于 2022-07-10 10:32:00">2022-07-10</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="[手册翻译]微软FAT文件系统手册"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/23b1/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><h1 id="overview-and-purpose"><a class="markdownIt-Anchor" href="#overview-and-purpose"></a> Overview and Purpose</h1>
+<p>This document describes the on-media FAT file system format.<br>
+This document is written to help guide development of FAT implementations that are compatible with those provided by Microsoft.</p>
+<p>这个文档描述了FAT文件系统的格式。<br>
+这个文档是微软为了引导FAT实现兼容性开发而编写的。</p>
+<p>This document does not describe all algorithms contained in the Microsoft FAT file system driver implementation neither does it describe all algorithms contained in associated utilities (Microsoft format and chkdsk utilities).<br>
+However, it is expected that the reader will refer to the Microsoft Corporation FAT file system reference source code for additional clarification as/when needed.</p>
+<p>该文档不会描述包含在Microsoft FAT 文件系统驱动中的所有算法。也没有描述包含在相关工具中的所有算法(Microsoft format(格式化工具) and chkdsk(磁盘检查工具))。<br>
+不过若读者需要可以参考微软公司的FAT文件系统的源代码reference以更加获得更清晰地理解。</p>
+<p>There are three variants of the FAT on-disk format, namely:</p>
+<p>FAT 在磁盘上的格式有以下三种变体，分别叫做：</p>
+<ul>
+<li>FAT12</li>
+<li>FAT16</li>
+<li>FAT32</li>
+</ul>
+<p>Data structures comprising all three variants are described here.<br>
+由三种变体组成的数据结构都会在本文进行描述。</p>
+<p>Also provided are descriptions of specific algorithms that will be useful to the engineer implementing a FAT driver for reading and/or writing to media.<br>
+It is expected that the FAT Test Specification document will be used by the reader to validate interoperability and correctness of the resultant FAT implementation.</p>
+<p>本文还将描述一些特定的算法，这将对工程师实现FAT驱动在存储媒介上的读写操作有用。</p>
+<h1 id="section-1-definitions-and-notations"><a class="markdownIt-Anchor" href="#section-1-definitions-and-notations"></a> Section 1: Definitions and Notations</h1>
+<h2 id="11-definitions"><a class="markdownIt-Anchor" href="#11-definitions"></a> 1.1 Definitions</h2>
+<ul>
+<li>
+<p>byte</p>
+<p>A string of binary digits operated upon as a unit.</p>
+<p>是一串二进制数，这作为一个操作单元。</p>
+</li>
+<li>
+<p>bad (defective) sector</p>
+<p>A sector whose contents cannot be read or one that cannot be written.</p>
+<p>一个扇区的内容不能读或写，那么该扇区称为坏扇区或无效扇区。</p>
+</li>
+<li>
+<p>file</p>
+<p>A named stream of bytes representing a collection of information.</p>
+<p>被称作比特流，它表达了一个信息的集合。</p>
+</li>
+<li>
+<p>sector</p>
+<p>A unit of data that can be accessed independently of other units on the media</p>
+<p>是一个数据单元能够独立于媒介上其他数据单元而访问。</p>
+</li>
+<li>
+<p>cluster</p>
+<p>A unit of allocation comprising a set of logically contiguous sectors. Each cluster within the volume is referred to by a cluster number “N”. All allocation for a file must be an integral multiple of a cluster.</p>
+<p>逻辑上连续的扇区集合构成了一个分配单元叫做一个簇。卷上的每个簇都会被一个簇号N所引用到。一个文件的所有分配情况必须是簇的整数倍。</p>
+</li>
+<li>
+<p>partition</p>
+<p>An extent of sectors within a volume.</p>
+<p>volume内的扇区范围</p>
+</li>
+<li>
+<p>volume</p>
+<p>A logically contiguous sector address space as specified in the relevant standard for recording.</p>
+<p>通过某个有关标准的记录信息，可确定一个逻辑上连续的扇区的地址空间，叫做volume</p>
+</li>
+</ul>
+<h2 id="12-notation"><a class="markdownIt-Anchor" href="#12-notation"></a> 1.2 Notation</h2>
+<h3 id="numerical-notation"><a class="markdownIt-Anchor" href="#numerical-notation"></a> Numerical Notation</h3>
+<p>Numbers in decimal notation are represented by decimal digits, namely 0 to 9.</p>
+<p>数字在十进制下通过一个或多个十进制数字表示，记做0~9。</p>
+<p>Numbers in hexadecimal notation are represented as a sequence of one or more hexadecimal digits namely 0 to 9 and A to F, prefixed by “0x”.</p>
+<p>数字在十六进制下的符号被表达为一个或多个十六进制下数字，通常记做0<sub>9和A</sub>F,并且通过前缀0x修饰。</p>
+<p>Zero represents a single bit with the value 0.</p>
+<p>零表达了一个简单的比特位0</p>
+<h3 id="arithmetic-notation"><a class="markdownIt-Anchor" href="#arithmetic-notation"></a> Arithmetic Notation</h3>
+<p>The notation ip(x) shall mean the integer part of x.</p>
+<p>符号ip(x)的意思是取x的整数部分。</p>
+<p>The notation ceil(x) shall mean the minimum integer that is greater than x.</p>
+<p>符号ceil(x)的意思是取比x大的最小整数值。</p>
+<p>The notation rem(x,y) shall mean the remainder of the integer division of x by y.</p>
+<p>符号rem(x,y)的意思是x被y整数除法的余数。</p>
+<h1 id="section-2-volume-structure"><a class="markdownIt-Anchor" href="#section-2-volume-structure"></a> Section 2: Volume Structure</h1>
+<p>A FAT file system volume is composed of four basic regions, which are laid out in this order on the volume:</p>
+<p>一个FAT文件系统卷是有四个基本区域所构成，这四个区域通过以下方式放置：</p>
+<ul>
+<li>
+<p>0 – Reserved Region</p>
+<p>保留区域</p>
+</li>
+<li>
+<p>1 – FAT Region</p>
+<p>FAT区域</p>
+</li>
+<li>
+<p>2 – Root Directory Region (doesn’t exist on FAT32 volumes)</p>
+<p>根目录区域(FAT32卷中不存在)</p>
+</li>
+<li>
+<p>3 – File and Directory Data Region</p>
+<p>文件和目录数据区</p>
+</li>
+</ul>
+<p>The below figure illustrates the four regions in a volume formatted FAT:</p>
+<p>以下图表说明了四个区域在FAT卷中的区域分布:</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/23b1/2022-07-11-12-14-45.png" alt></p>
+<p>All of the FAT file systems were originally developed for the IBM PC machine architecture.<br>
+Hence, on disk data structures for the FAT format are all “little endian.”</p>
+<p>整个FAT文件系统最初都是为IBM的PC机的架构而开发的。<br>
+因此，FAT格式在磁盘上的数据结构是小端存储。</p>
+<p>To illustrate, below is an instance of a 32-bit FAT entry stored on disk as a series of four 8-bit bytes—the first being byte[0] and the last being byte[3]. The 32 bits numbered 00 through 31 are stored as follows (00 being the least significant bit):</p>
+<p>为了进一步解释说明，以下是一个32位的FAT条目实例，它通过一系列的4个8bit字节存储在磁盘上，第一个字节是byte[0]，最后一个是byte[3]。32位数通过00到31位进行编号，其存储结构如下，00是最低有效位：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">byte[3] 3 3 2 2 2 2 2 2</span><br><span class="line">        1 0 9 8 7 6 5 4</span><br><span class="line"></span><br><span class="line">byte[2] 2 2 2 2 1 1 1 1</span><br><span class="line">        3 2 1 0 9 8 7 6</span><br><span class="line"></span><br><span class="line">byte[1] 1 1 1 1 1 1 0 0</span><br><span class="line">        5 4 3 2 1 0 9 8</span><br><span class="line"></span><br><span class="line">byte[0] 0 0 0 0 0 0 0 0</span><br><span class="line">        7 6 5 4 3 2 1 0 </span><br></pre></td></tr></table></figure>
+<h1 id="section-3-boot-sector-and-bpb"><a class="markdownIt-Anchor" href="#section-3-boot-sector-and-bpb"></a> Section 3: Boot Sector and BPB</h1>
+<p>The BPB (BIOS Parameter Block) is located in the first sector of the volume in the Reserved Region.<br>
+This sector is sometimes called the “boot sector” or the “0 th sector”.<br>
+The important fact to note is that this sector is simply the first sector of the volume.<br>
+All FAT volumes must have a BPB in the boot sector. The BPB has evolved over the years as follows:<br>
+BPB(BIOS参数块)位于卷的保留区域中的第一个扇区。<br>
+这个扇区通常叫做引导扇区或0扇区。<br>
+一个很重要的注意点就是该扇区仅仅只是卷的第一个扇区。<br>
+所有的FAT卷都必须有个BPB在引导扇区中。<br>
+BPB的进化史如下：</p>
+<ul>
+<li>
+<p>The FAT implementation in MS-DOS 1.x did not include a BPB (introduced in MS-DOS 2.x)</p>
+<p>在MS-DOS 1.x中FAT的实现不包含BPB(它在MS-DOS 2.x中被引入)</p>
+</li>
+<li>
+<p>The BPB in MS-DOS 3.x was modified to allow &gt; 64K sectors</p>
+<p>在MS-DOS 3.x 中 BPB被修改为允许大于64K个扇区。</p>
+</li>
+<li>
+<p>For FAT32, the BPB differs from that for FAT16/FAT12 beginning at offset 36</p>
+<p>对于FAT32文件系统，BPB 与 FAT16/FAT12 的 BPB 不同，它从偏移量 36 开始。</p>
+</li>
+</ul>
+<p>The BPB in the boot sector of a FAT volume must always have all of the BPB fields for either the FAT12/FAT16 or FAT32 BPB type.<br>
+This ensures maximum compatibility of the FAT volume and will also ensure that all FAT file system drivers understand and support the volume correctly.</p>
+<p>BPB在FAT卷的引导扇区上必须总是包含要么FAT12/FAT16要么FAT32的所有的BPB字段。<br>
+这确保了 FAT 卷的最大兼容性，也将确保所有 FAT 文件系统驱动程序正确识别和支持该卷。</p>
+<blockquote>
+<p>NOTE:</p>
+<p>In the following description, all the fields whose names start with BPB_ are part of the BPB.</p>
+<p>All the fields whose names start with BS_ are part of the boot sector and not really part of the BPB.</p>
+</blockquote>
+<blockquote>
+<p>注意：</p>
+<p>在以下描述中，所有以BPB_开头命名的字段都是BPB的一部分。</p>
+<p>所有以BS_开头命名的字段是引导扇区的一部分但不是BPB的真正部分。</p>
+</blockquote>
+<p>The fields comprising the BPB are described further in this section.</p>
+<p>在这一节，将更进一步描述这些构成BPB的字段。</p>
+<h2 id="31-bpb-structure-common-to-fat12-fat16-and-fat32-implementations"><a class="markdownIt-Anchor" href="#31-bpb-structure-common-to-fat12-fat16-and-fat32-implementations"></a> 3.1 BPB structure common to FAT12, FAT16, and FAT32 implementations</h2>
+<p>The below table describes the fields in the BPB that are common to all FAT variants.</p>
+<p>下列表格描述了FAT变体的共同BPB字段。</p>
+<h3 id="bs_jmpboot"><a class="markdownIt-Anchor" href="#bs_jmpboot"></a> BS_jmpBoot</h3>
+<p>Offset: 0 byte</p>
+<p>Size: 3 bytes</p>
+<p>Jump instruction to boot code. This field has two<br>
+allowed forms:</p>
+<p>跳转指令到引导代码。这个字段有以下两种形式</p>
+<p><strong>jmpBoot[0] = 0xEB, jmpBoot[1] = 0x??, jmpBoot[2] = 0x90</strong></p>
+<p>and</p>
+<p><strong>jmpBoot[0] = 0xE9, jmpBoot[1] = 0x??, jmpBoot[2] = 0x??</strong></p>
+<p><strong>0x??</strong> indicates that any 8-bit value is allowed in<br>
+that byte.</p>
+<p><strong>0x??</strong> 表示在那个字节中的任意允许的8位数。</p>
+<p>What this forms is a three-byte Intel x86<br>
+unconditional branch (jump) instruction that jumps<br>
+to the start of the operating system bootstrap code.</p>
+<p>这形成了intel x86的三字节无条件分支(jump)指令去跳转到操作系统引导代码的起始位置。</p>
+<p>This code typically occupies the rest of sector 0 of<br>
+the volume following the BPB and possibly other<br>
+sectors. Either of these forms is acceptable.<br>
+<strong>JmpBoot[0] = 0xEB</strong> is the more frequently used<br>
+format.</p>
+<p>此代码通常占据 BPB 之后的卷的其余扇区 0 以及可能的其他扇区。这些形式中的任何一种都是可以接受的。<strong>JmpBoot[0] = 0xEB</strong> 是使用最频繁的格式。</p>
+<h3 id="bs_oemname"><a class="markdownIt-Anchor" href="#bs_oemname"></a> BS_OEMName</h3>
+<p>Offset: 3 byte</p>
+<p>Size: 8 bytes</p>
+<p>OEM Name Identifier.<br>
+Can be set by a FAT implementation to any desired value.<br>
+Typically this is some indication of what system formatted the volume.</p>
+<p>OEM 名称标识。<br>
+可以通过FAT的实现设置为任何想要的值。<br>
+通常这被标识为是什么系统格式化了该卷。</p>
+<h3 id="bpb_bytspersec"><a class="markdownIt-Anchor" href="#bpb_bytspersec"></a> BPB_BytsPerSec</h3>
+<p>Offset: 11 byte</p>
+<p>Size: 2 bytes</p>
+<p>Count of bytes per sector.<br>
+This value may take on only the following values: 512, 1024, 2048 or 4096.</p>
+<p>每个扇区的比特数。<br>
+这个值通常只接受以下值：512, 1024, 2048 or 4096</p>
+<h3 id="bpb_secperclus"><a class="markdownIt-Anchor" href="#bpb_secperclus"></a> BPB_SecPerClus</h3>
+<p>Offset: 13 byte</p>
+<p>Size: 1 bytes</p>
+<p>Number of sectors per allocation unit. This value must be a power of 2 that is greater than 0. The legal values are 1, 2, 4, 8, 16, 32, 64, and 128.</p>
+<p>每个分配单元的扇区数。这个值必须是大于0的2的整数次方。<br>
+合法值如下，1,2,4,8,16,32,64和128。</p>
+<h3 id="bpb_rsvdseccnt"><a class="markdownIt-Anchor" href="#bpb_rsvdseccnt"></a> BPB_RsvdSecCnt</h3>
+<p>Offset: 14 byte</p>
+<p>Size: 2 bytes</p>
+<p>Number of reserved sectors in the reserved region of the volume starting at the first sector of the volume.<br>
+This field is used to align the start of the data area to integral multiples of the cluster size with respect to the start of the partition/media.<br>
+This field must not be 0 and can be any non-zero value.<br>
+This field should typically be used to align the start of the data area (cluster #2) to the desired alignment unit, typically cluster size.</p>
+<p>从卷的第一个扇区开始的保留区域中的保留扇区数。</p>
+<p>这个字段用于对齐数据域的起始位置到相对于分区或存储媒介的簇大小的整数倍。</p>
+<p>该字段不能是0,必须是非0数。</p>
+<p>该字段通常应该被用于对齐数据域的起点（簇 #2）到期望的对齐单元。通常是簇的大小。</p>
+<h3 id="bpb_numfats"><a class="markdownIt-Anchor" href="#bpb_numfats"></a> BPB_NumFATs</h3>
+<p>Offset: 16 byte</p>
+<p>Size: 1 bytes</p>
+<p>The count of file allocation tables (FATs) on the volume. A value of 2 is recommended although a value of 1 is acceptable.</p>
+<p>卷上文件分配表的数目。通常推荐是2,即使1也是可以用的。</p>
+<h3 id="bpb_rootentcnt"><a class="markdownIt-Anchor" href="#bpb_rootentcnt"></a> BPB_RootEntCnt</h3>
+<p>Offset: 17 byte</p>
+<p>Size: 2 bytes</p>
+<p>For FAT12 and FAT16 volumes, this field contains the count of 32-byte directory entries in the root directory.<br>
+For FAT32 volumes, this field must be set to 0. For FAT12 and FAT16 volumes, this value should always specify a count that when multiplied by 32 results in an even multiple of BPB_BytsPerSec.<br>
+For maximum compatibility, FAT16 volumes should use the value 512.</p>
+<p>在FAT12和FAT16卷中，这个字段包含了32个字节的根目录入口。<br>
+对于FAT32卷，这个字段必须设置为0.对于FAT12和FAT16卷，该字段的值应该总是一个特殊的值，使其被32相乘后的结果是BPB_BytsPerSec的偶数倍。<br>
+出于最大兼容性考虑，FAT16卷应该使用512.</p>
+<h3 id="bpb_totsec16"><a class="markdownIt-Anchor" href="#bpb_totsec16"></a> BPB_TotSec16</h3>
+<p>Offset: 19 byte</p>
+<p>Size: 2 bytes</p>
+<p>This field is the old 16-bit total count of sectors on the volume. This count includes the count of all<br>
+sectors in all four regions of the volume.<br>
+This field can be 0; if it is 0, then BPB_TotSec32<br>
+must be non-zero. For FAT32 volumes, this field<br>
+must be 0.<br>
+For FAT12 and FAT16 volumes, this field contains<br>
+the sector count, and BPB_TotSec32 is 0 if the<br>
+total sector count “fits” (is less than 0x10000).</p>
+<h3 id="bpb_media"><a class="markdownIt-Anchor" href="#bpb_media"></a> BPB_Media</h3>
+<p>Offset: 21 byte</p>
+<p>Size: 1 bytes</p>
+<p>The legal values for this field are 0xF0, 0xF8, 0xF9,<br>
+0xFA, 0xFB, 0xFC, 0xFD, 0xFE, and 0xFF.<br>
+0xF8 is the standard value for “fixed” (non-<br>
+removable) media. For removable media, 0xF0 is<br>
+frequently used.</p>
+<h3 id="bpb_fatsz16"><a class="markdownIt-Anchor" href="#bpb_fatsz16"></a> BPB_FATSz16</h3>
+<p>Offset: 22 byte</p>
+<p>Size: 2 bytes</p>
+<p>This field is the FAT12/FAT16 16-bit count of<br>
+sectors occupied by one FAT. On FAT32 volumes<br>
+this field must be 0, and BPB_FATSz32 contains<br>
+the FAT size count.</p>
+<h3 id="bpb_secpertrk"><a class="markdownIt-Anchor" href="#bpb_secpertrk"></a> BPB_SecPerTrk</h3>
+<p>Offset: 24 byte</p>
+<p>Size: 2 bytes</p>
+<p>Sectors per track for interrupt 0x13.<br>
+This field is only relevant for media that have a<br>
+geometry (volume is broken down into tracks by<br>
+multiple heads and cylinders) and are visible on<br>
+interrupt 0x13.</p>
+<h3 id="bpb_numheads"><a class="markdownIt-Anchor" href="#bpb_numheads"></a> BPB_NumHeads</h3>
+<p>Offset: 26 byte</p>
+<p>Size: 2 bytes</p>
+<p>Number of heads for interrupt 0x13. This field is<br>
+relevant as discussed earlier for <code>BPB_SecPerTrk</code>.<br>
+This field contains the one based “count of heads”.<br>
+For example, on a 1.44 MB 3.5-inch floppy drive<br>
+this value is 2.</p>
+<h3 id="bpb_hiddsec"><a class="markdownIt-Anchor" href="#bpb_hiddsec"></a> BPB_HiddSec</h3>
+<p>Offset: 28 byte</p>
+<p>Size: 4 bytes</p>
+<p>Count of hidden sectors preceding the partition that<br>
+contains this FAT volume. This field is generally<br>
+only relevant for media visible on interrupt 0x13.<br>
+This field must always be zero on media that are<br>
+not partitioned.<br>
+NOTE: Attempting to utilize this field to align the<br>
+start of data area is incorrect.</p>
+<h3 id="bpb_totsec32"><a class="markdownIt-Anchor" href="#bpb_totsec32"></a> BPB_TotSec32</h3>
+<p>Offset: 32 byte</p>
+<p>Size: 4 bytes</p>
+<p>This field is the new 32-bit total count of sectors on<br>
+the volume. This count includes the count of all<br>
+sectors in all four regions of the volume.<br>
+This field can be 0; if it is 0, then <code>BPB_TotSec16</code><br>
+must be non-zero. For FAT12/FAT16 volumes, this<br>
+field contains the sector count if <code>BPB_TotSec16</code> is<br>
+0 (count is greater than or equal to 0x10000).<br>
+For FAT32 volumes, this field must be non-zero.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/23b1/">https://zhangzqs.cn/posts/23b1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/fba5/" title="k进制与等比数列求和公式的思考"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">k进制与等比数列求和公式的思考</div></div></a></div><div class="next-post pull-right"><a href="/posts/802b/" title="jwt登录"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">jwt登录</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#overview-and-purpose"><span class="toc-number">1.</span> <span class="toc-text"> Overview and Purpose</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#section-1-definitions-and-notations"><span class="toc-number">2.</span> <span class="toc-text"> Section 1: Definitions and Notations</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#11-definitions"><span class="toc-number">2.1.</span> <span class="toc-text"> 1.1 Definitions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-notation"><span class="toc-number">2.2.</span> <span class="toc-text"> 1.2 Notation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#numerical-notation"><span class="toc-number">2.2.1.</span> <span class="toc-text"> Numerical Notation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#arithmetic-notation"><span class="toc-number">2.2.2.</span> <span class="toc-text"> Arithmetic Notation</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#section-2-volume-structure"><span class="toc-number">3.</span> <span class="toc-text"> Section 2: Volume Structure</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#section-3-boot-sector-and-bpb"><span class="toc-number">4.</span> <span class="toc-text"> Section 3: Boot Sector and BPB</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#31-bpb-structure-common-to-fat12-fat16-and-fat32-implementations"><span class="toc-number">4.1.</span> <span class="toc-text"> 3.1 BPB structure common to FAT12, FAT16, and FAT32 implementations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#bs_jmpboot"><span class="toc-number">4.1.1.</span> <span class="toc-text"> BS_jmpBoot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bs_oemname"><span class="toc-number">4.1.2.</span> <span class="toc-text"> BS_OEMName</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_bytspersec"><span class="toc-number">4.1.3.</span> <span class="toc-text"> BPB_BytsPerSec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_secperclus"><span class="toc-number">4.1.4.</span> <span class="toc-text"> BPB_SecPerClus</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_rsvdseccnt"><span class="toc-number">4.1.5.</span> <span class="toc-text"> BPB_RsvdSecCnt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_numfats"><span class="toc-number">4.1.6.</span> <span class="toc-text"> BPB_NumFATs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_rootentcnt"><span class="toc-number">4.1.7.</span> <span class="toc-text"> BPB_RootEntCnt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_totsec16"><span class="toc-number">4.1.8.</span> <span class="toc-text"> BPB_TotSec16</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_media"><span class="toc-number">4.1.9.</span> <span class="toc-text"> BPB_Media</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_fatsz16"><span class="toc-number">4.1.10.</span> <span class="toc-text"> BPB_FATSz16</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_secpertrk"><span class="toc-number">4.1.11.</span> <span class="toc-text"> BPB_SecPerTrk</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_numheads"><span class="toc-number">4.1.12.</span> <span class="toc-text"> BPB_NumHeads</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_hiddsec"><span class="toc-number">4.1.13.</span> <span class="toc-text"> BPB_HiddSec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bpb_totsec32"><span class="toc-number">4.1.14.</span> <span class="toc-text"> BPB_TotSec32</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: 'ca1c92a3e13a8deb322481a36e3509d7',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

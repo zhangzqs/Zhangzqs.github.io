@@ -1,0 +1,870 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>大数据技术及应用-题库 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Hadoop有多种浏览HDFS文件目录的方式，下列方式错误的是：  A、通过HDFS命令 B、通过Web浏览器 C、通过Eclipse中的Project Explorer D、通过SSH客户端工具 正确答案： D 2. Hadoop配置文件中，yarn-site.xml文件的作用是： A、保存从节"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/987a/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '大数据技术及应用-题库',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-04-27 22:39:49'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">大数据技术及应用-题库<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/大数据/大数据技术及应用-题库.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-27T14:39:49.000Z" title="发表于 2022-04-27 22:39:49">2022-04-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-04-27T14:39:49.000Z" title="更新于 2022-04-27 22:39:49">2022-04-27</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>27分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="大数据技术及应用-题库"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/987a/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><ol>
+<li>Hadoop有多种浏览HDFS文件目录的方式，下列方式错误的是：</li>
+</ol>
+<p>A、通过HDFS命令</p>
+<p>B、通过Web浏览器</p>
+<p>C、通过Eclipse中的Project Explorer</p>
+<p>D、通过SSH客户端工具</p>
+<p><strong>正确答案： D</strong></p>
+<hr>2. Hadoop配置文件中，yarn-site.xml文件的作用是：
+<p>A、保存从节点信息</p>
+<p>B、配置YARN框架</p>
+<p>C、配置MapReduce框架</p>
+<p>D、配置Hadoop的HDFS系统的命名</p>
+<p><strong>正确答案： B</strong></p>
+<hr>3. 下列说法错误的是：
+<p>A、Map函数将输入的元素转换成&lt;key,value&gt;形式的键值对</p>
+<p>B、MapReduce框架采用了Master/Slave架构，包括一个Master和若干个Slave</p>
+<p>C、Hadoop框架是用Java实现的，MapReduce应用程序则一定要用Java来写</p>
+<p>D、不同的Map任务之间不能互相通信</p>
+<p><strong>正确答案： C</strong></p>
+<hr>4. 下列文件不属于Hadoop3.x集群部署时必需配置的是：
+<p>A、worker</p>
+<p>B、<a target="_blank" rel="noopener" href="http://hadoop-env.sh">hadoop-env.sh</a></p>
+<p>C、profile</p>
+<p>D、yarn-site.xml</p>
+<p><strong>正确答案： C</strong></p>
+<hr>5. 关于NameNode和DataNode描述错误的是：
+<p>A、NameNode存储元数据信息，DataNode存储数据文件</p>
+<p>B、DataNode维护block列表信息，并上报给NameNode</p>
+<p>C、NameNode维护文件、block和DataNode之间的映射关系</p>
+<p>D、客户端同时向多个副本的DataNode传输数据</p>
+<p><strong>正确答案： D</strong></p>
+<hr>6. 以下哪个是MapReduce的适用场景？
+<p>A、适用于海量流数据的处理</p>
+<p>B、适用于海量数据的批处理</p>
+<p>C、可以实现秒级结果返回</p>
+<p>D、可以应对多步骤复杂的数据处理</p>
+<p><strong>正确答案： B</strong></p>
+<hr>7. HDFS的命名空间不包含：
+<p>A、文件</p>
+<p>B、目录</p>
+<p>C、块</p>
+<p>D、字节</p>
+<p><strong>正确答案： D</strong></p>
+<hr>8. 何种情况会触发HDFS进入安全模式：
+<p>A、DataNode无法正常启动</p>
+<p>B、NameNode重启</p>
+<p>C、NameNode磁盘空间不足</p>
+<p>D、Block上报率低于阈值</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>9. Hadoop非HA模式配置前需要节点完成的前期准备有：
+<p>A、修改初始IP为静态IP</p>
+<p>B、安装好适配版本的JDK</p>
+<p>C、主节点与其他节点交互的无密码登录设置</p>
+<p>D、Zookeeper安装配置</p>
+<p><strong>正确答案： ABC</strong></p>
+<hr>10. 关于Hadoop三大框架HDFS、YARN和MapReduce说法错误的是：
+<p>A、HDFS主要有NameNode、Client和DataNode三部分组成</p>
+<p>B、MapReduce程序编写时，Driver类和Inputformat类一样可使用系统默认，一般不用专门编写</p>
+<p>C、YARN框架中的Application Master一直存在，为了方便任务启动时监控进程</p>
+<p>D、MapReuduce框架的计算资源由YARN框架调配</p>
+<p><strong>正确答案： BC</strong></p>
+<hr>11. Hadoop安装部署时需要修改相应的配置文件，下列说法正确的是：
+<p>A、/etc/profile文件：修改IP映射</p>
+<p>B、hadoop-env.sh文件：添加JDK环境变量</p>
+<p>C、yarn-site.xml文件：配置YARN框架</p>
+<p>D、slaves文件：添加各个数据节点名称</p>
+<p><strong>正确答案： BCD</strong></p>
+<hr>12. 下列关于传统并行计算框架（比如MPI）和MapReduce并行计算框架进行比较，正确的是：
+<p>A、前者相比后者学习起来更难</p>
+<p>B、前者所需硬件价格贵，可扩展性差，后者硬件便宜，扩展性好</p>
+<p>C、前者是共享式(共享内存/共享存储)，容错性差，后者是非共享式的，容错性好</p>
+<p>D、前者适用于实时、细粒度计算、计算密集型，后者适用于批处理、非实时、数据密集型</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>13. 以下对数据节点理解正确的是:
+<p>A、数据节点在名称节点的统一调度下进行数据块的创建、删除和复制等操作</p>
+<p>B、数据节点通常只有一个</p>
+<p>C、数据节点用来存储具体的文件内容</p>
+<p>D、数据节点的数据保存在磁盘中</p>
+<p><strong>正确答案： ACD</strong></p>
+<hr>14. Hadoop的运行模式有：
+<p>A、本地模式</p>
+<p>B、伪分布式</p>
+<p>C、全分布式</p>
+<p>D、HA模式</p>
+<p><strong>正确答案： ABC</strong></p>
+<hr>15. 下列关于HDFS说法正确的是：
+<p>A、HDFS是分布式文件系统</p>
+<p>B、HDFS正常工作的情况下，主要进程有一个NameNode和若干个DataNode</p>
+<p>C、HDFS中Secondary NameNode是对NameNode节点宕机的预防措施，这两个进程需要在同一个节点上</p>
+<p>D、当数据存储DataNode时，DataNode会生成数据块对数据进行存储，且数据块大小是固定的，2.x版本默认为128MB</p>
+<p><strong>正确答案： ABD</strong></p>
+<hr>16. MapReduce V1.x体系结构主要由哪几个部分组成：
+<p>A、JobTracker</p>
+<p>B、Client</p>
+<p>C、TaskTracker</p>
+<p>D、Task</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>17. 关于Block的描述正确的是：
+<p>A、Block是HDFS的最小存储单元</p>
+<p>B、Block存储在DataNode的本地磁盘上</p>
+<p>C、Block大小的设置目标是让任务数量尽可能的小</p>
+<p>D、Block也是数据网络传输的最小单位</p>
+<p><strong>正确答案： AB</strong></p>
+<hr>18. 以下对名称节点理解正确的是：
+<p>A、名称节点用来负责具体用户数据的存储</p>
+<p>B、名称节点作为中心服务器，负责管理文件系统的命名空间及客户端对文件的访问</p>
+<p>C、名称节点通常用来保存元数据</p>
+<p>D、名称节点的数据保存在内存中</p>
+<p><strong>正确答案： BCD</strong></p>
+<hr>19. 关于Hadoop三大框架之间的关系，下列说法错误的是：
+<p>A、HDFS中元数据有YARN框架进行管控</p>
+<p>B、在Hadoop集群中MapReduce处理的数据一般来源和输出路径都是HDFS</p>
+<p>C、YARN框架每次为MapReduce调配的计算资源都是某个单节点上的</p>
+<p>D、HDFS的副本机制是由YARN进行分配的</p>
+<p><strong>正确答案： ACD</strong></p>
+<hr>20. HDFS考虑设置block大小的目标是：
+<p><strong>第一空： <br>
+最小化寻址开销；</strong></p>
+<hr>21. 向HDFS下载文件时，Client会对文件进行（ ）操作。
+<p><strong>第一空： <br>
+合并；</strong></p>
+<hr>22. 向HDFS上传文件时，Client会对文件进行（ ）操作。
+<p><strong>第一空： <br>
+切分；</strong></p>
+<hr>23. HDFS的block块默认大小是____M。
+<p><strong>第一空： <br>
+128；</strong></p>
+<hr>24. Reduce任务的数量是由Partition的数量确定的。
+<p><strong>正确答案：×</strong></p>
+<hr>25. MapReduce设计的一个理念就是“计算向数据靠拢”，而不是“数据向计算靠拢”，因为，移动数据需要大量的网络传输开销。
+<p><strong>正确答案：√</strong></p>
+<hr>26. 若将MapReduce程序打包为jar包的形式在集群节点运行，运行的shell命令为“yarn df jar”。
+<p><strong>正确答案：×</strong></p>
+<hr>27. MapReduce中Reduce接收的键值对数据类型与Map传出的键值对数据类型无需一致。。
+<p><strong>正确答案：×</strong></p>
+<hr>28. NameNode可以同Client进行交互，并处理Client客户端的读写请求。
+<p><strong>正确答案：√</strong></p>
+<hr>29. MapReduce任务分片的个数，默认与数据所占用的数据块个数一致。
+<p><strong>正确答案：√</strong></p>
+<hr>30. Hadoop支持单条数据记录的修改。
+<p><strong>正确答案：×</strong></p>
+<hr>31. 客户端是通过 级寻址来定位Region。
+<p>A、一</p>
+<p>B、二</p>
+<p>C、三</p>
+<p>D、四</p>
+<p><strong>正确答案： C</strong></p>
+<hr>32. 下列关于Hive基本操作命令的解释错误的是：
+<p>A、insert overwrite table student select * from user where age&gt;10; //向表student中插入来自user表的age大于10的数据并覆盖student表中原有数据</p>
+<p>B、create database userdb;//创建数据库userdb</p>
+<p>C、load data local inpath ‘/usr/local/data’ overwrite into table usr; //把目录’/usr/local/data’下的数据文件中的数据以追加的方式装载进usr表</p>
+<p>D、create table if not exists usr(id bigint,name string,age int);//如果usr表不存在，创建表usr，含三个属性id,name,age</p>
+<p><strong>正确答案： C</strong></p>
+<hr>33. 下列说法正确的是：
+<p>A、Zookeeper是一个集群管理工具，常用于分布式计算，提供配置维护、域名服务、分布式同步等。</p>
+<p>B、HBase的实现包括的主要功能组件是库函数，一个Master主服务器和一个Region服务器</p>
+<p>C、如果不启动Hadoop，则HBase完全无法使用</p>
+<p>D、如果通过HBase Shell插入表数据，可以插入一行数据或一个单元格数据。</p>
+<p><strong>正确答案： A</strong></p>
+<hr>34. 以下哪个不是Hive的特点：
+<p>A、Hive的结果返回延迟较高</p>
+<p>B、Hive可以在视图上更新、插入和删除数据</p>
+<p>C、Hive暂不支持存储过程</p>
+<p>D、Hive暂不支持列级别数据的增加、更新、删除操作</p>
+<p><strong>正确答案： B</strong></p>
+<hr>35. 当前，对于HBase数据库而言，每个Region的建议最佳大小是：
+<p>A、100MB-200MB</p>
+<p>B、500MB-1000MB</p>
+<p>C、1GB-2GB</p>
+<p>D、2GB-4GB</p>
+<p><strong>正确答案： C</strong></p>
+<hr>36. 下列对HBase数据模型的描述错误的是：
+<p>A、每个HBase表都由若干行组成，每个行由行键（row key）来标识</p>
+<p>B、HBase是一个稀疏、多维度、排序的映射表，这张表的索引是行键、列族、列限定符和时间戳</p>
+<p>C、HBase列族支持动态扩展，可以很轻松地添加一个列族或列</p>
+<p>D、HBase中执行更新操作时，会删除数据旧的版本，并生成一个新的版本</p>
+<p><strong>正确答案： D</strong></p>
+<hr>37. 关于Hive内部表与外部表的描述错误的是：
+<p>A、内部表的创建过程和数据加载过程，可以分别独立完成，也可以在同一个语句中一次完成</p>
+<p>B、删除内部表时，元数据与数据都会被删除</p>
+<p>C、外部表指向已经在HDFS中存在的数据</p>
+<p>D、删除外部表时，元数据与数据都会被删除</p>
+<p><strong>正确答案： D</strong></p>
+<hr>38. 关于HBase中Hlog的描述错误的是：
+<p>A、Hlog是以WAL（预写日志）方式在写数据时产生的日志文件</p>
+<p>B、HBase写数据时，先写Hlog，然后就写入StoreFile</p>
+<p>C、定期会删除Hlog过期数据</p>
+<p>D、一个Region服务器只有一个Hlog文件，可以提高对表的写操作性能</p>
+<p><strong>正确答案： B</strong></p>
+<hr>39. HBase是一种 数据库。
+<p>A、列式数据库</p>
+<p>B、关系数据库</p>
+<p>C、文档数据库</p>
+<p>D、行式数据库</p>
+<p><strong>正确答案： A</strong></p>
+<hr>40. 关于分区和分桶的描述，哪些是正确的：
+<p>A、分区和分桶的目的都是为了提高数据检索的效率</p>
+<p>B、分区的数量通常是不固定的</p>
+<p>C、分桶的数据通常是不固定的</p>
+<p>D、分区之下可再有分区或者分桶</p>
+<p><strong>正确答案： ABD</strong></p>
+<hr>41. 关于HBase Shell命令解释错误的是：
+<p>A、get：通过表名、行、列、时间戳、时间范围和版本号来获得相应单元格的值</p>
+<p>B、list：显示表的所有数据</p>
+<p>C、put：向表、行、列指定的单元格添加数据</p>
+<p>D、create：创建表</p>
+<p><strong>正确答案： B</strong></p>
+<hr>42. 下列对HBase的理解正确的是：
+<p>A、HBase多用于存储非结构化和半结构化的松散数据</p>
+<p>B、HBase是针对谷歌BigTable的开源实现</p>
+<p>C、HBase是一个行式分布式数据库，是Hadoop生态系统中的一个组件</p>
+<p>D、HBase是一种关系型数据库，现成功应用于互联网服务领域</p>
+<p><strong>正确答案： AB</strong></p>
+<hr>43. 关于Hive的说法正确的是：
+<p>A、Hive将元数据存储在关系型数据库中</p>
+<p>B、Hive的元数据包含表的名字、表数据所在HDFS目录、表属性等</p>
+<p>C、Hive的计算引擎只能是Apache MapReduce</p>
+<p>D、Hive的存储引擎可以是HDFS，也可以是Hbase</p>
+<p><strong>正确答案： ABD</strong></p>
+<hr>44. 下列hiveQL语句解释正确的有：
+<p>A、load data local inpath ‘/usr/local/data’ overwrite into table usr; 将本地目录的文件写入到usr表中，并覆盖usr表中原有数据</p>
+<p>B、load data inpath ’hdfs://localhost:9000/data’ overwrite into table usr; 将HDFS目录上的文件写入到usr表中，并覆盖usr表中原有数据</p>
+<p>C、load data inpath ‘/usr/local/data’ into table usr; 将本地目录的文件写入到usr表中，不覆盖usr表中原有数据</p>
+<p>D、insert into table usr1 select * from usr where age=10; 向表usr1中插入来自usr表的数据并追加在原有数据后</p>
+<p><strong>正确答案： ABD</strong></p>
+<hr>45. 以下属于Hive的基本数据类型是：
+<p>A、TINYINT</p>
+<p>B、FLOAT</p>
+<p>C、BINARY</p>
+<p>D、STRING</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>46. HBase和传统关系型数据库的区别在于哪些方面：
+<p>A、数据模型</p>
+<p>B、数据维护</p>
+<p>C、可伸缩性</p>
+<p>D、存储模式</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>47. 访问HBase表中的行，有哪些方式：
+<p>A、通过单个行健访问</p>
+<p>B、通过一个行健的区间来访问</p>
+<p>C、全表扫描</p>
+<p>D、通过某列的值区间</p>
+<p><strong>正确答案： ABC</strong></p>
+<hr>48. 关于Store的描述正确的有：
+<p>A、Store由一个MemStore和若干个StoreFile组成</p>
+<p>B、数据的读写都是先访问MemStore</p>
+<p>C、Store中可以存储任意多个StoreFile</p>
+<p>D、多个Store可以存储在一个Region中</p>
+<p><strong>正确答案： ABD</strong></p>
+<hr>49. Hive的数据表可以进行分区和分桶，分区表下面可以再进行分桶，分桶表下面也可以进行再分区。
+<p><strong>正确答案：×</strong></p>
+<hr>50. HBase中，Region是分布式存储的最小单元，而Store是存储落盘的最小单元。
+<p><strong>正确答案：√</strong></p>
+<hr>51. 某种程度上，可以把Hive看作是用户编程接口，它本身不存储和处理数据。
+<p><strong>正确答案：√</strong></p>
+<hr>52. Hive计算引擎可以是Apache MapReduce或者Apache Spark。
+<p><strong>正确答案：√</strong></p>
+<hr>53. Hive支持数据的实时更新，执行延迟低。
+<p><strong>正确答案：×</strong></p>
+<hr>54. 如果要用Hive和其它工具来处理同一个数据集，建议使用内部表。
+<p><strong>正确答案：×</strong></p>
+<hr>55. 下面关于机器学习处理过程的描述，错误的是：
+<p>A、在数据的基础上，通过算法构建出模型并对模型进行评估</p>
+<p>B、评估的性能如果达到要求，就用该模型来测试其他的数据</p>
+<p>C、评估的性能如果达不到要求，就要调整算法来重新建立模型，再次进行评估</p>
+<p>D、通过算法构建出的模型不需要评估就可以用于其他数据的测试</p>
+<p><strong>正确答案： D</strong></p>
+<hr>56. 要把一个DataFrame保存到people.json文件中，下面语句哪个是正确的：
+<p>A、df.write.json(“people.json”)</p>
+<p>B、df.json(“people.json”)</p>
+<p>C、df.write.format(“csv”).save(“people.json”)</p>
+<p>D、df.write.csv(“people.json”)</p>
+<p><strong>正确答案： A</strong></p>
+<hr>57. 下列大数据类型与其对应的软件框架不适应的是：
+<p>A、图结构数据的计算：Hive</p>
+<p>B、基于实时数据流的数据处理：Storm</p>
+<p>C、复杂的批量数据处理：MapReduce</p>
+<p>D、基于历史数据的交互式查询：Impala</p>
+<p><strong>正确答案： A</strong></p>
+<hr>58. 下面关于机器学习流水线(PipeLine)的描述，错误的是：
+<p>A、流水线将多个工作流阶段（转换器和评估器）连接在一起，形成机器学习的工作流，并获得结果输出</p>
+<p>B、要构建一个机器学习流水线，首先需要定义流水线中的各个PipelineStage</p>
+<p>C、PipelineStage称为工作流阶段，包括转换器和评估器，比如指标提取和转换模型训练等</p>
+<p>D、流水线构建好以后，就是一个转换器（Transformer）</p>
+<p><strong>正确答案： D</strong></p>
+<hr>59. 以下哪个不是Spark的组件：
+<p>A、Spark Streaming</p>
+<p>B、MLlib</p>
+<p>C、GraphX</p>
+<p>D、Flink</p>
+<p><strong>正确答案： D</strong></p>
+<hr>60. Spark SQL目前暂时不支持下列哪种语言：
+<p>A、Java</p>
+<p>B、Scala</p>
+<p>C、Matlab</p>
+<p>D、Python</p>
+<p><strong>正确答案： C</strong></p>
+<hr>61. 下面哪个不是 RDD 的特点：
+<p>A、可分区</p>
+<p>B、可序列化</p>
+<p>C、可修改</p>
+<p>D、可持久化</p>
+<p><strong>正确答案： C</strong></p>
+<hr>62. 下面关于转换器（Transformer）的描述错误的是：
+<p>A、转换器是一种可以将一个DataFrame转换为另一个DataFrame的算法</p>
+<p>B、技术上，转换器实现了一个方法fit()，它通过附加一个或多个列，将一个DataFrame转换为另一个DataFrame</p>
+<p>C、一个模型就是一个转换器，它把一个不包含预测标签的测试数据集DataFrame打上标签，转化成另一个包含预测标签的 DataFrame</p>
+<p>D、技术上，转换器实现了一个方法transform()，它通过附加一个或多个列，将一个DataFrame转换为另一个DataFrame</p>
+<p><strong>正确答案： B</strong></p>
+<hr>63. 下面关于Spark SQL架构的描述错误的是：
+<p>A、在Shark原有的架构上重写了逻辑执行计划的优化部分，解决了Shark存在的问题</p>
+<p>B、Spark SQL在Hive兼容层面仅依赖HiveQL解析和Hive元数据</p>
+<p>C、Spark SQL执行计划生成和优化都由Catalyst（函数式关系查询优化框架）负责</p>
+<p>D、Spark SQL执行计划生成和优化需要依赖Hive来完成</p>
+<p><strong>正确答案： D</strong></p>
+<hr>64. 以下操作中，哪个不是DataFrame的常用操作：
+<p>A、printSchema()</p>
+<p>B、select()</p>
+<p>C、filter()</p>
+<p>D、sendto()</p>
+<p><strong>正确答案： D</strong></p>
+<hr>65. 关于Shark，下面描述正确的是：
+<p>A、Shark提供了类似Pig的功能</p>
+<p>B、Shark把SQL语句转换成MapReduce作业</p>
+<p>C、Shark重用了Hive中的HiveQL解析、逻辑执行计划翻译、执行计划优化等逻辑</p>
+<p>D、Shark的性能比Hive差很多</p>
+<p><strong>正确答案： C</strong></p>
+<hr>66. 下面哪个操作肯定是宽依赖：
+<p>A、map</p>
+<p>B、filter</p>
+<p>C、reduceByKey</p>
+<p>D、union</p>
+<p><strong>正确答案： C</strong></p>
+<hr>67. RDD操作分为转换（Transformation）和动作（Action）两种类型，下列属于动作（Action）类型的操作的是：
+<p>A、groupBy</p>
+<p>B、filter</p>
+<p>C、count</p>
+<p>D、map</p>
+<p><strong>正确答案： C</strong></p>
+<hr>68. 以下哪种运算属于宽依赖：
+<p>A、map</p>
+<p>B、filter</p>
+<p>C、groupByKey</p>
+<p>D、join</p>
+<p><strong>正确答案： C</strong></p>
+<hr>69. Task是Executor上的工作单元，运行于下面哪个组件上：
+<p>A、Driver Program</p>
+<p>B、Spark Master</p>
+<p>C、Worker Node</p>
+<p>D、Cluster Manager</p>
+<p><strong>正确答案： C</strong></p>
+<hr>70. 下面论述中错误的是：
+<p>A、机器学习和人工智能是不存在关联关系的两个独立领域</p>
+<p>B、机器学习强调三个关键词：算法、经验、性能</p>
+<p>C、推荐系统、金融反欺诈、语音识别、自然语言处理和机器翻译、模式识别、智能控制等领域，都用到了机器学习的知识</p>
+<p>D、机器学习可以看作是一门人工智能的科学，该领域的主要研究对象是人工智能</p>
+<p><strong>正确答案： A</strong></p>
+<hr>71. 下列关于常见的动作（Action）和转换（Transformation）操作的API解释错误的是：
+<p>A、take(n)：返回数据集中的第n个元素</p>
+<p>B、map(func)：将每个元素传递到函数func中，并将结果返回为一个新的数据集</p>
+<p>C、filter(func)：筛选出满足函数func的元素，并返回一个新的数据集</p>
+<p>D、count()：返回数据集中的元素个数</p>
+<p><strong>正确答案： A</strong></p>
+<hr>72. 下面的论述中，正确的是：
+<p>A、传统的机器学习算法，由于技术和单机存储的限制，大多只能在少量数据上使用</p>
+<p>B、利用MapReduce框架在全量数据上进行机器学习，这在一定程度上解决了统计随机性的问题，提高了机器学习的精度</p>
+<p>C、MapReduce可以高效支持迭代计算</p>
+<p>D、Spark无法高效支持迭代计算</p>
+<p><strong>正确答案： AB</strong></p>
+<hr>73. 目前的大数据处理典型应用场景可分为哪几个类型：
+<p>A、复杂的批量数据处理</p>
+<p>B、基于历史数据的交互式查询</p>
+<p>C、大数据的分布式计算</p>
+<p>D、基于实时数据流的数据处理</p>
+<p><strong>正确答案： ABD</strong></p>
+<hr>74. Spark的主要特点包括：
+<p>A、容易使用</p>
+<p>B、通用性好</p>
+<p>C、运行速度快</p>
+<p>D、运行模式多样</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>75. 以下选项中哪些是Spark的优点：
+<p>A、具有高效的容错性</p>
+<p>B、利用进程模型</p>
+<p>C、可以将中间结果持久化到内存</p>
+<p>D、表达能力有限</p>
+<p><strong>正确答案： AC</strong></p>
+<hr>76. Apache软件基金会最重要的三大分布式计算系统开源项目包括：
+<p>A、MapReduce</p>
+<p>B、Hadoop</p>
+<p>C、Spark</p>
+<p>D、Storm</p>
+<p><strong>正确答案： BCD</strong></p>
+<hr>77. 以下是Spark的主要特点的有：
+<p>A、运行速度快</p>
+<p>B、容易使用，简洁的API设计有助于用户轻松构建并行程序</p>
+<p>C、通用性，Spark提供了完整而强大的技术栈</p>
+<p>D、运行模式多样</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>78. Spark的运行架构包括哪些：
+<p>A、集群资源管理器（Cluster Manager）</p>
+<p>B、执行进程（Executor）</p>
+<p>C、Worker Node</p>
+<p>D、任务控制节点Driver Program</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>79. 下面关于为什么推出Spark SQL的原因的描述正确的是：
+<p>A、Spark SQL可以提供DataFrame API，可以对内部和外部各种数据源执行各种关系操作</p>
+<p>B、可以支持大量的数据源和数据分析算法，组合使用Spark SQL和Spark MLlib，可以融合传统关系数据库的结构化数据管理能力和机器学习算法的数据处理能力</p>
+<p>C、Spark SQL无法对各种不同的数据源进行整合</p>
+<p>D、Spark SQL无法融合结构化数据管理能力和机器学习算法的数据处理能力</p>
+<p><strong>正确答案： AC</strong></p>
+<hr>80. 以下属于RDD的特性的有：
+<p>A、RDD的中间结果会持久化到内存</p>
+<p>B、RDD采用lineage机制实现高效容错性</p>
+<p>C、RDD采用数据冗余存储方式实现容错性</p>
+<p>D、RDD存放的数据可以是未序列化的java对象</p>
+<p><strong>正确答案： ABD</strong></p>
+<hr>81. 使用编程方式定义RDD模式时，主要包括哪三个步骤：
+<p>A、制作“表头”</p>
+<p>B、制作“表中的记录”</p>
+<p>C、制作映射表</p>
+<p>D、把“表头”和“表中的记录”拼装在一起</p>
+<p><strong>正确答案： ABD</strong></p>
+<hr>82. Spark的运行架构包括：
+<p>A、集群资源管理器 Cluster Manager</p>
+<p>B、运行作业任务的工作节点 Worker Node</p>
+<p>C、每个工作节点上负责具体任务的执行进程 Executor</p>
+<p>D、每个应用的任务控制节点 Driver</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>83. 关于RDD的说法正确的有：
+<p>A、RDD是一个弹性分布式数据集</p>
+<p>B、RDD的数据可以修改</p>
+<p>C、RDD可以分成多个分区</p>
+<p>D、RDD不仅支持数据集的粗粒度操作，也支持数据项的细粒度操作</p>
+<p><strong>正确答案： AC</strong></p>
+<hr>84. 下面关于Spark MLlib库的描述正确的是：
+<p>A、MLlib库从1.2版本以后分为两个包：<a target="_blank" rel="noopener" href="http://spark.xn--mllibspark-lh7q.ml">spark.mllib和spark.ml</a></p>
+<p>B、spark.mllib包含基于DataFrame的原始算法API</p>
+<p>C、spark.mllib包含基于RDD的原始算法API</p>
+<p>D、spark.ml则提供了基于RDD的、高层次的API</p>
+<p><strong>正确答案： AC</strong></p>
+<hr>85. Shark的设计导致了两个问题：
+<p>A、执行计划优化完全依赖于Hive，不方便添加新的优化策略</p>
+<p>B、执行计划优化不依赖于Hive，方便添加新的优化策略</p>
+<p>C、Spark是线程级并行，而MapReduce是进程级并行，因此，Spark在兼容Hive的实现上存在线程安全问题，导致Shark不得不使用另外一套独立维护的、打了补丁的Hive源码分支</p>
+<p>D、Spark是进程级并行，而MapReduce是线程级并行，因此，Spark在兼容Hive的实现上存在线程安全问题，导致Shark不得不使用另外一套独立维护的、打了补丁的Hive源码分支</p>
+<p><strong>正确答案： AC</strong></p>
+<hr>86. Spark可以采用几种不同的部署方式，以下正确的部署方式有：
+<p>A、Local</p>
+<p>B、Standalone</p>
+<p>C、Spark on Mesos</p>
+<p>D、Spark on YARN</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>87. 从RDD转换得到DataFrame包含两种典型方法，分别是：
+<p>A、利用反射机制推断RDD模式</p>
+<p>B、使用编程方式定义RDD模式</p>
+<p>C、利用投影机制推断RDD模式</p>
+<p>D、利用互联机制推断RDD模式</p>
+<p><strong>正确答案： AB</strong></p>
+<hr>88. 下面关于DataFrame的描述正确的是：
+<p>A、DataFrame的推出，让Spark具备了处理大规模结构化数据的能力</p>
+<p>B、DataFrame比原有的RDD转化方式更加简单易用，而且获得了更高的计算性能</p>
+<p>C、Spark能够轻松实现从MySQL到DataFrame的转化，并且支持SQL查询</p>
+<p>D、DataFrame是一种以RDD为基础的分布式数据集，提供了详细的结构信息</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>89. 以下哪个不是Hadoop2.X的特点？
+<p>A、具有两个NameNode，可以改进单个NameNode单点故障问题</p>
+<p>B、将MapReduce中资源管理和作业控制分开</p>
+<p>C、ResourceManager负责所有应用程序的资源分配，ApplicationMaster负责管理一个应用程序</p>
+<p>D、Yarn仅可为MapReduce计算框架提供服务</p>
+<p><strong>正确答案： D</strong></p>
+<hr>90. 以下描述错误的是：
+<p>A、edits文件保存的是自最新检查点之后的所有文件更新操作</p>
+<p>B、edits文件的大小对于重启NameNode是没有影响的</p>
+<p>C、fsimage文件保存的内容有：文件目录信息、文件副本数、Block与DataNode映射关系等</p>
+<p>D、Standby NameNode会定期合并edits和fsimage，并返回给Active NameNode</p>
+<p><strong>正确答案： B</strong></p>
+<hr>91. 下面关于分布式文件系统HDFS的描述正确的是：
+<p>A、分布式文件系统HDFS是一种关系型数据库</p>
+<p>B、分布式文件系统HDFS是Google Bigtable的一种开源实现</p>
+<p>C、分布式文件系统HDFS是谷歌分布式文件系统GFS（Google File System）的一种开源实现</p>
+<p>D、分布式文件系统HDFS比较适合存储大量零碎的小文件</p>
+<p><strong>正确答案： C</strong></p>
+<hr>92. 克隆虚拟机后需要修改的文件有：
+<p>（1）/etc/udev/rules.d/70-persistent-net</p>
+<p>（2）/etc/sysconfig/network-scripts/ifcfg-ens33</p>
+<p>（3）/etc/sysconfig/network</p>
+<p>A、①②</p>
+<p>B、①②③</p>
+<p>C、②③</p>
+<p>D、①③</p>
+<p>E、无</p>
+<p>F、5</p>
+<p>G、0</p>
+<p><strong>正确答案： C</strong></p>
+<hr>93. 下列命令可以显示出HDFS文件系统中 /user/root/ 目录情况的是：
+<p>A、hdfs dfs –dir /user/root/</p>
+<p>B、hdfs dfs –report /user/root/</p>
+<p>C、hdfs dfs –ls /user/root/</p>
+<p>D、hdfs dfs –display /user/root/</p>
+<p><strong>正确答案： C</strong></p>
+<hr>94. 对于文本行“hello hadoop hello world”，经过WordCount的Reduce函数处理后的结果是：
+<p>A、&lt;“hello”,1,1&gt;&lt;“hadoop”,1&gt;&lt;“world”,1&gt;</p>
+<p>B、&lt;“hello”,2&gt;&lt;“hadoop”,1&gt;&lt;“world”,1&gt;</p>
+<p>C、&lt;“hello”,&lt;1,1&gt;&gt;&lt;“hadoop”,1&gt;&lt;“world”,1&gt;</p>
+<p>D、&lt;“hello”,1&gt;&lt;“hello”,1&gt;&lt;“hadoop”,1&gt;&lt;“world”,1&gt;</p>
+<p><strong>正确答案： B</strong></p>
+<hr>95. 分布式文件系统HDFS采用了主从结构模型，由计算机集群中的多个节点构成的，这些节点分为两类，一类存储元数据叫 ，另一类存储具体数据叫
+<p>A、名称节点，主节点</p>
+<p>B、从节点，主节点</p>
+<p>C、数据节点，名称节点</p>
+<p>D、名称节点，数据节点</p>
+<p><strong>正确答案： D</strong></p>
+<hr>96. 下列命令可以将HDFS文件系统/user/root/目录下的live.txt文件下载到本地/opt目录的是：
+<p>A、hadoop fs –get /user/root/live.txt /opt</p>
+<p>B、hadoop fs –download /user/root/live.txt /opt</p>
+<p>C、hadoop fs –put /user/root/live.txt /opt</p>
+<p>D、hadoop fs –move /user/root/live.txt /opt</p>
+<p><strong>正确答案： A</strong></p>
+<hr>97. 下列关于MapReduce框架说法错误的是：
+<p>A、输入MapReduce的数据必须为键值对类型，但MapReduce不可以将数据转换为键值对</p>
+<p>B、在Mapper阶段完成后数据会传入环形缓冲区</p>
+<p>C、MapReduce中根据键值对进行分组的步骤在Shuffle阶段进行</p>
+<p>D、在不设置分区的情况下，MapReduce的结果文件为一个</p>
+<p><strong>正确答案： AD</strong></p>
+<hr>98. 对于shuffle阶段的描述正确的是：
+<p>A、shuffle阶段会执行partition、sort、merge等工作</p>
+<p>B、shuffle阶段的partition数量是由Map任务的结果数量决定的</p>
+<p>C、shuffle阶段的任务是由MapReduce框架自身完成的，不需要用户干预</p>
+<p>D、shuffle阶段的任务是在缓存上进行的，如果文件很大，会spill到磁盘上</p>
+<p><strong>正确答案： ACD</strong></p>
+<hr>99. Hadoop中的YARN是在2.x版本后加入的。
+<p><strong>正确答案：√</strong></p>
+<hr>100. MapReduce程序中的数据类型Text类似于String，使用这一数据类型的数据为UTF-8格式的文本数据。
+<p><strong>正确答案：√</strong></p>
+<hr>101. Hadoop支持数据的随机读写。
+<p><strong>正确答案：×</strong></p>
+<hr>102. 在YARN框架中，Application Master的产生是在任务开始的节点，而不是Resource Manager所在节点。
+<p><strong>正确答案：√</strong></p>
+<hr>103. HDFS Shell可以在非集群节点上运行。
+<p><strong>正确答案：×</strong></p>
+<hr>104. 两个键值对<"a",1>和<"a",1>，如果对其进行归并(merge)，会得到<"a",2>，如果对其进行合并(combine)，会得到<"a",<1,1>>。
+<p><strong>正确答案：×</strong></p>
+<hr>105. HBase三层结构的顺序是：
+<p>A、.MEATA.表，Zookeeper文件，-ROOT-表</p>
+<p>B、-ROOT-表，Zookeeper文件，.MEATA.表</p>
+<p>C、Zookeeper文件，.MEATA.表，-ROOT-表</p>
+<p>D、Zookeeper文件，-ROOT-表，.MEATA.表</p>
+<p><strong>正确答案： D</strong></p>
+<hr>106. 下面关于评估器（Estimator）的描述错误的是：
+<p>A、评估器是学习算法或在训练数据上的训练方法的概念抽象</p>
+<p>B、在机器学习流水线里，评估器通常是被用来操作 DataFrame数据并生成一个转换器</p>
+<p>C、评估器实现了方法transfrom()，它接受一个DataFrame并产生一个转换器</p>
+<p>D、评估器实现了方法fit()，它接受一个DataFrame并产生一个转换器</p>
+<p><strong>正确答案： C</strong></p>
+<hr>107. 下面论述中正确的是：
+<p>A、DataFrame可容纳各种数据类型，与RDD数据集相比，它包含了模式（schema）信息，类似于传统数据库中的二维表格</p>
+<p>B、流水线用DataFrame来存储源数据</p>
+<p>C、转换器（Transformer）是一种可以将一个DataFrame转换为另一个DataFrame的算法</p>
+<p>D、评估器（Estimator）是一种可以将一个DataFrame转换为另一个DataFrame的算法</p>
+<p><strong>正确答案： ABC</strong></p>
+<hr>108. 下列关于Scala的说法正确的是：
+<p>A、Scala运行于Java平台，兼容现有的Java程序</p>
+<p>B、Scala具备强大的并发性，支持函数式编程</p>
+<p>C、Scala是一种多范式编程语言</p>
+<p>D、Scala是Spark的主要编程语言，但Spark还支持Java、Python、R作为编程语言</p>
+<p><strong>正确答案： ABCD</strong></p>
+<hr>109. 要读取people.json文件生成DataFrame，可以使用下面哪些命令：
+<p>A、spark.read.json(“people.json”)</p>
+<p>B、spark.read.parquet(“people.json”)</p>
+<p>C、spark.read.format(“json”).load(“people.json”)</p>
+<p>D、spark.read.format(“csv”).load(“people.json”)</p>
+<p><strong>正确答案： AC</strong></p>
+<hr>110. 关于RDD之间的依赖分为窄依赖和宽依赖，以下说法正确的是：
+<p>A、存在一个父RDD的一个分区对应一个子RDD的多个分区，则为宽依赖</p>
+<p>B、存在一个父RDD的多个分区对应一个子RDD的一个分区，则为宽依赖</p>
+<p>C、存在一个父RDD的一个分区只被一个子RDD的一个分区所使用，则为窄依赖</p>
+<p>D、存在一个父RDD的一个分区被一个子RDD的多个分区所使用，则为窄依赖</p>
+<p><strong>正确答案： AC</strong></p>
+<hr>111. 以下关于宽依赖和窄依赖的描述正确的有：
+<p>A、宽依赖可以实现“流水化”优化</p>
+<p>B、窄依赖可以实现“流水化”优化</p>
+<p>C、尽量将窄依赖划分到同一个stage中</p>
+<p>D、宽依赖对于作业job的优化更有利</p>
+<p><strong>正确答案： BC</strong></p>
+<hr>112. 在使用MapReduce程序WordCount进行词频统计时，对于文本行“hello hadoop hello world”，经过WordCount程序的Map函数处理后直接输出的中间结果，应该是下面哪种形式：
+<p>A、&lt;“hello”,1&gt;、&lt;“hello”,1&gt;、&lt;“hadoop”,1&gt;和&lt;“world”,1&gt;</p>
+<p>B、&lt;“hello”,2&gt;、&lt;“hadoop”,1&gt;和&lt;“world”,1&gt;</p>
+<p>C、&lt;“hello”,&lt;1,1&gt;&gt;、&lt;“hadoop”,1&gt;和&lt;“world”,1&gt;</p>
+<p>D、&lt;“hello”,1,1&gt;、&lt;“hadoop”,1&gt;和&lt;“world”,1&gt;</p>
+<p><strong>正确答案： C</strong></p>
+<hr>113. 采用多副本冗余存储的优势不包含：
+<p>A、保证数据可靠性</p>
+<p>B、节约存储空间</p>
+<p>C、加快数据传输速度</p>
+<p>D、容易检查数据错误</p>
+<p><strong>正确答案： B</strong></p>
+<hr>114. 使用MapReduce统计学生的平均成绩时，如果输出结果的格式为“学生姓名平均成绩”，如“Alice89.5”，对应输出键值对格式设置的命令是：
+<p>A、job.setOutputKeyClass(Text.class); job.setOutputValueClass(Text.class)</p>
+<p>B、job.setOutputKeyClass(IntWritable.class); job.setOutputValueClass(Text.class)</p>
+<p>C、job.setOutputKeyClass(Text.class); job.setOutputValueClass(LongWritable.class)</p>
+<p>D、job.setOutputKeyClass(Text.class); job.setOutputValueClass(DoubleWritable.class)</p>
+<p><strong>正确答案： D</strong></p>
+<hr>115. 下列属于Hadoop适用场景的是：
+<p>A、某一网站用户的行为数据</p>
+<p>B、结构化数据</p>
+<p>C、电商数据存储、处理</p>
+<p>D、需要经常修改的数据</p>
+<p><strong>正确答案： AC</strong></p>
+<hr>116. HDFS可以存储海量的数据，同时也支持低延迟查询。
+<p><strong>正确答案：×</strong></p>
+<hr></"a",<1,1></"a",2></"a",1></"a",1></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/987a/">https://zhangzqs.cn/posts/987a/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/9a84/" title="ElasticSearch环境搭建"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ElasticSearch环境搭建</div></div></a></div><div class="next-post pull-right"><a href="/posts/3e14/" title="大数据技术及应用-期末复习"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">大数据技术及应用-期末复习</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '4fd428367859f0591835338199b2aaac',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

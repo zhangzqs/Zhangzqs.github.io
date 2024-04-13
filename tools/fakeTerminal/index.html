@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fake Terminal</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/xterm@4.18.0/lib/xterm.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.18.0/css/xterm.css" />
+</head>
+
+<body>
+    <textarea id="userInput"></textarea>
+    <button id="update">更新</button>
+    <br />
+    <div id="terminal"></div>
+    <script>
+        const userInputTextArea = document.getElementById('userInput');
+        const termDiv = document.getElementById('terminal');
+        const updateButton = document.getElementById('update');
+
+        const getUserInput = () => userInputTextArea.value;
+
+        const term = new Terminal();
+        term.open(termDiv);
+        const writeToTerminal = (text) => {
+            term.clear();
+            term.write(text);
+        };
+        const getTerminalSize = () => ({ width: termDiv.clientWidth, height: termDiv.clientHeight });
+
+        updateButton.addEventListener('click', (e) => {
+            const text = getUserInput();
+            const replacedText = `${text}\n`.replaceAll('\n', '\r\n');
+            writeToTerminal(replacedText);
+        });
+    </script>
+</body>
+
+</html>

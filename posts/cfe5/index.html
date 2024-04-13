@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Hive简单应用 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="第一步：创建数据库 首先通过show databases命令查看已存在的数据库。然后使用create命令创建一个新的数据库，在本实验中命名为“demo+学号后4位”。 show databases; 1CREATE DATABASE IF NOT EXISTS demo0740; 12345678"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/cfe5/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Hive简单应用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-04-25 18:50:00'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Hive简单应用<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/大数据/Hive简单应用.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-24T14:18:23.000Z" title="发表于 2022-04-24 22:18:23">2022-04-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-04-25T10:50:00.000Z" title="更新于 2022-04-25 18:50:00">2022-04-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Hive简单应用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/cfe5/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><h2 id="第一步创建数据库"><a class="markdownIt-Anchor" href="#第一步创建数据库"></a> 第一步：创建数据库</h2>
+<p>首先通过show databases命令查看已存在的数据库。然后使用create命令创建一个新的数据库，在本实验中命名为“demo+学号后4位”。</p>
+<p><code>show databases;</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> DATABASE IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> demo0740;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">CREATE</span> DATABASE IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> demo0740;</span><br><span class="line">OK</span><br><span class="line"><span class="type">Time</span> taken: <span class="number">0.074</span> seconds</span><br><span class="line"></span><br><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">show</span> databases;</span><br><span class="line">OK</span><br><span class="line"><span class="keyword">default</span></span><br><span class="line">demo0740</span><br><span class="line">test</span><br><span class="line"><span class="type">Time</span> taken: <span class="number">0.038</span> seconds, Fetched: <span class="number">3</span> <span class="type">row</span>(s)</span><br></pre></td></tr></table></figure>
+<h2 id="第二步使用创建的数据库"><a class="markdownIt-Anchor" href="#第二步使用创建的数据库"></a> 第二步：使用创建的数据库</h2>
+<p>使用USE命令，将你创建的demo数据库设置为当前使用的数据库。</p>
+<p><code>use demo0740;</code></p>
+<h2 id="第三步创建表"><a class="markdownIt-Anchor" href="#第三步创建表"></a> 第三步：创建表</h2>
+<p>通过create table命令创建一个表，表名users，创建完成后，用describe 表名 命令查看建表结果，确保建表成功。表属性包含：</p>
+<p>id：int，记录编号，具有唯一性</p>
+<p>uid：string，用户id</p>
+<p>item_id：string，商品id</p>
+<p>behavior_type：int，包括浏览、收藏、加购物车、购买，分别为1、2、3、4</p>
+<p>item_category：string，商品分类</p>
+<p>visit_date：date，该记录产生时间</p>
+<p>province：string，用户所在省份</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> users(</span><br><span class="line">    id <span class="type">int</span>, </span><br><span class="line">    uid string, </span><br><span class="line">    item_id string, </span><br><span class="line">    behavior_type <span class="type">int</span>,</span><br><span class="line">    item_category string, </span><br><span class="line">    visit_date <span class="type">date</span>, </span><br><span class="line">    province string</span><br><span class="line">)</span><br><span class="line"><span class="type">ROW</span> FORMAT DELIMITED</span><br><span class="line">FIELDS TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\t&#x27;</span></span><br><span class="line">STORED <span class="keyword">AS</span> TEXTFILE;</span><br></pre></td></tr></table></figure>
+<h2 id="第四步在表中加载数据"><a class="markdownIt-Anchor" href="#第四步在表中加载数据"></a> 第四步：在表中加载数据。</h2>
+<p>按照给定的附件中表样式（users_table.txt，字段间隔为tab）自己编写更多的txt数据，然后使用load data local inpath +‘路径’命令，注意：local表示加载本地系统中文件的数据，而不是HDFS中的。</p>
+<p>users_table.txt文件内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1    u001    w12340    1    c01    2019-11-10    shanghai</span><br><span class="line">2    u001    w98881    4    c01    2019-11-11    shanghai</span><br><span class="line">3    u001    w12444    4    c02    2019-11-11    shanghai</span><br><span class="line">4    u002    w12340    4    c01    2019-11-11    hangzhou</span><br><span class="line">5    u002    w86658    4    c05    2019-11-11    hangzhou</span><br><span class="line">6    u003    w87658    3    c02    2019-11-10    nanjing</span><br><span class="line">7    u003    w88667    4    c01    2019-11-11    nanjing</span><br><span class="line">8    u004    w77668    2    c03    2019-11-09    nanjing</span><br><span class="line">9    u004    w12334    1    c03    2019-11-09    nanjing</span><br><span class="line">10    u005    w12324    4    c04    2019-11-11    shanghai</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load data <span class="keyword">local</span> inpath &quot;/root/users_table.txt&quot; <span class="keyword">into</span> <span class="keyword">table</span> users;</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">hive<span class="operator">&gt;</span> load data <span class="keyword">local</span> inpath &quot;/root/users_table.txt&quot; <span class="keyword">into</span> <span class="keyword">table</span> users;</span><br><span class="line">Loading data <span class="keyword">to</span> <span class="keyword">table</span> demo0740.users</span><br><span class="line">OK</span><br><span class="line"><span class="type">Time</span> taken: <span class="number">0.48</span> seconds</span><br><span class="line"></span><br><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users;</span><br><span class="line">OK</span><br><span class="line"><span class="number">1</span>       u001    w12340  <span class="number">1</span>       c01     <span class="number">2019</span><span class="number">-11</span><span class="number">-10</span>      shanghai</span><br><span class="line"><span class="number">2</span>       u001    w98881  <span class="number">4</span>       c01     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      shanghai</span><br><span class="line"><span class="number">3</span>       u001    w12444  <span class="number">4</span>       c02     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      shanghai</span><br><span class="line"><span class="number">4</span>       u002    w12340  <span class="number">4</span>       c01     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      hangzhou</span><br><span class="line"><span class="number">5</span>       u002    w86658  <span class="number">4</span>       c05     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      hangzhou</span><br><span class="line"><span class="number">6</span>       u003    w87658  <span class="number">3</span>       c02     <span class="number">2019</span><span class="number">-11</span><span class="number">-10</span>      nanjing</span><br><span class="line"><span class="number">7</span>       u003    w88667  <span class="number">4</span>       c01     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      nanjing</span><br><span class="line"><span class="number">8</span>       u004    w77668  <span class="number">2</span>       c03     <span class="number">2019</span><span class="number">-11</span><span class="number">-09</span>      nanjing</span><br><span class="line"><span class="number">9</span>       u004    w12334  <span class="number">1</span>       c03     <span class="number">2019</span><span class="number">-11</span><span class="number">-09</span>      nanjing</span><br><span class="line"><span class="number">10</span>      u005    w12324  <span class="number">4</span>       c04     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      shanghai</span><br><span class="line"><span class="type">Time</span> taken: <span class="number">0.222</span> seconds, Fetched: <span class="number">10</span> <span class="type">row</span>(s)</span><br></pre></td></tr></table></figure>
+<h2 id="第五步从表中检索数据"><a class="markdownIt-Anchor" href="#第五步从表中检索数据"></a> 第五步：从表中检索数据。</h2>
+<p><strong>（1） 查询visit_date为“2019-11-11”的记录。（给定检索条件）</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">WHERE</span> visit_date <span class="operator">=</span> <span class="string">&#x27;2019-11-11&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users</span><br><span class="line">    <span class="operator">&gt;</span> <span class="keyword">WHERE</span> visit_date <span class="operator">=</span> <span class="string">&#x27;2019-11-11&#x27;</span>;</span><br><span class="line">OK</span><br><span class="line"><span class="number">2</span>       u001    w98881  <span class="number">4</span>       c01     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      shanghai</span><br><span class="line"><span class="number">3</span>       u001    w12444  <span class="number">4</span>       c02     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      shanghai</span><br><span class="line"><span class="number">4</span>       u002    w12340  <span class="number">4</span>       c01     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      hangzhou</span><br><span class="line"><span class="number">5</span>       u002    w86658  <span class="number">4</span>       c05     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      hangzhou</span><br><span class="line"><span class="number">7</span>       u003    w88667  <span class="number">4</span>       c01     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      nanjing</span><br><span class="line"><span class="number">10</span>      u005    w12324  <span class="number">4</span>       c04     <span class="number">2019</span><span class="number">-11</span><span class="number">-11</span>      shanghai</span><br><span class="line"><span class="type">Time</span> taken: <span class="number">0.402</span> seconds, Fetched: <span class="number">6</span> <span class="type">row</span>(s)</span><br></pre></td></tr></table></figure>
+<p><strong>（2） 查询visit_date为“2019-11-11”的前5条用户购买商品的商品分类和用户所在省份。（给定检索条件，并限定检索数量，limit）</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> item_category, province <span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">WHERE</span> visit_date <span class="operator">=</span> <span class="string">&#x27;2019-11-11&#x27;</span></span><br><span class="line">LIMIT <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">SELECT</span> item_category, province <span class="keyword">FROM</span> users</span><br><span class="line">    <span class="operator">&gt;</span> <span class="keyword">WHERE</span> visit_date <span class="operator">=</span> <span class="string">&#x27;2019-11-11&#x27;</span></span><br><span class="line">    <span class="operator">&gt;</span> LIMIT <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">OK</span><br><span class="line">c01     shanghai</span><br><span class="line">c02     shanghai</span><br><span class="line">c01     hangzhou</span><br><span class="line">c05     hangzhou</span><br><span class="line">c01     nanjing</span><br><span class="line"><span class="type">Time</span> taken: <span class="number">0.236</span> seconds, Fetched: <span class="number">5</span> <span class="type">row</span>(s)</span><br></pre></td></tr></table></figure>
+<p><strong>（3） 使用聚合函数count（）计算出表内有多少行数据。</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> users;</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> users;</span><br><span class="line"></span><br><span class="line">Query ID <span class="operator">=</span> root_20220425184634_6ea834ce<span class="operator">-</span>d99a<span class="number">-42</span>cd<span class="number">-9741</span><span class="operator">-</span>ffa1188ec3b9</span><br><span class="line">Total jobs <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">Launching Job <span class="number">1</span> <span class="keyword">out</span> <span class="keyword">of</span> <span class="number">1</span></span><br><span class="line">Number <span class="keyword">of</span> reduce tasks determined <span class="keyword">at</span> compile <span class="type">time</span>: <span class="number">1</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> change the average load <span class="keyword">for</span> a reducer (<span class="keyword">in</span> bytes):</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.bytes.per.reducer<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> limit the maximum number <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.max<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> <span class="keyword">set</span> a constant number <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> mapreduce.job.reduces<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line">Starting Job <span class="operator">=</span> job_1650876267702_0002, Tracking URL <span class="operator">=</span> http:<span class="operator">/</span><span class="operator">/</span>master:<span class="number">8088</span><span class="operator">/</span>proxy<span class="operator">/</span>application_1650876267702_0002<span class="operator">/</span></span><br><span class="line">Kill Command <span class="operator">=</span> <span class="operator">/</span>opt<span class="operator">/</span>hadoop<span class="number">-3.1</span><span class="number">.4</span><span class="operator">/</span>bin<span class="operator">/</span>mapred job  <span class="operator">-</span>kill job_1650876267702_0002</span><br><span class="line">Hadoop job information <span class="keyword">for</span> Stage<span class="number">-1</span>: number <span class="keyword">of</span> mappers: <span class="number">1</span>; number <span class="keyword">of</span> reducers: <span class="number">1</span></span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">18</span>:<span class="number">46</span>:<span class="number">49</span>,<span class="number">277</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span></span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">18</span>:<span class="number">46</span>:<span class="number">58</span>,<span class="number">650</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span>, Cumulative CPU <span class="number">3.21</span> sec</span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">18</span>:<span class="number">47</span>:<span class="number">07</span>,<span class="number">972</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>, Cumulative CPU <span class="number">8.2</span> sec</span><br><span class="line">MapReduce Total cumulative CPU <span class="type">time</span>: <span class="number">8</span> seconds <span class="number">200</span> msec</span><br><span class="line">Ended Job <span class="operator">=</span> job_1650876267702_0002</span><br><span class="line">MapReduce Jobs Launched:</span><br><span class="line">Stage<span class="operator">-</span>Stage<span class="number">-1</span>: Map: <span class="number">1</span>  Reduce: <span class="number">1</span>   Cumulative CPU: <span class="number">8.2</span> sec   HDFS Read: <span class="number">13756</span> HDFS Write: <span class="number">102</span> SUCCESS</span><br><span class="line">Total MapReduce CPU <span class="type">Time</span> Spent: <span class="number">8</span> seconds <span class="number">200</span> msec</span><br><span class="line"></span><br><span class="line">OK</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="type">Time</span> taken: <span class="number">34.846</span> seconds, Fetched: <span class="number">1</span> <span class="type">row</span>(s)</span><br></pre></td></tr></table></figure>
+<p>可以看见输出结果为10</p>
+<p><strong>（4） 查询uid不重复的数据有多少条。（distinct）</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="keyword">DISTINCT</span> uid) <span class="keyword">FROM</span> users;</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">hive<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="built_in">count</span>(<span class="keyword">DISTINCT</span> uid) <span class="keyword">FROM</span> users;</span><br><span class="line"></span><br><span class="line">Query ID <span class="operator">=</span> root_20220425184757_c1464142<span class="operator">-</span>e985<span class="number">-47</span>f7<span class="number">-82</span>d1<span class="operator">-</span>d078b3c69eba</span><br><span class="line">Total jobs <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">Launching Job <span class="number">1</span> <span class="keyword">out</span> <span class="keyword">of</span> <span class="number">1</span></span><br><span class="line">Number <span class="keyword">of</span> reduce tasks determined <span class="keyword">at</span> compile <span class="type">time</span>: <span class="number">1</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> change the average load <span class="keyword">for</span> a reducer (<span class="keyword">in</span> bytes):</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.bytes.per.reducer<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> limit the maximum number <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.max<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> <span class="keyword">set</span> a constant number <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> mapreduce.job.reduces<span class="operator">=</span><span class="operator">&lt;</span>number<span class="operator">&gt;</span></span><br><span class="line">Starting Job <span class="operator">=</span> job_1650876267702_0003, Tracking URL <span class="operator">=</span> http:<span class="operator">/</span><span class="operator">/</span>master:<span class="number">8088</span><span class="operator">/</span>proxy<span class="operator">/</span>application_1650876267702_0003<span class="operator">/</span></span><br><span class="line">Kill Command <span class="operator">=</span> <span class="operator">/</span>opt<span class="operator">/</span>hadoop<span class="number">-3.1</span><span class="number">.4</span><span class="operator">/</span>bin<span class="operator">/</span>mapred job  <span class="operator">-</span>kill job_1650876267702_0003</span><br><span class="line">Hadoop job information <span class="keyword">for</span> Stage<span class="number">-1</span>: number <span class="keyword">of</span> mappers: <span class="number">1</span>; number <span class="keyword">of</span> reducers: <span class="number">1</span></span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">18</span>:<span class="number">48</span>:<span class="number">12</span>,<span class="number">757</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span></span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">18</span>:<span class="number">48</span>:<span class="number">22</span>,<span class="number">144</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">0</span><span class="operator">%</span>, Cumulative CPU <span class="number">3.75</span> sec</span><br><span class="line"><span class="number">2022</span><span class="number">-04</span><span class="number">-25</span> <span class="number">18</span>:<span class="number">48</span>:<span class="number">36</span>,<span class="number">668</span> Stage<span class="number">-1</span> map <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>,  reduce <span class="operator">=</span> <span class="number">100</span><span class="operator">%</span>, Cumulative CPU <span class="number">8.37</span> sec</span><br><span class="line">MapReduce Total cumulative CPU <span class="type">time</span>: <span class="number">8</span> seconds <span class="number">370</span> msec</span><br><span class="line">Ended Job <span class="operator">=</span> job_1650876267702_0003</span><br><span class="line">MapReduce Jobs Launched:</span><br><span class="line">Stage<span class="operator">-</span>Stage<span class="number">-1</span>: Map: <span class="number">1</span>  Reduce: <span class="number">1</span>   Cumulative CPU: <span class="number">8.37</span> sec   HDFS Read: <span class="number">9748</span> HDFS Write: <span class="number">101</span> SUCCESS</span><br><span class="line">Total MapReduce CPU <span class="type">Time</span> Spent: <span class="number">8</span> seconds <span class="number">370</span> msec</span><br><span class="line"></span><br><span class="line">OK</span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="type">Time</span> taken: <span class="number">41.043</span> seconds, Fetched: <span class="number">1</span> <span class="type">row</span>(s)</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/cfe5/">https://zhangzqs.cn/posts/cfe5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/a279/" title="Leetcode-398-随机数索引"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Leetcode-398-随机数索引</div></div></a></div><div class="next-post pull-right"><a href="/posts/4433/" title="HBase基本操作"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">HBase基本操作</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.</span> <span class="toc-text"> 第一步：创建数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E4%BD%BF%E7%94%A8%E5%88%9B%E5%BB%BA%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">2.</span> <span class="toc-text"> 第二步：使用创建的数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E5%88%9B%E5%BB%BA%E8%A1%A8"><span class="toc-number">3.</span> <span class="toc-text"> 第三步：创建表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%E5%9C%A8%E8%A1%A8%E4%B8%AD%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE"><span class="toc-number">4.</span> <span class="toc-text"> 第四步：在表中加载数据。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%E4%BB%8E%E8%A1%A8%E4%B8%AD%E6%A3%80%E7%B4%A2%E6%95%B0%E6%8D%AE"><span class="toc-number">5.</span> <span class="toc-text"> 第五步：从表中检索数据。</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '1b33eeaf24fe4ec67de37bea46250041',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

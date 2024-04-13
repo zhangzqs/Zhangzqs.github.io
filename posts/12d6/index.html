@@ -1,0 +1,1375 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>软件测试期末复习 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="基本路径测试法 基本路径测试法是在是在程序控制流图的基础上，通过分析控制构造的环路复杂性，导出基本可执行路径 出基本可执行路径集合，从而设计测试用例的方法。设计出的测试用例要保证在测试中程序的每一条可执行语句至少执行一次。  程序的控制流图 控制流图是描述程序控制流的一种图示方式。其中基本的控制结"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/12d6/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '软件测试期末复习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-18 17:25:15'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">软件测试期末复习<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/软件工程/软件测试/软件测试期末复习.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-18T09:25:15.000Z" title="发表于 2022-05-18 17:25:15">2022-05-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-18T09:25:15.000Z" title="更新于 2022-05-18 17:25:15">2022-05-18</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">6.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>22分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="软件测试期末复习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/12d6/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><h1 id="基本路径测试法"><a class="markdownIt-Anchor" href="#基本路径测试法"></a> 基本路径测试法</h1>
+<p>基本路径测试法是在是在程序控制流图的基础上，通过分析控制构造的环路复杂性，导出基本可执行路径 出基本可执行路径集合，从而设计测试用例的方法。设计出的测试用例要保证在测试中程序的每一条可执行语句至少执行一次。</p>
+<h2 id="程序的控制流图"><a class="markdownIt-Anchor" href="#程序的控制流图"></a> 程序的控制流图</h2>
+<p>控制流图是描述程序控制流的一种图示方式。其中基本的控制结构对应的图形符号如图所示。在图所示的图形符号中，圆圈称为控制流图的一个结点，它表示一个或多个无分支的语句或源程序语句。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-17-27-06-image.png" alt></p>
+<p>如下图所示，程序的流程图可以映射到控制流图</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-17-28-06-image.png" alt></p>
+<p>在具有复合条件的情况时，可以转化拆分成成单条件的流程图，如下图先判断单条件a，则根据短路直接可执行到y，否则继续判断b</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-17-32-18-image.png" alt></p>
+<h2 id="环路复杂度"><a class="markdownIt-Anchor" href="#环路复杂度"></a> 环路复杂度</h2>
+<p>进行程序的基本路径测试 进行程序的基本路径测试时，程序的环路复杂性给出了程序基本路径集合中的独立路径条数，这是确保程序中每个可执行语句至少执行一次所必须的测试用例数的测试用例数目的最小值。</p>
+<p>所谓独立路径，是指包括若干未曾处理的语句或条件的一条路径。</p>
+<p>基本路径集不是惟一的，对于给定的控制流图，可以得到不同的基本路径集。</p>
+<p>通常环路复杂性可用以下3种方法求得。</p>
+<ol>
+<li>
+<p>将环路复杂J性定义为控制流图中的区域数</p>
+</li>
+<li>
+<p>设 E 为控制流图的边数， N 为图的结点数，则定义环路的复杂性为 V(G)=E−N+2</p>
+</li>
+<li>
+<p>若设 P为控制流图中的判定结点数，则有 V(G)=P+1</p>
+</li>
+</ol>
+<h2 id="基本路径测试法的步骤"><a class="markdownIt-Anchor" href="#基本路径测试法的步骤"></a> 基本路径测试法的步骤</h2>
+<ol>
+<li>
+<p>画出程序的控制流图</p>
+</li>
+<li>
+<p>计算程序的环路复杂度</p>
+</li>
+<li>
+<p>确定独立路径的集合</p>
+</li>
+<li>
+<p>准备测试用例</p>
+</li>
+</ol>
+<h2 id="例题1"><a class="markdownIt-Anchor" href="#例题1"></a> 例题1</h2>
+<p><strong>代码</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-19-20-54-image.png" alt></p>
+<p><strong>控制流图</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-19-32-40-image.png" alt></p>
+<p><strong>环路复杂度</strong></p>
+<ol>
+<li>
+<p>直接数封闭区域，</p>
+<ol>
+<li>
+<p>6-7-13-10-9-6</p>
+</li>
+<li>
+<p>9-10-13-12-9</p>
+</li>
+<li>
+<p>4-6-9-12-13-4</p>
+</li>
+<li>
+<p>外围区域</p>
+</li>
+</ol>
+</li>
+<li>
+<p>判定节点为4, 6, 9，则判定节点数+1为4</p>
+</li>
+<li>
+<p>顶点数有7个，边有9条，则有9-7+2=4</p>
+</li>
+</ol>
+<p><strong>独立路径</strong></p>
+<p>路径1: 4-14</p>
+<p>路径2: 4-6-7-13-4-14</p>
+<p>路径3: 4-6-9-10-13-4-14</p>
+<p>路径4: 4-6-9-12-13-4-14</p>
+<h2 id="例题2"><a class="markdownIt-Anchor" href="#例题2"></a> 例题2</h2>
+<p><strong>代码</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-13-18-image.png" alt></p>
+<p><strong>控制流图</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-21-04-image.png" alt></p>
+<p><strong>环路复杂度</strong></p>
+<ol>
+<li>
+<p>直接数封闭区域，</p>
+<ol>
+<li>
+<p>3-4-5-13-3</p>
+</li>
+<li>
+<p>3-4-8-3</p>
+</li>
+<li>
+<p>外围区域</p>
+</li>
+</ol>
+</li>
+<li>
+<p>判定节点为3, 4，则判定节点数+1为3</p>
+</li>
+<li>
+<p>顶点数有5个，边有6条，则有6-5+2=3</p>
+</li>
+</ol>
+<p><strong>独立路径</strong></p>
+<p>路径1: 3-13</p>
+<p>路径2: 3-4-5-13</p>
+<p>路径3: 3-4-8-13</p>
+<h2 id="例题3"><a class="markdownIt-Anchor" href="#例题3"></a> 例题3</h2>
+<p><strong>代码</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-25-35-image.png" alt></p>
+<p><strong>控制流图</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-30-32-image.png" alt></p>
+<p><strong>环路复杂度</strong></p>
+<ol>
+<li>
+<p>直接数封闭区域，</p>
+<ol>
+<li>
+<p>4-5-9-4</p>
+</li>
+<li>
+<p>4-5-7-12-4</p>
+</li>
+<li>
+<p>外围区域</p>
+</li>
+</ol>
+</li>
+<li>
+<p>判定节点为4, 5，则判定节点数+1为3</p>
+</li>
+<li>
+<p>顶点数有5个，边有6条，则有6-5+2=3</p>
+</li>
+</ol>
+<p><strong>独立路径</strong></p>
+<p>路径1: 4-12</p>
+<p>路径2: 4-5-9-12</p>
+<p>路径3: 4-5-7-12</p>
+<h2 id="例题4"><a class="markdownIt-Anchor" href="#例题4"></a> 例题4</h2>
+<p><strong>代码</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-41-37-image.png" alt></p>
+<p><strong>流程图</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-41-12-image.png" alt></p>
+<p><strong>控制流图</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-45-58-image.png" alt></p>
+<p><strong>环路复杂度</strong></p>
+<ul>
+<li>
+<p>直接数封闭区域，</p>
+<ol>
+<li>
+<p>2-3-7-2</p>
+</li>
+<li>
+<p>7-8-12-7</p>
+</li>
+<li>
+<p>12-13-17-12</p>
+</li>
+<li>
+<p>外围区域</p>
+</li>
+</ol>
+</li>
+<li>
+<p>判定节点为2, 7, 12，则判定节点数+1为4</p>
+</li>
+<li>
+<p>顶点数有7个，边有9条，则有9-7+2=4</p>
+</li>
+</ul>
+<p><strong>基本路径</strong></p>
+<p>路径1: 2-7-12-17</p>
+<p>路径2: 2-3-7-12-17</p>
+<p>路径3: 2-7-8-12-17</p>
+<p>路径4: 2-7-12-13-17</p>
+<h2 id="例题5"><a class="markdownIt-Anchor" href="#例题5"></a> 例题5</h2>
+<p><strong>代码</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-09-50-40-image.png" alt></p>
+<p><strong>控制流图</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-09-59-25-image.png" alt></p>
+<p><strong>环路复杂度</strong></p>
+<ol>
+<li>
+<p>直接数封闭区域，</p>
+<ol>
+<li>
+<p>4-5-7-16-4</p>
+</li>
+<li>
+<p>4-5-13-14-4</p>
+</li>
+<li>
+<p>5-7-14-13-5</p>
+</li>
+<li>
+<p>外围区域</p>
+</li>
+</ol>
+</li>
+<li>
+<p>判定节点为4, 5, 7，则判定节点数+1为4</p>
+</li>
+<li>
+<p>顶点数有6个，边有8条，则有8-6+2=4</p>
+</li>
+</ol>
+<p><strong>独立路径</strong></p>
+<p>路径1: 4-16</p>
+<p>路径2: 4-5-7-16</p>
+<p>路径3: 4-5-7-14-4-16</p>
+<p>路径4: 4-5-13-14-4-16</p>
+<p><strong>设计测试用例</strong></p>
+<p>路径1: n=0</p>
+<p>路径2: n=100, flag = 2</p>
+<p>路径3: n=2, flag = 1</p>
+<p>路径4: n=1, flag=1</p>
+<h2 id="例题6"><a class="markdownIt-Anchor" href="#例题6"></a> 例题6</h2>
+<p><strong>代码</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">1</span>         <span class="type">int</span> <span class="title function_">Test</span><span class="params">(<span class="type">int</span> num, <span class="type">int</span> x)</span></span><br><span class="line"> 2         &#123;</span><br><span class="line"> <span class="number">3</span>             <span class="type">int</span> temp = <span class="number">0</span>;</span><br><span class="line"> <span class="number">4</span>             <span class="keyword">while</span> (num&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="number">5</span>             &#123;</span><br><span class="line"> <span class="number">6</span>                 <span class="keyword">if</span> (x&gt;<span class="number">0</span>)</span><br><span class="line"> <span class="number">7</span>                 &#123;</span><br><span class="line"> <span class="number">8</span>                     temp = num + <span class="number">100</span>;</span><br><span class="line"> <span class="number">9</span>                     <span class="keyword">break</span>;</span><br><span class="line"><span class="number">10</span>                 &#125;</span><br><span class="line"><span class="number">11</span>                 <span class="keyword">else</span></span><br><span class="line"><span class="number">12</span>                 &#123;</span><br><span class="line"><span class="number">13</span>                     <span class="keyword">if</span> (x == <span class="number">0</span>)</span><br><span class="line"><span class="number">14</span>                     &#123;</span><br><span class="line"><span class="number">15</span>                         temp = temp + <span class="number">10</span>;</span><br><span class="line"><span class="number">16</span>                     &#125;</span><br><span class="line"><span class="number">17</span>                     <span class="keyword">else</span></span><br><span class="line"><span class="number">18</span>                     &#123;</span><br><span class="line"><span class="number">19</span>                         temp = temp + <span class="number">20</span>;</span><br><span class="line"><span class="number">20</span>                     &#125;</span><br><span class="line"><span class="number">21</span>                 &#125;</span><br><span class="line"><span class="number">22</span>                num--;</span><br><span class="line"><span class="number">23</span>             &#125;</span><br><span class="line"><span class="number">24</span>             <span class="keyword">return</span> temp;</span><br><span class="line"><span class="number">25</span>         &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>控制流图</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-10-36-35-image.png" alt></p>
+<p><strong>环路复杂度</strong></p>
+<ol>
+<li>
+<p>直接数封闭区域，</p>
+<ol>
+<li>
+<p>4-6-13-15-22-4</p>
+</li>
+<li>
+<p>4-6-8-24-4</p>
+</li>
+<li>
+<p>13-15-22-19-13</p>
+</li>
+<li>
+<p>外围区域</p>
+</li>
+</ol>
+</li>
+<li>
+<p>判定节点为4, 6, 13，则判定节点数+1为4</p>
+</li>
+<li>
+<p>顶点数有8个，边有10条，则有10-8+2=4</p>
+</li>
+</ol>
+<p><strong>独立路径</strong></p>
+<p>路径1: B (4-24)</p>
+<p>路径2: C-E-J (4-6-8-24)</p>
+<p>路径3: C-D-G-I-A-B (4-6-13-15-22-4-24)</p>
+<p>路径4: C-D-F-H-A-B (4-6-13-19-22-4-24)</p>
+<p><strong>设计测试用例</strong></p>
+<p>路径1</p>
+<ul>
+<li>
+<p>输入：num &lt;= 0 的某个值</p>
+</li>
+<li>
+<p>输出：temp = 0</p>
+</li>
+</ul>
+<p>路径2</p>
+<ul>
+<li>
+<p>输入：num&gt;0的任意值, x&gt;0的任意值</p>
+</li>
+<li>
+<p>输出：temp=num+100</p>
+</li>
+</ul>
+<p>路径3</p>
+<ul>
+<li>
+<p>输入：x=0, num=1</p>
+</li>
+<li>
+<p>输出：temp=10</p>
+</li>
+</ul>
+<p>路径4</p>
+<ul>
+<li>
+<p>输入：x=-1, num=1</p>
+</li>
+<li>
+<p>输出：temp=20</p>
+</li>
+</ul>
+<h1 id="等价类划分法"><a class="markdownIt-Anchor" href="#等价类划分法"></a> 等价类划分法</h1>
+<p>等价类划分是一种典型的、常用的黑盒测试方法。</p>
+<p>所谓等价类是指某个输入域的子集，使用这一方法 ，使用这一方法时，是把所有可能的输入数据，即程序的输入域划分成若干<br>
+部分（子集），然后从每一个子集中选取少数具有代表性的数据作为测试用例。</p>
+<h2 id="等价类划分的情况"><a class="markdownIt-Anchor" href="#等价类划分的情况"></a> 等价类划分的情况</h2>
+<p>等价类的划分有以下两种不同的情况</p>
+<ol>
+<li>
+<p><strong>有效等价类</strong>：是指对于程序规格说明来说，是合理的、有意义的输入数据构成的集合。利用它，可以检验程序是否实现了规格说明预先规定的功能和性能。</p>
+</li>
+<li>
+<p><strong>无效等价类</strong> ：是指对于程序规格说明来说，是不合理的、无意义的输入数据构成的集合。利用它，可以检查程序中功能和性能的实现是否有不符合规格说明要求的地方</p>
+</li>
+</ol>
+<h2 id="划分等价类的方法"><a class="markdownIt-Anchor" href="#划分等价类的方法"></a> 划分等价类的方法</h2>
+<ol>
+<li>
+<p>按区间划分</p>
+</li>
+<li>
+<p>按数值划分</p>
+</li>
+<li>
+<p>按数值集合划分</p>
+</li>
+<li>
+<p>按限制条件划分</p>
+</li>
+<li>
+<p>按限制规则划分</p>
+</li>
+<li>
+<p>按处理方式划分</p>
+</li>
+</ol>
+<p>在确立了等价类之后，建立等价类表，列出所有划分出的等价类，如表 3-1 所示</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-20-10-24-image.png" alt></p>
+<p>再从划分出的等价类中按以下原则选择测试用例。 选择测试用例。</p>
+<ol>
+<li>
+<p>为每一个等价类规定一个唯一的编号</p>
+</li>
+<li>
+<p>设计一个新的测试用例，使其尽可能多地覆盖尚未覆盖的有效等价类；重复这一步骤，直到所有的有效等价类都被覆盖为止。</p>
+</li>
+<li>
+<p>设计一个新的测试用例，使其 设计一个新的测试用例，使其仅覆盖一个无效等价类，重复这一步骤，直到所有的无效等价类都被覆盖为止。</p>
+</li>
+</ol>
+<h2 id="三角形问题"><a class="markdownIt-Anchor" href="#三角形问题"></a> 三角形问题</h2>
+<p>三角形问题是软件测试文献中使用最广泛的一个例子。</p>
+<p>三角形问题之所以复杂，是因为输入与输出之间的关系比较复杂。</p>
+<h3 id="问题概述"><a class="markdownIt-Anchor" href="#问题概述"></a> 问题概述</h3>
+<p>输入三个整数a,b,c分别作为三角形的三条边，程序判断由这三条边构成的三角形类型是：等边三角形，等腰三角形，一般三角形或非三角形。</p>
+<h3 id="传统等价类划分测试用例设计"><a class="markdownIt-Anchor" href="#传统等价类划分测试用例设计"></a> 传统等价类划分测试用例设计</h3>
+<p>设输入条件分别要求为（这些输入条件自身都作为了有效等价类）：</p>
+<ul>
+<li>
+<p>整数（设为1号有效等价类）</p>
+<ul>
+<li>
+<p>有一条边为非整数，设为4号无效等价类</p>
+<ul>
+<li>1.5, 4, 5</li>
+</ul>
+</li>
+<li>
+<p>有两条边为非整数，设为5号无效等价类</p>
+<ul>
+<li>3.5, 2.5, 5</li>
+</ul>
+</li>
+<li>
+<p>有三条边为非整数，设为6号无效等价类</p>
+<ul>
+<li>2.5, 4.5, 5.5</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>三个数（设为2号有效等价类）</p>
+<ul>
+<li>
+<p>只有一条边，设为7号无效等价类</p>
+<ul>
+<li>3</li>
+</ul>
+</li>
+<li>
+<p>只有两条边，设为8号无效等价类</p>
+<ul>
+<li>4, 5</li>
+</ul>
+</li>
+<li>
+<p>多于三条边，设为9号无效等价类</p>
+<ul>
+<li>2, 3, 4, 5</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>三个数取值分别为1到100（设为3号有效等价类）</p>
+<ul>
+<li>
+<p>一边=0，设为10号</p>
+<ul>
+<li>3, 0, 8</li>
+</ul>
+</li>
+<li>
+<p>二边=0，设为11号</p>
+<ul>
+<li>0, 6, 0</li>
+</ul>
+</li>
+<li>
+<p>三边=0，设为12号</p>
+<ul>
+<li>0, 0, 0</li>
+</ul>
+</li>
+<li>
+<p>一边&lt;0，设为13号</p>
+<ul>
+<li>-3, 4, 6</li>
+</ul>
+</li>
+<li>
+<p>两边&lt;0，设为14号</p>
+<ul>
+<li>2, -7, -5</li>
+</ul>
+</li>
+<li>
+<p>三边&lt;0，设为15号</p>
+<ul>
+<li>-3, -5, -7</li>
+</ul>
+</li>
+<li>
+<p>一边&gt;100，设为16号</p>
+<ul>
+<li>101, 4, 8</li>
+</ul>
+</li>
+<li>
+<p>二边&gt;100，设为17号</p>
+<ul>
+<li>3, 101, 101</li>
+</ul>
+</li>
+<li>
+<p>三边&gt;100，设为18号</p>
+<ul>
+<li>101, 101, 101</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>等价类划分表</strong><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-23-55-36-image.png" alt></p>
+<p>为<strong>无效等价类</strong>设计<strong>测试用例表</strong><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-23-59-05-image.png" alt></p>
+<h3 id="标准和健壮等价类划分测试用例设计"><a class="markdownIt-Anchor" href="#标准和健壮等价类划分测试用例设计"></a> 标准和健壮等价类划分测试用例设计</h3>
+<p>三角形问题有四种可能输出：</p>
+<ul>
+<li>
+<p>非三角形</p>
+</li>
+<li>
+<p>一般三角形</p>
+</li>
+<li>
+<p>等腰三角形</p>
+</li>
+<li>
+<p>等边三角形</p>
+</li>
+</ul>
+<p>利用这些信息来确定输出（值域）等价类。</p>
+<p>R1={&lt;a, b, c&gt;: 边为a, b, c的等边三角形}</p>
+<p>R2={&lt;a, b, c&gt;: 边为a, b, c的等腰三角形}</p>
+<p>R3={&lt;a, b, c&gt;: 边为a, b, c的一般三角形}</p>
+<p>R4={&lt;a, b, c&gt;: 边a, b, c不能形成三角形}</p>
+<p>可以设计四个标准等价类如下，</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-07-25-image.png" alt></p>
+<p>考虑a, b, c的无效值产生了下面7个健壮等价类测试用例，如下表所示：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-00-09-16-image.png" alt></p>
+<h2 id="nextdate问题"><a class="markdownIt-Anchor" href="#nextdate问题"></a> NextDate问题</h2>
+<p>NextDate是一个含三个变量<code>month, day, year</code>的函数。有效值区间定义如下：</p>
+<ul>
+<li>
+<p>M1={month: 1&lt;=month&lt;=12}</p>
+</li>
+<li>
+<p>D1={day: 1&lt;=day&lt;=31}</p>
+</li>
+<li>
+<p>Y1={year: 1912&lt;=year&lt;=2050}</p>
+</li>
+</ul>
+<p>无效等价类为：</p>
+<ul>
+<li>
+<p>M2={month: month &lt; 1}</p>
+</li>
+<li>
+<p>M3={month: month &gt; 12}</p>
+</li>
+<li>
+<p>D2={day: day &lt; 1}</p>
+</li>
+<li>
+<p>D3={day: day&gt;31}</p>
+</li>
+<li>
+<p>Y2={year: year &lt; 1912}</p>
+</li>
+<li>
+<p>Y3={year: year &gt; 2050}</p>
+</li>
+</ul>
+<p>只有一个<strong>标准等价类的测试用例</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-14-45-07-image.png" alt></p>
+<p><strong>健壮等价类测试用例</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-14-45-49-image.png" alt></p>
+<p>如果<strong>更仔细地选择等价关系</strong>，可以得到更有用的等价类：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-14-48-14-image.png" alt></p>
+<p><strong>标准等价类测试用例</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-14-48-56-image.png" alt></p>
+<p><strong>健壮等价类测试用例</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-14-50-17-image.png" alt></p>
+<h1 id="边界值分析法"><a class="markdownIt-Anchor" href="#边界值分析法"></a> 边界值分析法</h1>
+<p>边界值分析法就是对输入或输出的边界值进行测试的一种黑盒测试方法。</p>
+<p>在测试过程中，边界值分析法是通过选择等价类边界的测试用例进行测试，边界值分析法与等价类划分法的区别是边界值分析不是从某等价类中随便挑一个作为代表，而是使这个等价类的每个边界都要作为测试条件。</p>
+<p>另外，边界值分析不仅考虑输入条件边界，还要考虑输出条件边界，还要考虑输出域边界产生的测试情况。</p>
+<p>使用边界值分析方法设计测试用例，首先应确定边界情况。<br>
+        通常输入等价类与输出等价类的边界，就是应着重测试的边界情况。应当选取正好等于，刚刚大于，或刚刚小于边界的值作为测试数据，而不是选取等价类中的典型值或任意值作为测试数据</p>
+<h2 id="选择测试用例的原则"><a class="markdownIt-Anchor" href="#选择测试用例的原则"></a> 选择测试用例的原则</h2>
+<ol>
+<li>
+<p>如果输入条件规定了值的范围，则应该取刚达到这个范围的边界值，以及刚刚超过这个范围边界的值作为测试输入数据。</p>
+</li>
+<li>
+<p>如果输入条件规定了值的个数，则用最大个数、最小个数、比最大个数多 1 个、比最小个数少 1 个的数作为测试数据。</p>
+</li>
+<li>
+<p>根据规格说明的每一个输出 据规格说明的每一个输出条件，使用前面两条规则 。</p>
+</li>
+<li>
+<p>如果程序的规格说明 如果程序的规格说明给出的输入域或输出域是有序集合（如有序表、 顺序文件等），则应选取集合的第一个和最后一个元素作为测试用例。</p>
+</li>
+<li>
+<p>如果程序用了一个内部结构，应该选取这个内部数据结构的边界值作为测试用例。</p>
+</li>
+<li>
+<p>分析规格说明， 分析规格说明，找出其他可能的边界条件。</p>
+</li>
+</ol>
+<h1 id="因果图法"><a class="markdownIt-Anchor" href="#因果图法"></a> 因果图法</h1>
+<p>因果图法是一种利用图解法分析输入的各种组合情况，从而设计测试用例的方法，它适合于检查程序输入条件的各种组合情况。</p>
+<p>利用因果图生成测试用例的基本步骤如下：</p>
+<ol>
+<li>
+<p>分析软件规格说明的描述中哪些是原因，哪些是结果。原因是输入条件或输入条件的等价类，结果是输出条件。</p>
+</li>
+<li>
+<p>分析软件规格说明描述中的语义，找出原因与结果之间、原因与原因之间对应的关系，根据这些关系，画出因果图。</p>
+</li>
+<li>
+<p>标明约束条件。由于语法或环境的限制，有些原因和结果的组合情况是不可能出现的。为表明这些特定的情况，在因果图上使用若干标准的符号标明约束条件</p>
+</li>
+<li>
+<p>把因果图转换成判定表</p>
+</li>
+<li>
+<p>为判定表中的每一列设计测试用例</p>
+</li>
+</ol>
+<p>通常在因果图中，用 Ci表示原因， Ei表示结果，其基本符号如图 3-15 所示。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-20-35-57-image.png" alt></p>
+<h1 id="决策表法"><a class="markdownIt-Anchor" href="#决策表法"></a> 决策表法</h1>
+<h2 id="nextdate问题-2"><a class="markdownIt-Anchor" href="#nextdate问题-2"></a> NextDate问题</h2>
+<p>NextDate函数能够使用的操作只有5种</p>
+<p>Day变量+1</p>
+<p>Month变量+1</p>
+<p>Day变量复位</p>
+<p>Month变量复位</p>
+<p>Year变量+1</p>
+<p>将注意力集中到NextDate函数的日月问题上，并仔细研究动作桩，可以在以下等价类集合上建立决策表：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-19-54-28-image.png" alt></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-19-54-56-image.png" alt></p>
+<h1 id="集成测试的实施方案"><a class="markdownIt-Anchor" href="#集成测试的实施方案"></a> 集成测试的实施方案</h1>
+<p>集成测试的实施方案有很多种，如：<br>
+        非增式集成测试和增量式集成测试、 量式集成测试、三明治集成测试、核心集成测试、分层集成测试、基于使用的集成测试等。其中，常用的是非增式集成测试和增量式集成测试两种模式。</p>
+<h2 id="非增式测试方法"><a class="markdownIt-Anchor" href="#非增式测试方法"></a> 非增式测试方法</h2>
+<p>概括来说，非增式测试方法是采用一步 式测试方法是采用一步到位的方法来进行测试，对所有模块进行个别的单元测试后，按程序结构图将各模块程序结构图将各模块连接起来，把连接后的程序当做一个整体进行测试。图 4-4 给出的是采用这种非增式的集成测试方法的一个经典例子。</p>
+<h2 id="增式测试方法"><a class="markdownIt-Anchor" href="#增式测试方法"></a> 增式测试方法</h2>
+<h3 id="自顶向下增式测试"><a class="markdownIt-Anchor" href="#自顶向下增式测试"></a> 自顶向下增式测试</h3>
+<p>自顶向下增式测试表示逐步集成和逐步测试是按结构图自上而下进行的。即模块集成的顺序是首先集成主控模块（主程序），然后按照软件控制层次结构向下进行集成。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-21-41-06-image.png" alt></p>
+<p>集成测试的整个过程由下列 3 个步骤完成：</p>
+<ol>
+<li>
+<p>主控模块作为测试驱动器，把对主控模块进行单元测试时引入的被调用模拟子模块用实际模块替代。</p>
+</li>
+<li>
+<p>依照所选用的模块集成策略（深度优先和广度优先），下层的被调用模拟子模块一次一个地被替换为真正的模块。</p>
+</li>
+<li>
+<p>在每个模块被集成时， 在每个模块被集成时，都必须立即进行测试一遍，回到第 2 步重复进行，直到整个系统结构被集成完成。</p>
+</li>
+</ol>
+<p>图 4-6 给出了一个按广度优先策略进行集成测试的典型例子：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-21-45-19-image.png" alt></p>
+<p>开发模块A时，使用用于支撑测试的桩模块S1,S2,S3，然后将S1,S2,S3分别替换为真正的模块B,C,D，其中模块S4,S5依然使用桩模块支撑，最后再替换桩模块S4,S5为模块E,F，最终集成测试完毕。</p>
+<h3 id="自底向上增式测试"><a class="markdownIt-Anchor" href="#自底向上增式测试"></a> 自底向上增式测试</h3>
+<p>自底向上增式测试是从最底层的模块开始，按结构图自下而上逐步进行集成和测试。<br>
+图 4-7 表示了采用自底向上增式测试实现同一实例的过程。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-18-21-53-07-image.png" alt></p>
+<h2 id="其他集成测试实施方案"><a class="markdownIt-Anchor" href="#其他集成测试实施方案"></a> 其他集成测试实施方案</h2>
+<ol>
+<li>
+<p>三明治集成测试</p>
+</li>
+<li>
+<p>核心系统先行集成测试</p>
+</li>
+<li>
+<p>高频集成测试</p>
+</li>
+</ol>
+<h1 id="各种例题"><a class="markdownIt-Anchor" href="#各种例题"></a> 各种例题</h1>
+<p>功能描述：如果x&lt;=3000，y的值为0；如果3000&lt;x&lt;=5000，则y的值为x超过3000部分的3%；如果5000&lt;x&lt;8000，则y 的值为：x超过5000部分的5%加上超过3000部分的3%。<br>
+请用等价类划分和边界值分析相结合来设计测试用例。</p>
+<p><strong>由题意得</strong></p>
+<ul>
+<li>x&lt;=3000
+<ul>
+<li>y=0</li>
+</ul>
+</li>
+<li>3000&lt;x&lt;=5000
+<ul>
+<li>y=0.03*x-90</li>
+</ul>
+</li>
+<li>5000&lt;x&lt;8000
+<ul>
+<li>y=0.08*x-340</li>
+</ul>
+</li>
+<li>x&gt;=8000
+<ul>
+<li>未定义</li>
+</ul>
+</li>
+</ul>
+<p><strong>有效等价类</strong></p>
+<ol>
+<li>x&lt;=3000</li>
+<li>3000&lt;x&lt;=5000</li>
+<li>5000&lt;x&lt;8000</li>
+</ol>
+<p><strong>无效等价类</strong></p>
+<ol start="4">
+<li>x&gt;=8000</li>
+</ol>
+<p><strong>测试用例</strong></p>
+<p>应该取边界值2999, 3000, 3001, 4999, 5000, 5001, 7999, 8000, 8001</p>
+<p>2999, 3000=&gt;0: 覆盖1</p>
+<p>3001,4999,5000=&gt;0.03, 59.97, 60: 覆盖2</p>
+<p>5001, 7999=&gt;60.08, 299.92: 覆盖3</p>
+<p>8000, 8001: 覆盖4</p>
+<hr>
+功能描述：密码输入框的字符长度要求为最短4个字符，最长20个字符。
+请用等价类划分和边界值分析相结合来设计测试用例。（要考虑字符的类型）
+<p>长度的边界值3,4,5, 19,20,21</p>
+<p>类型有三种纯数字，纯字母，数字+字母</p>
+<p><strong>有效等价类</strong></p>
+<ol>
+<li>
+<p>4-20字符</p>
+</li>
+<li>
+<p>纯数字</p>
+</li>
+<li>
+<p>纯字母</p>
+</li>
+<li>
+<p>数字+字母</p>
+</li>
+</ol>
+<p><strong>无效等价类</strong></p>
+<ol start="5">
+<li>
+<p>少于4字符</p>
+</li>
+<li>
+<p>多于20字符</p>
+</li>
+<li>
+<p>含有特殊符号</p>
+</li>
+</ol>
+<p><strong>设计测试用例</strong></p>
+<p>设计一个新的测试用例，使其尽可能多地覆盖尚未覆盖的有效等价类；重复这一步骤，直到所有的有效等价类都被覆盖为止。</p>
+<p>设计一个新的测试用例，使其设计一个新的测试用例，使其仅覆盖一个无效等价类，重复这一步骤，直到所有的无效等价类都被覆盖为止。</p>
+<p>123: 覆盖了2, 5</p>
+<p>abcd: 覆盖了1,3</p>
+<p>abcdefghij1234567890: 覆盖了1, 4</p>
+<p>abcdefghij12345678901: 覆盖了4, 6</p>
+<p>abcdefghij123456789-: 覆盖了1, 7</p>
+<hr>
+<p>“……对1.2米以下儿童免票，对1.2-1.5米的儿童半票，对教师、军人或70岁以上的老人，应给予优先的业务处理……”<br>
+这里假设“优先的业务处理”已在别处有更严格的定义，请建立判定表。</p>
+<ul>
+<li>
+<p>是儿童</p>
+<ul>
+<li>
+<p>&lt;1.2米 =&gt; 免票</p>
+</li>
+<li>
+<p>1.2-1.5米 =&gt; 半票</p>
+</li>
+</ul>
+</li>
+<li>
+<p>是老人</p>
+<ul>
+<li>
+<p>是教师 =&gt; 优先业务处理</p>
+</li>
+<li>
+<p>是军人 =&gt; 优先业务处理</p>
+</li>
+<li>
+<p>70岁以上 =&gt; 优先业务处理</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-20-07-14-38-image.png" alt></p>
+<hr>
+<p>请用等价类划分法设计测试用例。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">triangle</span><span class="params">(<span class="type">float</span> a, <span class="type">float</span> b, <span class="type">float</span> c)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (a &gt; <span class="number">0</span> &amp;&amp; b &gt; <span class="number">0</span> &amp;&amp; c &gt; <span class="number">0</span> &amp;&amp; a + b &gt; c &amp;&amp; a + c &gt; b &amp;&amp; b + c &gt; a) &#123;</span><br><span class="line">        <span class="keyword">if</span> (a == b &amp;&amp; b == c) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;等边三角形&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a == b || a == c || b == c) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;等腰三角形&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;一般三角形&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;输入无效&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考后面也有同样的题</p>
+<hr>
+<p>请用等价类划分法设计下列代码的单元测试用例。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> <span class="title function_">jisuan</span><span class="params">(<span class="type">float</span> a)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (a &gt; <span class="number">2000</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (a &gt; <span class="number">5000</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">3000</span> * <span class="number">0.2</span> + (a - <span class="number">5000</span>) * <span class="number">0.3</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> (a - <span class="number">2000</span>) * <span class="number">0.2</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (a &gt; <span class="number">800</span>) <span class="keyword">return</span> (a - <span class="number">800</span>) * <span class="number">0.1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>有效等价类</strong></p>
+<ol>
+<li>
+<p>800 &lt;a&lt;=2000</p>
+</li>
+<li>
+<p>2000&lt;a&lt;=5000</p>
+</li>
+<li>
+<p>a&gt;5000</p>
+</li>
+</ol>
+<p><strong>无效等价类</strong></p>
+<ol start="4">
+<li>a&lt;=800</li>
+</ol>
+<p><strong>边界值</strong></p>
+<p>799,800,801,1999,2000,2001,4999,5000,5001</p>
+<p><strong>测试用例</strong></p>
+<p>799, 800: 覆盖4</p>
+<p>801, 1999, 2000: 覆盖1</p>
+<p>2001, 4999, 5000: 覆盖2</p>
+<p>5001: 覆盖3</p>
+<hr>
+<p>某单位对其在大学以上学历的职工安排工作（工作岗位用AA-FF表示），方针如下：</p>
+<ul>
+<li>
+<p>如果年龄不满18岁，文化程度为大学，若是男性，则任AA。若是女性，则任BB；</p>
+</li>
+<li>
+<p>如果年满18但不足50岁，文化程度是研究生，不分男女性，均任CC。文化程度是大学，则不分男女性均任DD；</p>
+</li>
+<li>
+<p>如果年满50岁以上，文化程度是研究生，若是男性，则任CC，文化程度是大学，若是男性，则任EE。若是女性，则任FF。</p>
+</li>
+</ul>
+<p>请对以上说明绘制判定表。为了便于绘制，条件符号使用以下内容：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-20-08-31-image.png" alt></p>
+<ul>
+<li>
+<p>不满18岁 C</p>
+<ul>
+<li>
+<p>大学 U</p>
+<ul>
+<li>
+<p>男性 M =&gt; AA</p>
+</li>
+<li>
+<p>女性 F =&gt; BB</p>
+</li>
+</ul>
+</li>
+<li>
+<p>研究生 G</p>
+<ul>
+<li>未知 =&gt; X</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>年满18岁未满50岁 Y</p>
+<ul>
+<li>
+<p>研究生 G</p>
+<ul>
+<li>
+<p>男性 M =&gt; CC</p>
+</li>
+<li>
+<p>女性 F =&gt; CC</p>
+</li>
+</ul>
+</li>
+<li>
+<p>大学 U</p>
+<ul>
+<li>
+<p>男性M =&gt; DD</p>
+</li>
+<li>
+<p>女性 F =&gt; DD</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>年满50岁以上 L</p>
+<ul>
+<li>
+<p>研究生 G</p>
+<ul>
+<li>
+<p>男性 M =&gt; CC</p>
+</li>
+<li>
+<p>女性 F =&gt; FF</p>
+</li>
+</ul>
+</li>
+<li>
+<p>大学 U</p>
+<ul>
+<li>
+<p>男性 M =&gt; EE</p>
+</li>
+<li>
+<p>女性 F =&gt; FF</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>合并后得出如下判定表</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-20-35-33-image.png" alt></p>
+<hr>
+<p>“……对军人、残疾人或70岁以上的老人，应给予优先的业务处理……”这里假设“优先的业务处理”已在别处有更严格的定义，请建立判定表。<br>
+军人，残疾人，70岁以上老人分别代表了三种独立的状态，共有2<em>2</em>2=8种不同的组合<br>
+一一列出后合并便可得到如下判定表</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-20-42-21-image.png" alt></p>
+<hr>
+<p>功能描述：输入框的输入内容要求为数字或字母，长度要求为最短6个字符，最长20个字符。请用等价类划分和边界值分析相结合来设计测试用例。</p>
+<hr>
+<p>“……对成绩积点在2.5以上，并且参加过竞赛或创新项目的同学，在各类奖励中应给予优先考虑……”请建立判定表。</p>
+<p>可以得出逻辑表达式如下：</p>
+<p>予以考虑=(绩点在2.5以上) &amp; (参加过竞赛 | 参加过创新项目)</p>
+<p>得出真值表如下</p>
+<table>
+<thead>
+<tr>
+<th>绩点在2.5以上</th>
+<th>参加过竞赛</th>
+<th>参加过创新项目</th>
+<th>予以优先考虑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>建立判定表如下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-20-58-49-image.png" alt></p>
+<hr>
+<p>某保险公司对客户制定收费标准（标准等级用AA-GG表示），标准如下：</p>
+<ul>
+<li>
+<p>如果年龄不满18岁，不分男女性，标准为AA；如果年满18但不足50岁，大病例史为无，不分男女，标准BB；</p>
+</li>
+<li>
+<p>如果年满18但不足50岁，大病例史为有，若是男性，标准为CC，若是女性，标准为DD；</p>
+</li>
+<li>
+<p>如果年满50岁以上，大病例史为无，若是男性，标准为EE，若是女性，标准为FF；</p>
+</li>
+<li>
+<p>如果年满50岁以上，大病例史为有，不分男女，标准为GG。</p>
+</li>
+</ul>
+<p>请对以上说明绘制判定表。为了便于绘制，条件符号使用以下内容：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-21-02-36-image.png" alt></p>
+<ul>
+<li>
+<p>不满18岁 C =&gt; AA</p>
+</li>
+<li>
+<p>年满18但不足50 Y</p>
+<ul>
+<li>
+<p>无大病 N =&gt; BB</p>
+</li>
+<li>
+<p>有大病 H</p>
+<ul>
+<li>
+<p>男性 M =&gt; CC</p>
+</li>
+<li>
+<p>女性 F =&gt; DD</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>年满50 L</p>
+<ul>
+<li>
+<p>无大病 N</p>
+<ul>
+<li>
+<p>男性 M =&gt; EE</p>
+</li>
+<li>
+<p>女性 F =&gt; FF</p>
+</li>
+</ul>
+</li>
+<li>
+<p>有大病 H =&gt; GG</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-21-10-34-image.png" alt></p>
+<hr>
+<p>程序结构图如下图所示，请画出自顶向下集成的过程</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-21-11-13-image.png" alt></p>
+<p>自顶向下集成过程如下图所示</p>
+<p>Si为相应的桩模块，用来模拟子模块</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-21-21-33-image.png" alt></p>
+<hr>
+<p>程序结构图如下图所示，请画出自底向上集成的过程<br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-21-22-53-image.png" alt></p>
+<p>自底向上集成过程</p>
+<p>di为子模块的驱动模块</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-21-29-03-image.png" alt></p>
+<hr>
+<p>需求描述如下：“输入三个整数a、b、c，分别作为三边的边长构成三角形。”通过程序判定所构成的三角形的类型，当此三角形为一般三角形、等腰三角形及等边三角形时，用等价类划分方法为该程序进行测试用例设计。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-21-45-07-image.png" alt></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-21-55-10-image.png" alt></p>
+<hr>
+<p>有一个处理单价为1元5角的盒装饮料的自动售货机软件，</p>
+<ul>
+<li>
+<p>若投入1元5角硬币，按下“可乐”、“雪碧”或“红茶”按钮，相应的饮料就送出来。</p>
+</li>
+<li>
+<p>若投入的是2元硬币，在送出饮料的同时退换5角硬币，</p>
+</li>
+</ul>
+<p>试用因果图法设计测试用例。</p>
+<p>设有以下原因</p>
+<ul>
+<li>C1: 投入1.5元硬币</li>
+<li>C2: 投入2元硬币</li>
+<li>C3: 按下“可乐”</li>
+<li>C4: 按下“雪碧”</li>
+<li>C5: 按下“红茶”</li>
+</ul>
+<p>设有以下结果</p>
+<ul>
+<li>E1: 送出可乐</li>
+<li>E2: 送出雪碧</li>
+<li>E3: 送出红茶</li>
+<li>E4: 退还5角硬币</li>
+<li>E5: 不送出任何东西</li>
+</ul>
+<p>解题如下</p>
+<ul>
+<li>
+<p>若投入1.5元硬币 C1</p>
+<ul>
+<li>
+<p>按可乐C3=&gt;E1</p>
+</li>
+<li>
+<p>按雪碧C4=&gt;E2</p>
+</li>
+<li>
+<p>按红茶C5=&gt;E3</p>
+</li>
+</ul>
+</li>
+<li>
+<p>若投入2元硬币 C2</p>
+<ul>
+<li>
+<p>按可乐C3=&gt;E1 E4</p>
+</li>
+<li>
+<p>按雪碧C4=&gt;E2 E4</p>
+</li>
+<li>
+<p>按红茶C5=&gt;E3 E4</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-22-57-37-image.png" alt></p>
+<hr>
+<p>手机号码验证的描述如下：</p>
+<ul>
+<li>
+<p>输入的内容必须是数字，并且位数为11位，满足以上情况显示输入正确；</p>
+</li>
+<li>
+<p>如果输入内容有非数字，则显示内容有误；</p>
+</li>
+<li>
+<p>如果输入位数不为11位，则显示位数有误。</p>
+</li>
+</ul>
+<p>请用因果图法设计测试用例。</p>
+<ul>
+<li>
+<p>输入位数为11位</p>
+<ul>
+<li>
+<p>输入为数字</p>
+<ul>
+<li>显示输入正确</li>
+</ul>
+</li>
+<li>
+<p>输入有非数字</p>
+<ul>
+<li>显示内容有误</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>输入位数不为11位</p>
+<ul>
+<li>显示位数有误</li>
+</ul>
+</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/posts/12d6/2022-05-19-23-16-36-image.png" alt></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/12d6/">https://zhangzqs.cn/posts/12d6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/bd1b/" title="LRU缓存实现"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">LRU缓存实现</div></div></a></div><div class="next-post pull-right"><a href="/posts/969e/" title="Golang高质量编程与性能调优"><div class="cover" style="background: https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Golang高质量编程与性能调优</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">94</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%B7%AF%E5%BE%84%E6%B5%8B%E8%AF%95%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text"> 基本路径测试法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%8E%A7%E5%88%B6%E6%B5%81%E5%9B%BE"><span class="toc-number">1.1.</span> <span class="toc-text"> 程序的控制流图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E8%B7%AF%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text"> 环路复杂度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%B7%AF%E5%BE%84%E6%B5%8B%E8%AF%95%E6%B3%95%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.3.</span> <span class="toc-text"> 基本路径测试法的步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%981"><span class="toc-number">1.4.</span> <span class="toc-text"> 例题1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%982"><span class="toc-number">1.5.</span> <span class="toc-text"> 例题2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%983"><span class="toc-number">1.6.</span> <span class="toc-text"> 例题3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%984"><span class="toc-number">1.7.</span> <span class="toc-text"> 例题4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%985"><span class="toc-number">1.8.</span> <span class="toc-text"> 例题5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%986"><span class="toc-number">1.9.</span> <span class="toc-text"> 例题6</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AD%89%E4%BB%B7%E7%B1%BB%E5%88%92%E5%88%86%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text"> 等价类划分法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AD%89%E4%BB%B7%E7%B1%BB%E5%88%92%E5%88%86%E7%9A%84%E6%83%85%E5%86%B5"><span class="toc-number">2.1.</span> <span class="toc-text"> 等价类划分的情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%92%E5%88%86%E7%AD%89%E4%BB%B7%E7%B1%BB%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text"> 划分等价类的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E8%A7%92%E5%BD%A2%E9%97%AE%E9%A2%98"><span class="toc-number">2.3.</span> <span class="toc-text"> 三角形问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%A6%82%E8%BF%B0"><span class="toc-number">2.3.1.</span> <span class="toc-text"> 问题概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E7%AD%89%E4%BB%B7%E7%B1%BB%E5%88%92%E5%88%86%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.3.2.</span> <span class="toc-text"> 传统等价类划分测试用例设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E5%92%8C%E5%81%A5%E5%A3%AE%E7%AD%89%E4%BB%B7%E7%B1%BB%E5%88%92%E5%88%86%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.3.3.</span> <span class="toc-text"> 标准和健壮等价类划分测试用例设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nextdate%E9%97%AE%E9%A2%98"><span class="toc-number">2.4.</span> <span class="toc-text"> NextDate问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BE%B9%E7%95%8C%E5%80%BC%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text"> 边界值分析法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E7%9A%84%E5%8E%9F%E5%88%99"><span class="toc-number">3.1.</span> <span class="toc-text"> 选择测试用例的原则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%A0%E6%9E%9C%E5%9B%BE%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text"> 因果图法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%B3%E7%AD%96%E8%A1%A8%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text"> 决策表法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#nextdate%E9%97%AE%E9%A2%98-2"><span class="toc-number">5.1.</span> <span class="toc-text"> NextDate问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E7%9A%84%E5%AE%9E%E6%96%BD%E6%96%B9%E6%A1%88"><span class="toc-number">6.</span> <span class="toc-text"> 集成测试的实施方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E5%A2%9E%E5%BC%8F%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95"><span class="toc-number">6.1.</span> <span class="toc-text"> 非增式测试方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%BC%8F%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95"><span class="toc-number">6.2.</span> <span class="toc-text"> 增式测试方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%A2%9E%E5%BC%8F%E6%B5%8B%E8%AF%95"><span class="toc-number">6.2.1.</span> <span class="toc-text"> 自顶向下增式测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%BA%95%E5%90%91%E4%B8%8A%E5%A2%9E%E5%BC%8F%E6%B5%8B%E8%AF%95"><span class="toc-number">6.2.2.</span> <span class="toc-text"> 自底向上增式测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95%E5%AE%9E%E6%96%BD%E6%96%B9%E6%A1%88"><span class="toc-number">6.3.</span> <span class="toc-text"> 其他集成测试实施方案</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%84%E7%A7%8D%E4%BE%8B%E9%A2%98"><span class="toc-number">7.</span> <span class="toc-text"> 各种例题</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2024-04-13T03:33:10.605Z" title="更新于 2024-04-13 11:33:10">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5719/" title="吉他乐理">吉他乐理</a><time datetime="2024-04-12T18:34:14.000Z" title="更新于 2024-04-13 02:34:14">2024-04-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/f7eb/" title="斯涅耳定律推导">斯涅耳定律推导</a><time datetime="2024-02-25T07:28:52.000Z" title="更新于 2024-02-25 15:28:52">2024-02-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/3d72/" title="图形学三大变换">图形学三大变换</a><time datetime="2024-02-02T07:59:12.000Z" title="更新于 2024-02-02 15:59:12">2024-02-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏">使用Rust描述音乐系统并模拟乐器演奏</a><time datetime="2023-11-25T01:01:55.000Z" title="更新于 2023-11-25 09:01:55">2023-11-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '2f41b54b2166b7467a7effa04fce2207',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
