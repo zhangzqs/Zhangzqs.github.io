@@ -6,7 +6,7 @@
   <link href="https://zhangzqs.cn/atom.xml" rel="self"/>
   
   <link href="https://zhangzqs.cn/"/>
-  <updated>2024-06-16T09:29:52.132Z</updated>
+  <updated>2024-07-01T14:19:39.570Z</updated>
   <id>https://zhangzqs.cn/</id>
   
   <author>
@@ -20,8 +20,8 @@
     <title></title>
     <link href="https://zhangzqs.cn/posts/0/"/>
     <id>https://zhangzqs.cn/posts/0/</id>
-    <published>2024-06-16T09:29:52.132Z</published>
-    <updated>2024-06-16T09:29:52.132Z</updated>
+    <published>2024-07-01T14:19:39.570Z</published>
+    <updated>2024-07-01T14:19:39.570Z</updated>
     
     <content type="html"><![CDATA[<p>do fa do la fa do<br>fa do mi re la -<br>la fa la so re -<br>so la so re la do<br>do re fa -  -  -</p>]]></content>
     
@@ -47,8 +47,8 @@ do re fa -  -  -&lt;/p&gt;
     <title></title>
     <link href="https://zhangzqs.cn/posts/0/"/>
     <id>https://zhangzqs.cn/posts/0/</id>
-    <published>2024-06-16T09:29:52.132Z</published>
-    <updated>2024-06-16T09:29:52.132Z</updated>
+    <published>2024-07-01T14:19:39.570Z</published>
+    <updated>2024-07-01T14:19:39.570Z</updated>
     
     <content type="html"><![CDATA[let notes = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];let octives = ['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7', 'O8'];function add(notePitch, halfTones) {    let oldNote = notePitch.note;    let oldOctive = notePitch.octive;    let oldDist = octives.indexOf(oldOctive) * 12 + notes.indexOf(oldNote);    let newDist = oldDist + halfTones;    let newOctive = octives[Math.floor(newDist / 12)];    let newNote = notes[newDist % 12];    return {        note: newNote,        octive: newOctive,    };}function notePitchToStr(notePitch) {    return notePitch.note + `${octives.indexOf(notePitch.octive)+1}`}const s = [    {note: 'E', octive: 'O4'},    {note: 'B', octive: 'O3'},    {note: 'G', octive: 'O3'},    {note: 'D', octive: 'O3'},    {note: 'A', octive: 'O2'},    {note: 'E', octive: 'O2'},]{    let tmp = '\t';    for (let i=0;i]]></content>
     
