@@ -210,7 +210,47 @@ window.__require = function e(t, n, o) {
         e.getComponent(cc.Animation).stop(t)
       },
       addNodeAni: function (e, t, n, o, c, a, i) {
-        for (var r = e.getComponent(cc.Animation), s = [], l = o; l <= 3 c; l++) { var u="new" cc.spriteframe(cc.url.raw("resources " + t l ".png")); s.push(u) } d="cc.AnimationClip.createWithSpriteFrames(s," 5); d.name="n," d.speed="i," d.wrapmode="a" ? cc.wrapmode.loop : cc.wrapmode.normal, r.addclip(d) }, returnrannum: function (e, t) return e math.floor(math.random() * (t - 1)) }; window.anitools="o," cc._rf.pop() {}], audiomanager: [function t, n) "use strict"; cc._rf.push(t, "3db2d9mutto8jrqknpm9kfu", "audiomanager"); o="this" && this.__extends || () (t, (e="Object.setPrototypeOf" __proto__: [] instanceof array e.__proto__="t" for (var n in t.hasownproperty(n) (e[n]="t[n])" })(t, o() this.constructor="t" e(t, n), t.prototype="null" =="=" object.create(n) (o.prototype="n.prototype," new o) }(), c="this" this.__decorate n, c, a="arguments.length," i="a" < null="==" o; if ("object"="=" typeof reflect "function"="=" reflect.decorate) o); else r="e.length" 1;>= 0; r--) (c = e[r]) && (i = (a < 3 ? c(i) : a > 3 ? c(t, n, i) : c(t, n)) || i);
+        for (var r = e.getComponent(cc.Animation), s = [], l = o; l <= c; l++) {
+          var u = new cc.SpriteFrame(cc.url.raw("resources/" + t + l + ".png"));
+          s.push(u)
+        }
+        var d = cc.AnimationClip.createWithSpriteFrames(s, 5);
+        d.name = n, d.speed = i, d.wrapMode = a ? cc.WrapMode.Loop : cc.WrapMode.Normal, r.addClip(d)
+      },
+      returnRanNum: function (e, t) {
+        return e + Math.floor(Math.random() * (t - e + 1))
+      }
+    };
+    window.AniTools = o, cc._RF.pop()
+  }, {}],
+  AudioManager: [function (e, t, n) {
+    "use strict";
+    cc._RF.push(t, "3db2d9MuTtO8JRQKnPm9kfu", "AudioManager");
+    var o = this && this.__extends || function () {
+        var e = function (t, n) {
+          return (e = Object.setPrototypeOf || {
+              __proto__: []
+            }
+            instanceof Array && function (e, t) {
+              e.__proto__ = t
+            } || function (e, t) {
+              for (var n in t) t.hasOwnProperty(n) && (e[n] = t[n])
+            })(t, n)
+        };
+        return function (t, n) {
+          function o() {
+            this.constructor = t
+          }
+
+          e(t, n), t.prototype = null === n ? Object.create(n) : (o.prototype = n.prototype, new o)
+        }
+      }(),
+      c = this && this.__decorate || function (e, t, n, o) {
+        var c, a = arguments.length,
+          i = a < 3 ? t : null === o ? o = Object.getOwnPropertyDescriptor(t, n) : o;
+        if ("object" == typeof Reflect && "function" == typeof Reflect.decorate) i = Reflect.decorate(e, t, n, o);
+        else
+          for (var r = e.length - 1; r >= 0; r--) (c = e[r]) && (i = (a < 3 ? c(i) : a > 3 ? c(t, n, i) : c(t, n)) || i);
         return a > 3 && i && Object.defineProperty(t, n, i), i
       };
     Object.defineProperty(n, "__esModule", {
@@ -1465,7 +1505,68 @@ window.__require = function e(t, n, o) {
         }
       }), c(o, "onDataHandler", function () {
         if (404 != this.req.status) {
-          if (4 == this.req.readyState && this.req.status >= 200 && this.req.status <= 3 207 && this.req.responsetext) { var e="JSON.parse(this.req.responseText);" this.isbusy="!1," this.perform.target ? this.perform.func.call(this.perform.target, e.error, e.data, e.commendgame, e.gameinfo) : this.perform.func(e) } else t="a.launchScene," n="a.Bros;" a.cas; cc.director.loadscene(t, null, function () if (n) ""; (e.style.backgroundimage ) cc.loader.onprogress="null," console.log("success to load scene: " + t) }) }), c(o, "returnlanguage", return ("" window.navigator.language).tolocalelowercase() "onerrorhandler", cc.log("\u7f51\u7edc\u9519\u8bef"), -1) this.perform.func(-1) "ontimeouthandler", cc.log("\u8bf7\u6c42\u8d85\u65f6"), "clearall", for (var < e; t++) (n.target n.func.call(n.target, n.func(-1)) this.cachelist.length="0" o); t.exports="i," cc._rf.pop() }, gameconfig: "gameconfig" }], inputcontroller: [function (e, t, n) "use strict"; cc._rf.push(t, "2fb79puruzexoy haothdvz", "inputcontroller"); o="this" this.__extends || (t, (e="Object.setPrototypeOf" __proto__: [] instanceof array e.__proto__="t" in t.hasownproperty(n) (e[n]="t[n])" })(t, }; o() this.constructor="t" e(t, n), t.prototype="null" =="=" object.create(n) (o.prototype="n.prototype," new o) }(), c="this" this.__decorate n, c, a="arguments.length," i="a" null="==" o; ("object"="=" typeof reflect "function"="=" reflect.decorate) r="e.length" - 1;>= 0; r--) (c = e[r]) && (i = (a < 3 ? c(i) : a > 3 ? c(t, n, i) : c(t, n)) || i);
+          if (4 == this.req.readyState && this.req.status >= 200 && this.req.status <= 207 && this.req.responseText) {
+            var e = JSON.parse(this.req.responseText);
+            this.isBusy = !1, this.perform.target ? this.perform.func.call(this.perform.target, e.error, e.data, e.commendGame, e.gameInfo) : this.perform.func(e)
+          }
+        } else {
+          var t = a.launchScene,
+            n = a.Bros;
+          a.caS;
+          cc.director.loadScene(t, null, function () {
+            if (n) {
+              "";
+              var e = document.getElementById("GameDiv");
+              e && (e.style.backgroundImage = "")
+            }
+            cc.loader.onProgress = null, console.log("Success to load scene: " + t)
+          })
+        }
+      }), c(o, "returnLanguage", function () {
+        return ("" + window.navigator.language).toLocaleLowerCase()
+      }), c(o, "onErrorHandler", function () {
+        cc.log("\u7f51\u7edc\u9519\u8bef"), this.isBusy = !1, this.perform.target ? this.perform.func.call(this.perform.target, -1) : this.perform.func(-1)
+      }), c(o, "onTimeoutHandler", function () {
+        cc.log("\u8bf7\u6c42\u8d85\u65f6"), this.isBusy = !1, this.perform.target ? this.perform.func.call(this.perform.target, -1) : this.perform.func(-1)
+      }), c(o, "clearAll", function () {
+        for (var e = this.cacheList.length, t = 0; t < e; t++) {
+          var n = this.cacheList[t];
+          n && (n.target ? n.func.call(n.target, -1) : n.func(-1))
+        }
+        this.cacheList.length = 0
+      }), o);
+    t.exports = i, cc._RF.pop()
+  }, {
+    GameConfig: "GameConfig"
+  }],
+  InputController: [function (e, t, n) {
+    "use strict";
+    cc._RF.push(t, "2fb79pURUZExoy/hAOtHdvz", "InputController");
+    var o = this && this.__extends || function () {
+        var e = function (t, n) {
+          return (e = Object.setPrototypeOf || {
+              __proto__: []
+            }
+            instanceof Array && function (e, t) {
+              e.__proto__ = t
+            } || function (e, t) {
+              for (var n in t) t.hasOwnProperty(n) && (e[n] = t[n])
+            })(t, n)
+        };
+        return function (t, n) {
+          function o() {
+            this.constructor = t
+          }
+
+          e(t, n), t.prototype = null === n ? Object.create(n) : (o.prototype = n.prototype, new o)
+        }
+      }(),
+      c = this && this.__decorate || function (e, t, n, o) {
+        var c, a = arguments.length,
+          i = a < 3 ? t : null === o ? o = Object.getOwnPropertyDescriptor(t, n) : o;
+        if ("object" == typeof Reflect && "function" == typeof Reflect.decorate) i = Reflect.decorate(e, t, n, o);
+        else
+          for (var r = e.length - 1; r >= 0; r--) (c = e[r]) && (i = (a < 3 ? c(i) : a > 3 ? c(t, n, i) : c(t, n)) || i);
         return a > 3 && i && Object.defineProperty(t, n, i), i
       };
     Object.defineProperty(n, "__esModule", {
@@ -1607,7 +1708,10 @@ window.__require = function e(t, n, o) {
         }, t.prototype.onCollisionStay = function (e, t) {
         }, t.prototype.onCollisionExit = function (e, t) {
         }, t.prototype.great = function (e, t) {
-          if (Math.abs(e.y - t.y) <= 15) { p.default.instance.play(1, !1, 1), a.default.tuoweictrl="!0," d.default.instance.injuredeffect(); var n="r.default.Spawn("great"," cc.find("canvas bazieffect")); e.x> 0 ? n.position = cc.v2(e.x - 40, e.y) : n.position = cc.v2(e.x + 40, e.y), n.runAction(cc.sequence(cc.spawn(cc.moveBy(.4, 0, 200), cc.rotateBy(.4, 360)), cc.scaleTo(.15, 1.1), cc.scaleTo(.15, 1), cc.fadeOut(.2))), a.default.score += 10, d.default.Instance.SetScoreTween(a.default.score)
+          if (Math.abs(e.y - t.y) <= 15) {
+            p.default.Instance.Play(1, !1, 1), a.default.tuoweiCtrl = !0, d.default.Instance.InjuredEffect();
+            var n = r.default.Spawn("great", cc.find("Canvas/bazieffect"));
+            e.x > 0 ? n.position = cc.v2(e.x - 40, e.y) : n.position = cc.v2(e.x + 40, e.y), n.runAction(cc.sequence(cc.spawn(cc.moveBy(.4, 0, 200), cc.rotateBy(.4, 360)), cc.scaleTo(.15, 1.1), cc.scaleTo(.15, 1), cc.fadeOut(.2))), a.default.score += 10, d.default.Instance.SetScoreTween(a.default.score)
           } else p.default.Instance.Play(0, !1, 1), a.default.score += 5, d.default.Instance.SetScoreTween(a.default.score)
         }, t.prototype.GhostBornEff = function (e, t) {
           for (var n = s.default.RandomInteger(24, 36), o = 0; o < n; o++) {
@@ -1922,7 +2026,16 @@ window.__require = function e(t, n, o) {
           var t = this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange;
           e > t ? (this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange += .005, (t = this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange) >= e && (this.lerpCtrl = !1)) : (this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange -= .015, (t = this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange) == e && (this.lerpCtrl = !1))
         }, t.prototype.lerpNumFunc1 = function () {
-          this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange -= .03, this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange <= 0 && (this.relerpctrl="!1," this.showlevelprogressinfo()) }, t.prototype.guidearrawaction="function" () { this.guidepanel.children[0].active="!0," this.guidepanel.children[0].runaction(cc.repeatforever(cc.sequence(cc.fadein(.1), cc.moveto(1, 240, 190), cc.moveto(.5, 120, 70), cc.fadeout(.5), cc.moveto(.01, -240, 190)))) t.prototype.closeguide="function" t.prototype.setscoretween="function" (e) this.targetscore !="e" (this.targetscore="e," this.scorechangevalue="Math.abs(this.targetScore" - this.currentscore), this.isscorechange="!0)" t.prototype.updatescorelabel="function" if (this.isscorechange) this.currentscore +="e" * 5,>= this.targetScore && (this.currentScore = this.targetScore, this.isScoreChange = !1);
+          this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange -= .03, this.levelProgress.children[0].children[0].getComponent(cc.Sprite).fillRange <= 0 && (this.relerpCtrl = !1, this.showLevelProgressInfo())
+        }, t.prototype.GuideArrawAction = function () {
+          this.guidePanel.children[0].active = !0, this.guidePanel.children[0].runAction(cc.repeatForever(cc.sequence(cc.fadeIn(.1), cc.moveTo(1, 240, 190), cc.moveTo(.5, 120, 70), cc.fadeOut(.5), cc.moveTo(.01, -240, 190))))
+        }, t.prototype.closeGuide = function () {
+          this.guidePanel.children[0].active = !1
+        }, t.prototype.SetScoreTween = function (e) {
+          this.targetScore != e && (this.targetScore = e, this.scoreChangeValue = Math.abs(this.targetScore - this.currentScore), this.isScoreChange = !0)
+        }, t.prototype.UpdateScoreLabel = function (e) {
+          if (this.isScoreChange) {
+            this.currentScore += e * this.scoreChangeValue * 5, this.currentScore >= this.targetScore && (this.currentScore = this.targetScore, this.isScoreChange = !1);
             var t = Math.floor(this.currentScore);
             this.scoreLabel.string = t.toString()
           }
@@ -2186,7 +2299,56 @@ window.__require = function e(t, n, o) {
         }, t.prototype.SetVelocity = function (e, t) {
           this.velocity = e, this.dropTime = t, this.dropTimeTicker = this.dropTime
         }, t.prototype.update = function (e) {
-          this.node.x += this.velocity.x * e, this.node.y += this.velocity.y * e, this.velocity.y += this.gravityScale * e, this.isDead || (this.dropTimeTicker -= e, this.dropTimeTicker <= 0 3 && (this.isdead="!0," this.node.runaction(cc.sequence(cc.scaleto(this.deadtime, 0), cc.callfunc(function (e) { a.default.despawn(this.prefabname, e) }, this))))) c([s], t.prototype, "prefabname", void "gravityscale", "droptime", "deadtime", c([s(cc.vec2)], "velocity", t="c([r]," t) }(cc.component); n.default="l," cc._rf.pop() ".. common poolmanager": "poolmanager" }], playerinfo: [function (e, t, n) "use strict"; cc._rf.push(t, "ea489dpdu9ozyor2de1hqb7", "playerinfo"), object.defineproperty(n, "__esmodule", value: !0 }); var o="function" () function e() } return e.playertouch="!0," e.score="0," e.knifestatic="Idle" , e.knifelr="1," e.gameupdatectrl="!0," e.playnum="0," e.tuoweictrl="!1," e.bgnumber="0," e }(); {}], poolmanager: "42678o0borezkamjcljpxi3", "poolmanager"); this.__extends || (t, (e="Object.setPrototypeOf" __proto__: [] instanceof array e.__proto__="t" for (var n in t.hasownproperty(n) (e[n]="t[n])" })(t, }; o() this.constructor="t" e(t, n), t.prototype="null" =="=" ? object.create(n) : (o.prototype="n.prototype," new o) }(), c="this" this.__decorate n, c, a="arguments.length," i="a" < null="==" o; if ("object"="=" typeof reflect "function"="=" reflect.decorate) o); else r="e.length" - 1;>= 0; r--) (c = e[r]) && (i = (a < 3 ? c(i) : a > 3 ? c(t, n, i) : c(t, n)) || i);
+          this.node.x += this.velocity.x * e, this.node.y += this.velocity.y * e, this.velocity.y += this.gravityScale * e, this.isDead || (this.dropTimeTicker -= e, this.dropTimeTicker <= 0 && (this.isDead = !0, this.node.runAction(cc.sequence(cc.scaleTo(this.deadTime, 0), cc.callFunc(function (e) {
+            a.default.Despawn(this.prefabName, e)
+          }, this)))))
+        }, c([s], t.prototype, "prefabName", void 0), c([s], t.prototype, "gravityScale", void 0), c([s], t.prototype, "dropTime", void 0), c([s], t.prototype, "deadTime", void 0), c([s(cc.Vec2)], t.prototype, "velocity", void 0), t = c([r], t)
+      }(cc.Component);
+    n.default = l, cc._RF.pop()
+  }, {
+    "../Common/PoolManager": "PoolManager"
+  }],
+  PlayerInfo: [function (e, t, n) {
+    "use strict";
+    cc._RF.push(t, "ea489dPDU9OZYOr2dE1HqB7", "PlayerInfo"), Object.defineProperty(n, "__esModule", {
+      value: !0
+    });
+    var o = function () {
+      function e() {
+      }
+
+      return e.playerTouch = !0, e.score = 0, e.knifeStatic = "Idle", e.knifeLR = 1, e.GameUpdateCtrl = !0, e.playNum = 0, e.tuoweiCtrl = !1, e.bgNumber = 0, e
+    }();
+    n.default = o, cc._RF.pop()
+  }, {}],
+  PoolManager: [function (e, t, n) {
+    "use strict";
+    cc._RF.push(t, "42678O0bOREZKAMjCljpxI3", "PoolManager");
+    var o = this && this.__extends || function () {
+        var e = function (t, n) {
+          return (e = Object.setPrototypeOf || {
+              __proto__: []
+            }
+            instanceof Array && function (e, t) {
+              e.__proto__ = t
+            } || function (e, t) {
+              for (var n in t) t.hasOwnProperty(n) && (e[n] = t[n])
+            })(t, n)
+        };
+        return function (t, n) {
+          function o() {
+            this.constructor = t
+          }
+
+          e(t, n), t.prototype = null === n ? Object.create(n) : (o.prototype = n.prototype, new o)
+        }
+      }(),
+      c = this && this.__decorate || function (e, t, n, o) {
+        var c, a = arguments.length,
+          i = a < 3 ? t : null === o ? o = Object.getOwnPropertyDescriptor(t, n) : o;
+        if ("object" == typeof Reflect && "function" == typeof Reflect.decorate) i = Reflect.decorate(e, t, n, o);
+        else
+          for (var r = e.length - 1; r >= 0; r--) (c = e[r]) && (i = (a < 3 ? c(i) : a > 3 ? c(t, n, i) : c(t, n)) || i);
         return a > 3 && i && Object.defineProperty(t, n, i), i
       };
     Object.defineProperty(n, "__esModule", {
@@ -2291,7 +2453,47 @@ window.__require = function e(t, n, o) {
         }, t.prototype.setMosquitoSpeed = function () {
           this.node.angle >= 360 ? this.node.angle -= 360 : this.node.angle < 0 && (this.node.angle += 360), this.mosquitoSpeedR = Math.random() * this.mosquitoSpeedMaxR * 2 - this.mosquitoSpeedMaxR;
           var e = Math.random() * this.mosquitoTargetMaxR * (Math.abs(this.mosquitoSpeedR) / (this.mosquitoSpeedMaxR + .4 * this.mapScale));
-          this.mosquitoSpeedR > 0 ? (this.mosquitoTargetR = this.node.angle + e, this.mosquitoAddR = !0) : (this.mosquitoTargetR = this.node.angle - e, this.mosquitoAddR = !1), this.checkEdgeDelayCount = 0, this.onEdgeFlag && Math.abs(this.mosquitoSpeedR) > 2 && (this.mosquitoSpeedR = this.mosquitoSpeedR / 3 * 2, this.mosquitoTargetR = this.mosquitoTargetR / 3 * 2), this.onEdgeFlag = !1, this.turnNum--, this.turnNum <= 0 && (this.isturn="!1)" }, t.prototype.updatemosquito="function" () { var e="this.mosquitoSpeedLen," t="this.mosquitoSpeedR," n="this.mosquitoTargetR," o="this.node," c="this.getPointByCPAndAngleAndLen(o.getPosition()," o.angle + t, e); o.setposition(c), this.mosquitoaddr ?>= n && this.setMosquitoSpeed() : o.angle <= 0 2 n && this.setmosquitospeed() }, t.prototype.setpos="function" () { this.node.position.x < ? this.newpos="cc.v2(-cc.winSize.width" - 100, this.node.position.y) : + this.node.position.y), this.isuser="!1" t.prototype.setpos_1="function" this.isupdate="!1," this.scheduleonce(function this.setpos() .5) t.prototype.update="function" (e) (this.updatemosquito(), this.checkonedge(!0)), this.isfade || (this.fadeticker this.fadeticker this.node.runaction(cc.sequence(cc.fadeout(.5), cc.callfunc(function this))))) t.prototype.updatemove_1="function" this.dir="cc.v2(this.node.position).sub(this.newPos).normalize().neg();" var t="1" * (this.dir.x this.mosquitospeedlen 3), (this.dir.y o="this.node.x" t, c="this.node.y" n; this.node.x="o," this.node.y="c;" a="180" math.atan2(this.dir.y, this.dir.x) math.pi; 90, this.node.angle="a" t.prototype.updatemove="function" this.mosquitospeedlen), t.prototype.setmosquitobackspeed="function" this.isturn="!1," 2) t.prototype.checkonedge="function"> cc.winSize.width / 2 + 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.x < -cc.winSize.width / 2 - 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.y > cc.winSize.height / 2 + 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.y < -cc.winSize.height / 2 - 100 && (e ? this.setMosquitoBackSpeed() : this.node.active = !1)
+          this.mosquitoSpeedR > 0 ? (this.mosquitoTargetR = this.node.angle + e, this.mosquitoAddR = !0) : (this.mosquitoTargetR = this.node.angle - e, this.mosquitoAddR = !1), this.checkEdgeDelayCount = 0, this.onEdgeFlag && Math.abs(this.mosquitoSpeedR) > 2 && (this.mosquitoSpeedR = this.mosquitoSpeedR / 3 * 2, this.mosquitoTargetR = this.mosquitoTargetR / 3 * 2), this.onEdgeFlag = !1, this.turnNum--, this.turnNum <= 0 && (this.isTurn = !1)
+        }, t.prototype.updateMosquito = function () {
+          var e = this.mosquitoSpeedLen,
+            t = this.mosquitoSpeedR,
+            n = this.mosquitoTargetR,
+            o = this.node,
+            c = this.getPointByCPAndAngleAndLen(o.getPosition(), o.angle + t, e);
+          o.setPosition(c), o.angle += t, this.mosquitoAddR ? o.angle >= n && this.setMosquitoSpeed() : o.angle <= n && this.setMosquitoSpeed()
+        }, t.prototype.setPos = function () {
+          this.node.position.x < 0 ? this.newPos = cc.v2(-cc.winSize.width / 2 - 100, this.node.position.y) : this.newPos = cc.v2(cc.winSize.width / 2 + 100, this.node.position.y), this.isUser = !1
+        }, t.prototype.setPos_1 = function () {
+          this.isUpdate = !1, this.scheduleOnce(function () {
+            this.isUpdate = !0, this.setPos()
+          }, .5)
+        }, t.prototype.update = function (e) {
+          this.isUpdate && this.isUser && (this.updateMosquito(), this.checkOnEdge(!0)), this.isFade || (this.fadeTicker -= e, this.fadeTicker < 0 && (this.fadeTicker = 0, this.isFade = !0, this.node.runAction(cc.sequence(cc.fadeOut(.5), cc.callFunc(function (e) {
+          }, this)))))
+        }, t.prototype.updateMove_1 = function (e) {
+          this.dir = cc.v2(this.node.position).sub(this.newPos).normalize().neg();
+          var t = 1 * (this.dir.x * this.mosquitoSpeedLen * 3),
+            n = 1 * (this.dir.y * this.mosquitoSpeedLen * 3),
+            o = this.node.x + t,
+            c = this.node.y + n;
+          this.node.x = o, this.node.y = c;
+          var a = 180 * Math.atan2(this.dir.y, this.dir.x) / Math.PI;
+          a = 360 - a + 90, this.node.angle = a
+        }, t.prototype.updateMove = function (e) {
+          this.dir = cc.v2(this.node.position).sub(this.newPos).normalize().neg();
+          var t = 1 * (this.dir.x * this.mosquitoSpeedLen),
+            n = 1 * (this.dir.y * this.mosquitoSpeedLen),
+            o = this.node.x + t,
+            c = this.node.y + n;
+          this.node.x = o, this.node.y = c;
+          var a = 180 * Math.atan2(this.dir.y, this.dir.x) / Math.PI;
+          a = 360 - a + 90, this.node.angle = a
+        }, t.prototype.setMosquitoBackSpeed = function () {
+          this.isTurn = !1, this.scheduleOnce(function () {
+            this.isTurn = !0, this.setMosquitoSpeed()
+          }, 2)
+        }, t.prototype.checkOnEdge = function (e) {
+          this.node.x > cc.winSize.width / 2 + 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.x < -cc.winSize.width / 2 - 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.y > cc.winSize.height / 2 + 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.y < -cc.winSize.height / 2 - 100 && (e ? this.setMosquitoBackSpeed() : this.node.active = !1)
         }, t.prototype.getAngle = function (e, t, n, o) {
           var c = Math.abs(e - n),
             a = Math.abs(t - o),
@@ -2489,7 +2691,11 @@ window.__require = function e(t, n, o) {
                 this.node.angle = this.angle - 90
             }
             var n = e * (360 / this.timePerRound);
-            this.clockwise ? this.angle -= n : this.angle += n, this.angle >= 360 ? this.angle %= 360 : this.angle <= -360 && (this.angle %="-360)" } }, t.prototype.run="function" (e, t, n, o, c) { if (e (this.targetpos="e)," t (this.clockwise="t)," n (this.timeperround="n)," o (this.facetotarget="o)," c (this.faceaxis="c)," !this.targetpos) return cc.log("no target!"); this.ischangefunc ? this.node.y> 0 ? this.angle = this.getAngle(this.targetPos, this.node.getPosition()) + 90 : this.angle = this.getAngle(this.targetPos, this.node.getPosition()) - 90 : this.angle = this.getAngle(this.targetPos, this.node.getPosition()), this.radius = this.getDistance(this.targetPos, this.node.getPosition());
+            this.clockwise ? this.angle -= n : this.angle += n, this.angle >= 360 ? this.angle %= 360 : this.angle <= -360 && (this.angle %= -360)
+          }
+        }, t.prototype.run = function (e, t, n, o, c) {
+          if (e && (this.targetPos = e), t && (this.clockwise = t), n && (this.timePerRound = n), o && (this.faceToTarget = o), c && (this.faceAxis = c), !this.targetPos) return cc.log("No target!");
+          this.ischangeFunc ? this.node.y > 0 ? this.angle = this.getAngle(this.targetPos, this.node.getPosition()) + 90 : this.angle = this.getAngle(this.targetPos, this.node.getPosition()) - 90 : this.angle = this.getAngle(this.targetPos, this.node.getPosition()), this.radius = this.getDistance(this.targetPos, this.node.getPosition());
           var a = Math.PI / 180 * this.angle;
           this.node.x = this.targetPos.x + this.radius * Math.cos(a), this.node.y = this.targetPos.y + this.radius * Math.sin(a), this.isRotating = !0
         }, t.prototype.stop = function () {
@@ -2823,7 +3029,70 @@ window.__require = function e(t, n, o) {
         if (1 === e) t[0] = 1;
         else {
           t[0] = t[1] = 1;
-          for (var n = 3; n <= 0 180 e; n++) { for (var o="new" array, c="0;" < n - 1; c++) o[c]="t[c];" t[0]="t[n" 1]="1;" (c="0;" 2; t[c + o[c } return t }, e.convertposition="function" (e, t) if (e.parent="=" t.parent) e.position; var 0)); t.converttonodespacear(n) e.convertangle="function" null !="n;)" a="t.angle;" e.convertanglevalue="function" t, n) i="n.angle;" e.convertscale="function" *="n.scaleX," r="t.scaleY;" s="o;" && (s = i); l="c;" (l r), cc.v2(s, l) e.random="function" math.random() (t e) e e.randominteger="function" math.floor(math.random() e.angletoradian="function" (e) math.pi e.centeredui="function" arguments.length; t[n 1) e, t.length; t[c].getcomponent(cc.label); -o; (a t[c].x="a" .5 t[c].width, e.checkpolygonnodecollision="function" (t, (null="=" || c) !1; o.points.length; i++) o.points[i].y); a.push(r) array; (i="0;" c.points.length; c.points[i].y); s.push(r) a.length; a[i].rotateself(e.angletoradian(t.angle)), a[i]="l.add(a[i]);" u="n.convertToWorldSpaceAR(cc.v2(0," s.length; s[i].rotateself(e.angletoradian(n.angle)), s[i]="u.add(s[i]);" cc.intersection.polygonpolygon(a, s) e.getrandomnum="function" void (n="!1)," ? : e.randomindexfromarr="function" e.length; e[c]> 0 && (t.push(e[c]), n.push(c), o += e[c]);
+          for (var n = 3; n <= e; n++) {
+            for (var o = new Array, c = 0; c < n - 1; c++) o[c] = t[c];
+            t[0] = t[n - 1] = 1;
+            for (c = 0; c < n - 2; c++) t[c + 1] = o[c] + o[c + 1]
+          }
+        }
+        return t
+      }, e.ConvertPosition = function (e, t) {
+        if (e.parent == t.parent) return e.position;
+        var n = e.convertToWorldSpaceAR(cc.v2(0, 0));
+        return t.convertToNodeSpaceAR(n)
+      }, e.ConvertAngle = function (e, t) {
+        for (var n = e.parent, o = e.angle; null != n;) o += n.angle, n = n.parent;
+        for (var c = t.parent, a = t.angle; null != c;) a += c.angle, c = c.parent;
+        return o - a
+      }, e.ConvertAngleValue = function (e, t, n) {
+        for (var o = e, c = t; null != o;) c += o.angle, o = o.parent;
+        for (var a = n.parent, i = n.angle; null != a;) i += a.angle, a = a.parent;
+        return c - i
+      }, e.ConvertScale = function (e, t) {
+        for (var n = e.parent, o = e.scaleX, c = e.scaleY; null != n;) o *= n.scaleX, c *= n.scaleY, n = n.parent;
+        for (var a = t.parent, i = t.scaleX, r = t.scaleY; null != a;) i *= a.scaleX, r *= a.scaleY, a = a.parent;
+        var s = o;
+        0 != i && (s /= i);
+        var l = c;
+        return 0 != r && (l /= r), cc.v2(s, l)
+      }, e.Random = function (e, t) {
+        return Math.random() * (t - e) + e
+      }, e.RandomInteger = function (e, t) {
+        return Math.floor(Math.random() * (t - e) + e)
+      }, e.AngleToRadian = function (e) {
+        return e * Math.PI / 180
+      }, e.CenteredUi = function (e) {
+        for (var t = [], n = 1; n < arguments.length; n++) t[n - 1] = arguments[n];
+        for (var o = (t.length - 1) * e, c = 0; c < t.length; c++) {
+          t[c].getComponent(cc.Label);
+          o += t[c].width
+        }
+        var a = .5 * -o;
+        for (c = 0; c < t.length; c++) 0 != c && (a += e), t[c].x = a + .5 * t[c].width, a += t[c].width
+      }, e.CheckPolygonNodeCollision = function (t, n) {
+        var o = t.getComponent(cc.PolygonCollider),
+          c = n.getComponent(cc.PolygonCollider);
+        if (null == o || null == c) return !1;
+        for (var a = new Array, i = 0; i < o.points.length; i++) {
+          var r = cc.v2(o.points[i].x, o.points[i].y);
+          a.push(r)
+        }
+        var s = new Array;
+        for (i = 0; i < c.points.length; i++) {
+          r = cc.v2(c.points[i].x, c.points[i].y);
+          s.push(r)
+        }
+        var l = t.convertToWorldSpaceAR(cc.v2(0, 0));
+        l = cc.find("Canvas").convertToNodeSpaceAR(l), l = t.position;
+        for (i = 0; i < a.length; i++) a[i].rotateSelf(e.AngleToRadian(t.angle)), a[i] = l.add(a[i]);
+        var u = n.convertToWorldSpaceAR(cc.v2(0, 0));
+        u = cc.find("Canvas").convertToNodeSpaceAR(u), u = n.position;
+        for (i = 0; i < s.length; i++) s[i].rotateSelf(e.AngleToRadian(n.angle)), s[i] = u.add(s[i]);
+        return cc.Intersection.polygonPolygon(a, s)
+      }, e.getRandomNum = function (e, t, n) {
+        return void 0 === n && (n = !1), n ? Math.floor(Math.random() * (t - e + 1) + e) : Math.random() * (t - e) + e
+      }, e.RandomIndexFromArr = function (e) {
+        for (var t = new Array, n = new Array, o = 0, c = 0; c < e.length; c++) e[c] > 0 && (t.push(e[c]), n.push(c), o += e[c]);
         var a = 100 / o;
         for (c = 0; c < t.length; c++) t[c] *= a, t[c] = Math.round(t[c]);
         var i = Math.floor(100 * Math.random()),
@@ -2886,7 +3155,17 @@ window.__require = function e(t, n, o) {
           o = t.y - e.y;
         return 360 * Math.atan(o / n) / (2 * Math.PI)
       }, e.judgeIntersect = function (e, t, n, o, c, a, i, r) {
-        return Math.min(e, n) <= 360 math.max(c, i) && math.min(a, r) <="Math.max(t," o) math.min(c, n) math.min(t, (((c - e) * (o t) (n (a t)) ((i (r ((e c) a) (i (t a)) ((n }, e.getnormalizevector="function" (e, { return t.sub(e).normalize() e.judgeitemoverlapping="function" t, n, o, c, a, i, !(e + n c || i e t o a r e.getcircumferencepos="function" var 0); o.x="e.x" math.sin(2 math.pi o.y="e.y" math.cos(2 e.upsetarr="function" (e) e.sort(function math.random()> .5 ? -1 : 1
+        return Math.min(e, n) <= Math.max(c, i) && Math.min(a, r) <= Math.max(t, o) && Math.min(c, i) <= Math.max(e, n) && Math.min(t, o) <= Math.max(a, r) && (((c - e) * (o - t) - (n - e) * (a - t)) * ((i - e) * (o - t) - (n - e) * (r - t)) <= 1e-8 && ((e - c) * (r - a) - (i - c) * (t - a)) * ((n - c) * (r - a) - (i - c) * (o - a)) <= 1e-8)
+      }, e.getNormalizeVector = function (e, t) {
+        return t.sub(e).normalize()
+      }, e.judgeItemOverlapping = function (e, t, n, o, c, a, i, r) {
+        return !(e + n < c || c + i < e || t + o < a || a + r < t)
+      }, e.getCircumferencePos = function (e, t, n) {
+        var o = cc.v2(0, 0);
+        return o.x = e.x + Math.sin(2 * Math.PI / 360 * n) * t, o.y = e.y + Math.cos(2 * Math.PI / 360 * n) * t, o
+      }, e.upsetArr = function (e) {
+        return e.sort(function (e, t) {
+          return Math.random() > .5 ? -1 : 1
         })
       }, e.getAudio = function (e, t) {
         return cc.sys.os === cc.sys.OS_IOS ? e : t
@@ -3067,7 +3346,54 @@ window.__require = function e(t, n, o) {
       setMosquitoSpeed: function () {
         this.node.angle >= 360 ? this.node.angle -= 360 : this.node.angle < 0 && (this.node.angle += 360), this.mosquitoSpeedR = Math.random() * this.mosquitoSpeedMaxR * 2 - this.mosquitoSpeedMaxR;
         var e = Math.random() * this.mosquitoTargetMaxR * (Math.abs(this.mosquitoSpeedR) / (this.mosquitoSpeedMaxR + .4 * this.mapScale));
-        this.mosquitoSpeedR > 0 ? (this.mosquitoTargetR = this.node.angle + e, this.mosquitoAddR = !0) : (this.mosquitoTargetR = this.node.angle - e, this.mosquitoAddR = !1), this.checkEdgeDelayCount = 0, this.onEdgeFlag && Math.abs(this.mosquitoSpeedR) > 2 && (this.mosquitoSpeedR = this.mosquitoSpeedR / 3 * 2, this.mosquitoTargetR = this.mosquitoTargetR / 3 * 2), this.onEdgeFlag = !1, this.turnNum--, this.turnNum <= 0 && (this.isturn="!1)" }, updatemosquito: function () { var e="this.mosquitoSpeedLen," t="this.mosquitoSpeedR," n="this.mosquitoTargetR," c="this.node," a="o.getPointByCPAndAngleAndLen(c.getPosition()," c.angle + t, e); c.setposition(a), this.mosquitoaddr ?>= n && this.setMosquitoSpeed() : c.angle <= 0 2 n && this.setmosquitospeed() }, setpos: function () { this.node.position.x < ? this.newpos="cc.v2(-GameData.gameWidth" - 100, this.node.position.y) : + this.node.position.y), this.isuser="!1" setpos_1: this.isupdate="!1," this.scheduleonce(function this.setpos() .5) update: (e) (this.isuser this.isturn (this.updatemosquito(), this.checkonedge(!0)) this.updatemove(e) (this.updatemove_1(e), this.checkonedge(!1))) updatemove_1: this.dir="other.getNormalizeVector(this.node.getPosition()," this.newpos); var t="1" * (this.dir.x this.mosquitospeedlen 3), (this.dir.y o="this.node.x" t, c="this.node.y" n; this.node.x="o," this.node.y="c;" a="180" math.atan2(this.dir.y, this.dir.x) math.pi; 90, this.node.angle="a" updatemove: cc.v2(0, 100)); this.mosquitospeedlen), setmosquitobackspeed: 2) checkonedge:> GameData.gameWidth / 2 + 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.x < -GameData.gameWidth / 2 - 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.y > GameData.gameHeight / 2 + 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.y < -GameData.gameHeight / 2 - 100 && (e ? this.setMosquitoBackSpeed() : this.node.active = !1)
+        this.mosquitoSpeedR > 0 ? (this.mosquitoTargetR = this.node.angle + e, this.mosquitoAddR = !0) : (this.mosquitoTargetR = this.node.angle - e, this.mosquitoAddR = !1), this.checkEdgeDelayCount = 0, this.onEdgeFlag && Math.abs(this.mosquitoSpeedR) > 2 && (this.mosquitoSpeedR = this.mosquitoSpeedR / 3 * 2, this.mosquitoTargetR = this.mosquitoTargetR / 3 * 2), this.onEdgeFlag = !1, this.turnNum--, this.turnNum <= 0 && (this.isTurn = !1)
+      },
+      updateMosquito: function () {
+        var e = this.mosquitoSpeedLen,
+          t = this.mosquitoSpeedR,
+          n = this.mosquitoTargetR,
+          c = this.node,
+          a = o.getPointByCPAndAngleAndLen(c.getPosition(), c.angle + t, e);
+        c.setPosition(a), c.angle += t, this.mosquitoAddR ? c.angle >= n && this.setMosquitoSpeed() : c.angle <= n && this.setMosquitoSpeed()
+      },
+      setPos: function () {
+        this.node.position.x < 0 ? this.newPos = cc.v2(-GameData.gameWidth / 2 - 100, this.node.position.y) : this.newPos = cc.v2(GameData.gameWidth / 2 + 100, this.node.position.y), this.isUser = !1
+      },
+      setPos_1: function () {
+        this.isUpdate = !1, this.scheduleOnce(function () {
+          this.isUpdate = !0, this.setPos()
+        }, .5)
+      },
+      update: function (e) {
+        this.isUpdate && (this.isUser ? this.isTurn ? (this.updateMosquito(), this.checkOnEdge(!0)) : this.updateMove(e) : (this.updateMove_1(e), this.checkOnEdge(!1)))
+      },
+      updateMove_1: function (e) {
+        this.dir = other.getNormalizeVector(this.node.getPosition(), this.newPos);
+        var t = 1 * (this.dir.x * this.mosquitoSpeedLen * 3),
+          n = 1 * (this.dir.y * this.mosquitoSpeedLen * 3),
+          o = this.node.x + t,
+          c = this.node.y + n;
+        this.node.x = o, this.node.y = c;
+        var a = 180 * Math.atan2(this.dir.y, this.dir.x) / Math.PI;
+        a = 360 - a + 90, this.node.angle = a
+      },
+      updateMove: function (e) {
+        this.dir = other.getNormalizeVector(this.node.getPosition(), cc.v2(0, 100));
+        var t = 1 * (this.dir.x * this.mosquitoSpeedLen),
+          n = 1 * (this.dir.y * this.mosquitoSpeedLen),
+          o = this.node.x + t,
+          c = this.node.y + n;
+        this.node.x = o, this.node.y = c;
+        var a = 180 * Math.atan2(this.dir.y, this.dir.x) / Math.PI;
+        a = 360 - a + 90, this.node.angle = a
+      },
+      setMosquitoBackSpeed: function () {
+        this.isTurn = !1, this.scheduleOnce(function () {
+          this.isTurn = !0, this.setMosquitoSpeed()
+        }, 2)
+      },
+      checkOnEdge: function (e) {
+        this.node.x > GameData.gameWidth / 2 + 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.x < -GameData.gameWidth / 2 - 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.y > GameData.gameHeight / 2 + 100 ? e ? this.setMosquitoBackSpeed() : this.node.active = !1 : this.node.y < -GameData.gameHeight / 2 - 100 && (e ? this.setMosquitoBackSpeed() : this.node.active = !1)
       }
     });
     var o = {
@@ -3321,7 +3647,36 @@ window.__require = function e(t, n, o) {
         var e = [],
           t = null,
           n = null;
-        return Math.random() <= .5 ? (t="a.gameEndName1," n="a.gameEndUrl1)" : e.push(t), e.push(n), e }, addclickbtns: function () { var e.morebtn.node.on(cc.node.eventtype.touch_start, (e) }), e.morebtn.node.on(cc.node.eventtype.touch_end, console.log("moregame"), window.location.href="a.moreGameUrl" e.leftbtn.node.on(cc.node.eventtype.touch_start, e.leftbtn.node.on(cc.node.eventtype.touch_end, c.game_over_bool="!0," c.gamescore="0," o.loadingscene("maingamescene") e.rightbtn.node.on(cc.node.eventtype.touch_start, e.rightbtn.node.on(cc.node.eventtype.touch_end, (t) !="e.rightBtnGameUrl" && "" e.rightbtngameurl e.temparr[1], }) getcontentbyscore: (e, t) + t "\u4e2d\u7adf\u7136\u5f97\u4e861\u5206\uff0c\u5168\u7403\u53ea\u67091\u4e2a\u4eba\u5f971\u5206\uff01", o="parseInt(.3" * this.standardscore), c="parseInt(1.5" a="parseInt(2.5" i="parseInt(4" this.standardscore); if (e> 0 && e <= o) n="\u6211\u5728" + t "\u4e2d\u5f97\u4e86" e "\u5206\uff0c\u771f\u662f\u592a\u68d2\u4e86\uff0c\u518d\u7ec3\u7ec3\u5c31\u80fd\u8fbe\u5230\u6e38\u5203\u6709\u4f59\u7684\u5883\u754c\uff01"; else if (e> o && e <= this.standardscore) n="\u6211\u5728" + t "\u4e2d\u5f97\u4e86" e "\u5206\uff0c\u771f\u662f\u592a\u68d2\u4e86\uff0c\u518d\u7ec3\u7ec3\u5c31\u80fd\u8fbe\u5230\u6e38\u5203\u6709\u4f59\u7684\u5883\u754c\uff01"; else if (e> this.standardScore && e <= c) { n="\u6211\u5728" + t "\u4e2d\u5f97\u4e86" e "\u5206\uff0c\u51fb\u8d25\u4e86\u5168\u7403" (math.floor(12 * (e - this.standardscore) (c this.standardscore)) 80) "%\u7684\u73a9\u5bb6\uff0c\u8fdb\u5165\u4e86\u4fe1\u624b\u62c8\u6765\u7684\u5883\u754c\uff01" } else if> c && e <= a) { n="\u6211\u5728" + t "\u4e2d\u5f97\u4e86" e "\u5206\uff0c\u51fb\u8d25\u4e86\u5168\u7403" (math.floor(7 * (e - c) (a c)) 92) "%\u7684\u73a9\u5bb6\uff0c\u8fdb\u5165\u4e86\u8fd0\u7528\u81ea\u5982\u7684\u5883\u754c\uff01" } else if> a && e <= i) n="\u6211\u5728" + t "\u4e2d\u5f97\u4e86" e "\u5206\uff0c\u51fb\u8d25\u4e86\u5168\u740399%\u7684\u73a9\u5bb6\uff0c\u8fbe\u5230\u4e86\u884c\u4e91\u6d41\u6c34\u7684\u5883\u754c\uff01"; else if (e> i && e < this.game_max_score) {
+        return Math.random() <= .5 ? (t = a.gameEndName1, n = a.gameEndUrl1) : (t = a.gameEndName2, n = a.gameEndUrl2), e.push(t), e.push(n), e
+      },
+      addClickBtns: function () {
+        var e = this;
+        e.moreBtn.node.on(cc.Node.EventType.TOUCH_START, function (e) {
+        }), e.moreBtn.node.on(cc.Node.EventType.TOUCH_END, function (e) {
+          console.log("MoreGame"), window.location.href = a.moreGameUrl
+        }), e.leftBtn.node.on(cc.Node.EventType.TOUCH_START, function (e) {
+        }), e.leftBtn.node.on(cc.Node.EventType.TOUCH_END, function (e) {
+          c.GAME_OVER_BOOL = !0, c.gameScore = 0, o.loadingScene("MainGameScene")
+        }), e.rightBtn.node.on(cc.Node.EventType.TOUCH_START, function (e) {
+        }), e.rightBtn.node.on(cc.Node.EventType.TOUCH_END, function (t) {
+          var n = null;
+          n = null != e.rightBtnGameUrl && "" != e.rightBtnGameUrl ? e.rightBtnGameUrl : e.tempArr[1], window.location.href = n
+        })
+      },
+      getContentByScore: function (e, t) {
+        var n = "\u6211\u771f\u662f\u592a\u5389\u5bb3\uff0c\u5728" + t + "\u4e2d\u7adf\u7136\u5f97\u4e861\u5206\uff0c\u5168\u7403\u53ea\u67091\u4e2a\u4eba\u5f971\u5206\uff01",
+          o = parseInt(.3 * this.standardScore),
+          c = parseInt(1.5 * this.standardScore),
+          a = parseInt(2.5 * this.standardScore),
+          i = parseInt(4 * this.standardScore);
+        if (e > 0 && e <= o) n = "\u6211\u5728" + t + "\u4e2d\u5f97\u4e86" + e + "\u5206\uff0c\u771f\u662f\u592a\u68d2\u4e86\uff0c\u518d\u7ec3\u7ec3\u5c31\u80fd\u8fbe\u5230\u6e38\u5203\u6709\u4f59\u7684\u5883\u754c\uff01";
+        else if (e > o && e <= this.standardScore) n = "\u6211\u5728" + t + "\u4e2d\u5f97\u4e86" + e + "\u5206\uff0c\u771f\u662f\u592a\u68d2\u4e86\uff0c\u518d\u7ec3\u7ec3\u5c31\u80fd\u8fbe\u5230\u6e38\u5203\u6709\u4f59\u7684\u5883\u754c\uff01";
+        else if (e > this.standardScore && e <= c) {
+          n = "\u6211\u5728" + t + "\u4e2d\u5f97\u4e86" + e + "\u5206\uff0c\u51fb\u8d25\u4e86\u5168\u7403" + (Math.floor(12 * (e - this.standardScore) / (c - this.standardScore)) + 80) + "%\u7684\u73a9\u5bb6\uff0c\u8fdb\u5165\u4e86\u4fe1\u624b\u62c8\u6765\u7684\u5883\u754c\uff01"
+        } else if (e > c && e <= a) {
+          n = "\u6211\u5728" + t + "\u4e2d\u5f97\u4e86" + e + "\u5206\uff0c\u51fb\u8d25\u4e86\u5168\u7403" + (Math.floor(7 * (e - c) / (a - c)) + 92) + "%\u7684\u73a9\u5bb6\uff0c\u8fdb\u5165\u4e86\u8fd0\u7528\u81ea\u5982\u7684\u5883\u754c\uff01"
+        } else if (e > a && e <= i) n = "\u6211\u5728" + t + "\u4e2d\u5f97\u4e86" + e + "\u5206\uff0c\u51fb\u8d25\u4e86\u5168\u740399%\u7684\u73a9\u5bb6\uff0c\u8fbe\u5230\u4e86\u884c\u4e91\u6d41\u6c34\u7684\u5883\u754c\uff01";
+        else if (e > i && e < this.game_max_score) {
           n = "\u6211\u5728" + t + "\u4e2d\u5f97\u4e86" + e + "\u5206\uff0c\u636e\u8bf4\u5168\u7403\u53ea\u6709 " + (20 - Math.ceil(17 * (e - i) / (this.game_max_score - i))) + "\u4e2a\u4eba\u8fbe\u5230\u8fd9\u4e2a\u6c34\u5e73\uff0c\u72ec\u5b64\u6c42\u8d25\uff01"
         } else e >= this.game_max_score && (n = "\u6211\u5728" + t + "\u4e2d\u5f97\u4e86" + e + "\u5206\uff0c\u8d85\u8d8a\u4e86\u72ec\u5b64\u6c42\u8d25\uff0c\u5fc3\u6709\u7075\u7280\uff01");
         return n
@@ -3329,8 +3684,25 @@ window.__require = function e(t, n, o) {
       strlen: function (e) {
         for (var t = 0, n = 0; n < e.length; n++) {
           var o = e.charCodeAt(n);
-          o >= 1 && o <= 0 126 65376 || <="o" && o ? t++ : t +="2" } return }, getcontentbyscore2: function (e, t) { var n="I'm awesome\uff0cin" "get score\uff0conly one person in the world has a 0\uff01", * this.standardscore), c="parseInt(1.5" i="parseInt(4" this.standardscore); if (e>= this.game_max_score) n = "I got " + e + " points in the game, defeating all players worldwide, waiting for you to fight!";
-        else if (e > 0 && e <= o) n="I got " + e " points in the game, really great\uff01"; else if (e> o && e <= this.standardscore) n="I got " + e " points in the game, really great\uff01"; else if (e> this.standardScore && e <= c) { n="I got in the game in " + e " points, beating out (math.floor(12 * (e - this.standardscore) (c this.standardscore)) 80) "% of global players\uff01" } else if> c && e <= a) { n="I got in the game in " + e " points, beating out (math.floor(7 * (e - c) (a c)) 92) "% of global players\uff01" } else if> a && e <= i) n="I got in the game in " + e " points, beating out 99% of global players\uff01"; else if (e> i && e < this.game_max_score) {
+          o >= 1 && o <= 126 || 65376 <= o && o <= 65439 ? t++ : t += 2
+        }
+        return t
+      },
+      getContentByScore2: function (e, t) {
+        var n = "I'm awesome\uff0cin" + t + "get 0 score\uff0conly one person in the world has a 0\uff01",
+          o = parseInt(.3 * this.standardScore),
+          c = parseInt(1.5 * this.standardScore),
+          a = parseInt(2.5 * this.standardScore),
+          i = parseInt(4 * this.standardScore);
+        if (e >= this.game_max_score) n = "I got " + e + " points in the game, defeating all players worldwide, waiting for you to fight!";
+        else if (e > 0 && e <= o) n = "I got " + e + " points in the game, really great\uff01";
+        else if (e > o && e <= this.standardScore) n = "I got " + e + " points in the game, really great\uff01";
+        else if (e > this.standardScore && e <= c) {
+          n = "I got in the game in " + e + " points, beating out " + (Math.floor(12 * (e - this.standardScore) / (c - this.standardScore)) + 80) + "% of global players\uff01"
+        } else if (e > c && e <= a) {
+          n = "I got in the game in " + e + " points, beating out " + (Math.floor(7 * (e - c) / (a - c)) + 92) + "% of global players\uff01"
+        } else if (e > a && e <= i) n = "I got in the game in " + e + " points, beating out 99% of global players\uff01";
+        else if (e > i && e < this.game_max_score) {
           n = "I got " + e + " points in the game, it said to be the world's only " + (20 - Math.ceil(17 * (e - i) / (this.game_max_score - i))) + " people to reach this level! Have you?"
         }
         return n
@@ -3399,7 +3771,21 @@ window.__require = function e(t, n, o) {
               if (e._imageArr.length >= 2) {
                 var i = Math.abs(a.x - e.gameWidth / 2 - e._imageArr[0].x),
                   r = Math.abs(a.y - e.gameHeight / 2 - e._imageArr[0].y);
-                i <= 30 && r <="30" (c.notouchbool="!1," null !="o.recGameUrl" "" (e._imagearr[0].runaction(cc.sequence(cc.scaleto(.1, .8), cc.scaleto(.1, 1), cc.callfunc(function () { window.location.href="o.recGameUrl" }))), e._imagearr[1].runaction(cc.sequence(cc.scaleto(.1, 1)))), console.log("touchlinkhttp")) } return !0 }, ontouchmoved: function (e, t) ontouchended: }; cc.eventtarget.call(t, e.node) update: (e) this.stopupdatebool this._imagearr.length>= 2 && (this.stopUpdateBool = !1, this.showLinkPic())
+                i <= 30 && r <= 30 && (c.noTouchBool = !1, null != o.recGameUrl && "" != o.recGameUrl && (e._imageArr[0].runAction(cc.sequence(cc.scaleTo(.1, .8), cc.scaleTo(.1, 1), cc.callFunc(function () {
+                  window.location.href = o.recGameUrl
+                }))), e._imageArr[1].runAction(cc.sequence(cc.scaleTo(.1, .8), cc.scaleTo(.1, 1)))), console.log("touchLinkHttp"))
+              }
+              return !0
+            },
+            onTouchMoved: function (e, t) {
+            },
+            onTouchEnded: function (e, t) {
+            }
+          };
+        cc.EventTarget.call(t, e.node)
+      },
+      update: function (e) {
+        this.stopUpdateBool && this._imageArr.length >= 2 && (this.stopUpdateBool = !1, this.showLinkPic())
       }
     }), cc._RF.pop()
   }, {
@@ -3787,4 +4173,3 @@ window.__require = function e(t, n, o) {
     "./GameManager": "GameManager"
   }]
 }, {}, ["HttpManagerJs", "LanguageSetJs", "LoadSceneJs", "AniTools", "MainGameJS", "ToolsJs", "resArr", "MainManage", "AddScore", "AdjusWithHeight", "AudioManager", "AutoDestroy", "DataManager", "EffectCenter", "FailedUi", "GameFunction", "GameManager", "InputController", "KnifeCollision", "MainGameUi", "NewAttribute", "PhysicsParticle", "Rocker", "RotateAround", "Stack", "WallUpdate", "fruitData", "peaCannonAI", "startPanel", "wineObsmove", "winerCollision", "GameConfig", "GameUiTools", "DynamicLoad", "EffectSprite", "PlayerInfo", "PoolManager", "RandomFly", "RenderWater", "Shake", "SpriteManager", "Toast", "Utils", "bfPrefabJs", "gameOverJs", "linkHttpIconJs", "startGameJs", "use_v2.1.x_cc.Action"]);
-</=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=></=>
