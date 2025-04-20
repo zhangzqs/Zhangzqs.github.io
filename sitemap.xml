@@ -2,9 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://zhangzqs.cn/categories/index.html</loc>
+    <loc>https://zhangzqs.cn/tags/index.html</loc>
     
-    <lastmod>2025-04-13</lastmod>
+    <lastmod>2025-04-20</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -13,7 +13,7 @@
   <url>
     <loc>https://zhangzqs.cn/link/index.html</loc>
     
-    <lastmod>2025-04-13</lastmod>
+    <lastmod>2025-04-20</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -22,16 +22,25 @@
   <url>
     <loc>https://zhangzqs.cn/recommend/index.html</loc>
     
-    <lastmod>2025-04-13</lastmod>
+    <lastmod>2025-04-20</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://zhangzqs.cn/tags/index.html</loc>
+    <loc>https://zhangzqs.cn/categories/index.html</loc>
     
-    <lastmod>2025-04-13</lastmod>
+    <lastmod>2025-04-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://zhangzqs.cn/posts/1c54/</loc>
+    
+    <lastmod>2025-04-19</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -949,7 +958,7 @@
 
   <url>
     <loc>https://zhangzqs.cn/</loc>
-    <lastmod>2025-04-13</lastmod>
+    <lastmod>2025-04-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

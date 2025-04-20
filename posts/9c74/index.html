@@ -1,0 +1,336 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>使用FCFS+Lotus进行2k测试步骤记录 | Zhangzqs</title><meta name="robots" content="noindex"><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="准备工作 有四台机器 node1&amp;#x2F;node2&amp;#x2F;node3&amp;#x2F;node4 我这里四台机器选用的是 Ubuntu24.04 这四个机器的 IP 地址分别如下： 1234node1: 192.168.242.201node2: 192.168.242.202node3: 192.168.242.203no"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/9c74/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '使用FCFS+Lotus进行2k测试步骤记录',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-04-19 22:41:43'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">102</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">34</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">使用FCFS+Lotus进行2k测试步骤记录<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/区块链/使用FCFS-Lotus进行2k测试步骤记录.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-04-19T14:41:43.000Z" title="发表于 2025-04-19 22:41:43">2025-04-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-04-19T14:41:43.000Z" title="更新于 2025-04-19 22:41:43">2025-04-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="使用FCFS+Lotus进行2k测试步骤记录"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/9c74/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><h2 id="准备工作"><a class="markdownIt-Anchor" href="#准备工作"></a> 准备工作</h2>
+<p>有四台机器 <code>node1/node2/node3/node4</code></p>
+<p>我这里四台机器选用的是 <code>Ubuntu24.04</code></p>
+<p>这四个机器的 IP 地址分别如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">node1: 192.168.242.201</span><br><span class="line">node2: 192.168.242.202</span><br><span class="line">node3: 192.168.242.203</span><br><span class="line">node4: 192.168.242.204</span><br></pre></td></tr></table></figure>
+<p>配置好 ssh 免密登录确保 node1 可以直接 ssh 到其余节点。</p>
+<p>其中 node1 运行 <code>lotus+miner</code>，其余节点是<code>worker</code></p>
+<p>测试可以在四台物理机上进行，也可以在四台虚拟机中进行，也可以在四个 LXC/LXD 容器环境中进行。</p>
+<p>在 LXC 容器中运行时， Node2/Node3/Node4 由于需要运行 fcfs，故需要 fuse 的支持，需要单独配置其支持 fuse 特性。</p>
+<p>在 node1 上将运行整个 lotus 的编译流程，node1 需要至少准备 4GB 的内存空间和 16GB 的存储空间。</p>
+<h2 id="清理环境"><a class="markdownIt-Anchor" href="#清理环境"></a> 清理环境</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 清理环境</span></span><br><span class="line"><span class="built_in">unset</span> MINER_API_INFO</span><br><span class="line"><span class="built_in">rm</span> -rf ~/.lotus</span><br><span class="line"><span class="built_in">rm</span> -rf ~/.lotusminer</span><br><span class="line"><span class="built_in">rm</span> -rf ~/.lotusworker</span><br><span class="line"><span class="built_in">rm</span> -rf ~/.genesis-sectors</span><br><span class="line"><span class="built_in">rm</span> -rf ~/.boost*</span><br></pre></td></tr></table></figure>
+<h2 id="编译环境准备"><a class="markdownIt-Anchor" href="#编译环境准备"></a> 编译环境准备</h2>
+<p>在 node1 中执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装基础环境</span></span><br><span class="line"><span class="built_in">sudo</span> apt update -yqq</span><br><span class="line"><span class="built_in">sudo</span> apt install -yqq mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config curl clang build-essential hwloc libhwloc-dev wget fuse3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Golang环境</span></span><br><span class="line">wget https://go.dev/dl/go1.24.2.linux-amd64.tar.gz</span><br><span class="line"><span class="built_in">rm</span> -rf /usr/local/go &amp;&amp; tar -C /usr/local -xzf go1.24.2.linux-amd64.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Rust环境</span></span><br><span class="line">curl --proto <span class="string">&#x27;=https&#x27;</span> --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y</span><br><span class="line">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装node环境</span></span><br><span class="line"><span class="built_in">export</span> NVM_DIR=<span class="string">&quot;<span class="subst">$([ -z <span class="string">&quot;<span class="variable">$&#123;XDG_CONFIG_HOME-&#125;</span>&quot;</span> ] &amp;&amp; printf %s <span class="string">&quot;<span class="variable">$&#123;HOME&#125;</span>/.nvm&quot;</span> || printf %s <span class="string">&quot;<span class="variable">$&#123;XDG_CONFIG_HOME&#125;</span>/nvm&quot;</span>)</span>&quot;</span></span><br><span class="line">[ -s <span class="string">&quot;<span class="variable">$NVM_DIR</span>/nvm.sh&quot;</span> ] &amp;&amp; \. <span class="string">&quot;<span class="variable">$NVM_DIR</span>/nvm.sh&quot;</span> <span class="comment"># This loads nvm</span></span><br><span class="line">nvm install 22</span><br></pre></td></tr></table></figure>
+<p>在其余节点执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install hwloc libhwloc-dev -y</span><br></pre></td></tr></table></figure>
+<h2 id="编译-lotus"><a class="markdownIt-Anchor" href="#编译-lotus"></a> 编译 Lotus</h2>
+<p>在 node1 中执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 选择要下载的 lotus 版本</span></span><br><span class="line">git <span class="built_in">clone</span> -b v1.32.2 --recursive https://github.com/filecoin-project/lotus.git</span><br><span class="line"><span class="built_in">cd</span> lotus</span><br><span class="line">make debug</span><br></pre></td></tr></table></figure>
+<p>将编译产物复制到其余三台机器上</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ssh 192.168.242.202 <span class="string">&quot;mkdir -p lotus&quot;</span></span><br><span class="line">ssh 192.168.242.203 <span class="string">&quot;mkdir -p lotus&quot;</span></span><br><span class="line">ssh 192.168.242.204 <span class="string">&quot;mkdir -p lotus&quot;</span></span><br><span class="line"></span><br><span class="line">scp lotus 192.168.242.202:~/lotus/</span><br><span class="line">scp lotus-seed 192.168.242.202:~/lotus/</span><br><span class="line">scp lotus-worker 192.168.242.202:~/lotus/</span><br><span class="line"></span><br><span class="line">scp lotus 192.168.242.203:~/lotus/</span><br><span class="line">scp lotus-seed 192.168.242.203:~/lotus/</span><br><span class="line">scp lotus-worker 192.168.242.203:~/lotus/</span><br><span class="line"></span><br><span class="line">scp lotus 192.168.242.204:~/lotus/</span><br><span class="line">scp lotus-seed 192.168.242.204:~/lotus/</span><br><span class="line">scp lotus-worker 192.168.242.204:~/lotus/</span><br></pre></td></tr></table></figure>
+<h2 id="启动-lotus-daemon"><a class="markdownIt-Anchor" href="#启动-lotus-daemon"></a> 启动 Lotus Daemon</h2>
+<p>在 node1 上执行以下命令进行下载相关数据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里可以换源来加速，但是我测试当前这个源会疯狂报错mismatch checksum, 我这里挂梯子走官方源下载正常</span></span><br><span class="line"><span class="comment"># export IPFS_GATEWAY=https://proof-parameters.s3.cn-south-1.jdcloud-oss.com/ipfs/</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 从IPFS_GATEWAY上获取数据，数据大小大约2GB</span></span><br><span class="line">./lotus fetch-params 2048</span><br></pre></td></tr></table></figure>
+<p>将数据拷贝到其余节点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scp -r /var/tmp/filecoin-proof-parameters 192.168.242.202:/var/tmp/</span><br><span class="line">scp -r /var/tmp/filecoin-proof-parameters 192.168.242.203:/var/tmp/</span><br><span class="line">scp -r /var/tmp/filecoin-proof-parameters 192.168.242.204:/var/tmp/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在四个节点上分别开启 tmux 在后台执行以下命令：</p>
+<p>由于 <a target="_blank" rel="noopener" href="https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes">https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes</a> 的原因，需要调整 Linux 内核参数中的 UDP 缓冲区大小，使用以下命令开启：</p>
+<blockquote>
+<p>如果是处在容器环境中，由于容器使用的是宿主机的 Linux 内核，故容器内无法调节内核参数，需要调整宿主机上的参数。如果需要持久化这些参数，可将其写入/etc/sysctl.conf 文件中</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w net.core.rmem_max=7500000</span><br><span class="line">sysctl -w net.core.wmem_max=7500000</span><br><span class="line">sysctl -w net.core.rmem_default=7500000</span><br><span class="line">sysctl -w net.core.wmem_default=7500000</span><br></pre></td></tr></table></figure>
+<p>初始化一些东西</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">./lotus-seed pre-seal --sector-size 2KiB --num-sectors 2</span><br><span class="line"><span class="built_in">sleep</span> 3</span><br><span class="line">./lotus-seed genesis new localnet.json</span><br><span class="line"><span class="built_in">sleep</span> 3</span><br><span class="line">./lotus-seed genesis add-miner localnet.json ~/.genesis-sectors/pre-seal-t01000.json</span><br><span class="line"><span class="built_in">sleep</span> 3</span><br></pre></td></tr></table></figure>
+<p>启动 Lotus Daemon</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> LOTUS_SKIP_GENESIS_CHECK=_yes_</span><br><span class="line">./lotus daemon --lotus-make-genesis=devgen.car --genesis-template=localnet.json --bootstrap=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<p>打开 <code>~/.lotus/config.toml</code> 设置以下参数</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">API.ListenAddress</span> = <span class="string">&quot;/ip4/&lt;这里填写各个节点的 IP&gt;/tcp/1234/http&quot;</span></span><br></pre></td></tr></table></figure>
+<p>重新启动 Lotus Daemon</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./lotus daemon --lotus-make-genesis=devgen.car --genesis-template=localnet.json --bootstrap=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="初始化-lotus-miner"><a class="markdownIt-Anchor" href="#初始化-lotus-miner"></a> 初始化 Lotus Miner</h2>
+<p>在 node1 上执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./lotus wallet import --as-default ~/.genesis-sectors/pre-seal-t01000.key</span><br><span class="line"><span class="built_in">sleep</span> 3</span><br><span class="line">./lotus-miner init --genesis-miner --actor=t01000 --sector-size=2KiB --pre-sealed-sectors=~/.genesis-sectors --pre-sealed-metadata=~/.genesis-sectors/pre-seal-t01000.json --nosync</span><br></pre></td></tr></table></figure>
+<p>打开 <code>~/.lotusminer/config.toml</code> 进行如下设置：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">API.ListenAddress</span> = <span class="string">&quot;/ip4/&lt;这里填写主机 IP&gt;/tcp/2345/http&quot;</span></span><br><span class="line"><span class="attr">API.RemoteListenAddress</span> = <span class="string">&quot;&lt;这里填写主机 IP&gt;:2345&quot;</span></span><br><span class="line"><span class="attr">Libp2p.ListenAddresses</span> = [<span class="string">&quot;/ip4/&lt;这里填写主机 IP&gt;/tcp/6666&quot;</span>]</span><br><span class="line"><span class="attr">Libp2p.AnnounceAddresses</span> = [<span class="string">&quot;/ip4/&lt;这里填写主机 IP&gt;/tcp/6666&quot;</span>]</span><br><span class="line"><span class="attr">Storage.AllowPreCommit1</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">Storage.AllowPreCommit2</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">Storage.AllowCommit</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">Storage.AllowUnseal</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">Storage.AllowReplicaUpdate</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">Storage.AllowProveReplicaUpdate2</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">Storage.AllowRegenSectorKey</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">Sealing.PreCommitBatchWait</span> = <span class="string">&quot;2m0s&quot;</span></span><br><span class="line"><span class="attr">Sealing.CommitBatchWait</span> = <span class="string">&quot;2m0s&quot;</span></span><br></pre></td></tr></table></figure>
+<p>或者也可以使用环境变量来配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> LOTUS_API_LISTENADDRESS=<span class="string">&quot;/ip4/192.168.242.201/tcp/2345/http&quot;</span></span><br><span class="line"><span class="built_in">export</span> LOTUS_API_REMOTELISTENADDRESS=<span class="string">&quot;192.168.242.201:2345&quot;</span></span><br><span class="line"><span class="built_in">export</span> LOTUS_STORAGE_ALLOWPRECOMMIT1=<span class="literal">false</span></span><br><span class="line"><span class="built_in">export</span> LOTUS_STORAGE_ALLOWPRECOMMIT2=<span class="literal">false</span></span><br><span class="line"><span class="built_in">export</span> LOTUS_STORAGE_ALLOWCOMMIT=<span class="literal">false</span></span><br><span class="line"><span class="built_in">export</span> LOTUS_STORAGE_ALLOWUNSEAL=<span class="literal">false</span></span><br><span class="line"><span class="built_in">export</span> LOTUS_STORAGE_ALLOWREPLICAUPDATE=<span class="literal">false</span></span><br><span class="line"><span class="built_in">export</span> LOTUS_STORAGE_ALLOWPROVEREPLICAUPDATE2=<span class="literal">false</span></span><br><span class="line"><span class="built_in">export</span> LOTUS_STORAGE_ALLOWREGENSECTORKEY=<span class="literal">false</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>打开 <code>~/.lotusminer/sectorstore.json</code> 进行如下设置：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CanSeal</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">CanStore</span> = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="启动-lotus-miner"><a class="markdownIt-Anchor" href="#启动-lotus-miner"></a> 启动 Lotus Miner</h2>
+<p>node1 执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUST_LOG=info RUST_BACKTRACE=full ./lotus-miner run --nosync</span><br></pre></td></tr></table></figure>
+<h2 id="启动-lotus-worker"><a class="markdownIt-Anchor" href="#启动-lotus-worker"></a> 启动 Lotus Worker</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># node1 中执行</span></span><br><span class="line">./lotus-miner auth api-info --perm admin</span><br><span class="line"><span class="comment"># 返回类似于以下结果</span></span><br><span class="line"><span class="comment"># MINER_API_INFO=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.nUs9aZtcZqOgDD5p3PfWT5fwK0Bn6gb4Q7S9wuzkfn0:/ip4/192.168.242.201/tcp/2345/http</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 node2，node3，node4 上均执行</span></span><br><span class="line"><span class="built_in">export</span> MINER_API_INFO=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.nUs9aZtcZqOgDD5p3PfWT5fwK0Bn6gb4Q7S9wuzkfn0:/ip4/192.168.242.201/tcp/2345/http</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 node2 上执行</span></span><br><span class="line">RUST_LOG=info RUST_BACKTRACE=full ./lotus-worker run</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 node3 上执行</span></span><br><span class="line">RUST_LOG=info RUST_BACKTRACE=full ./lotus-worker run --windowpost</span><br><span class="line"></span><br><span class="line"><span class="comment">#在 node4 上执行</span></span><br><span class="line">RUST_LOG=info RUST_BACKTRACE=full ./lotus-worker run --winningpost</span><br></pre></td></tr></table></figure>
+<h2 id="安装并启动-fcfs"><a class="markdownIt-Anchor" href="#安装并启动-fcfs"></a> 安装并启动 FCFS</h2>
+<p>在 node2/node3/node4 上部署 FCFS</p>
+<p>现在 node1 上执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget http://kodoe-release.qiniu.com/kodo-fcfs-latest.tar.gz</span><br><span class="line"><span class="built_in">mkdir</span> fcfs</span><br><span class="line">tar -zxvf kodo-fcfs-latest.tar.gz -C fcfs</span><br><span class="line"><span class="built_in">cd</span> fcfs</span><br><span class="line"><span class="built_in">cp</span> ./fcfs_ipfs.conf ./fcfs.conf</span><br></pre></td></tr></table></figure>
+<p>编辑 fcfs.conf 文件内容</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attr">&quot;kodo&quot;:</span> &#123;</span><br><span class="line">    <span class="attr">&quot;prefix&quot;:</span> <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;uc_hosts&quot;:</span> [<span class="string">&quot;http://ucpub-qos.&lt;Domain&gt;&quot;</span>],</span><br><span class="line">    <span class="attr">&quot;bucket&quot;:</span> <span class="string">&quot;&lt;Bucket Name&gt;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;ak&quot;:</span> <span class="string">&quot;&lt;Access Key&gt;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;sk&quot;:</span> <span class="string">&quot;&lt;Secret Key&gt;&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;slow_log_ms&quot;:</span> <span class="number">1000</span></span><br><span class="line">&#125;<span class="string">,</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;sync_filter&quot;:</span> &#123;</span><br><span class="line">    <span class="comment"># 路径支持[]展开，以提高sync并发</span></span><br><span class="line">    <span class="comment"># 当前规则</span></span><br><span class="line">    <span class="comment">#   [digit]  数字</span></span><br><span class="line">    <span class="comment">#   [alpha]  字母</span></span><br><span class="line">    <span class="comment">#   [alnum]  字母+数字</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># 取消下列行的注释，并修改0123456为实际矿工号(数字部分)</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="attr">&quot;keys&quot;:</span> [<span class="string">&quot;sectorstore.json&quot;</span>],</span><br><span class="line">    <span class="attr">&quot;prefixs&quot;:</span></span><br><span class="line">      [</span><br><span class="line">        <span class="string">&quot;sealed/s-t01000-[digit]&quot;</span>,</span><br><span class="line">        <span class="string">&quot;update/s-t01000-[digit]&quot;</span>,</span><br><span class="line">        <span class="string">&quot;unsealed/s-t01000-[digit]&quot;</span>,</span><br><span class="line">        <span class="string">&quot;cache/s-t01000-[digit]/&quot;</span>,</span><br><span class="line">        <span class="string">&quot;cache/s-t01000-[digit][digit]&quot;</span>,</span><br><span class="line">        <span class="string">&quot;update-cache/s-t01000-[digit]&quot;</span>,</span><br><span class="line">      ],</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>启动 fcfs</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./fcfs -e -s</span><br></pre></td></tr></table></figure>
+<p>node2 节点执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./lotus-worker storage attach --init --store /fcfs</span><br></pre></td></tr></table></figure>
+<p>node3/node4 节点执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./lotus-worker storage attach --init=<span class="literal">false</span> --store /fcfs</span><br></pre></td></tr></table></figure>
+<h2 id="创建一个扇区"><a class="markdownIt-Anchor" href="#创建一个扇区"></a> 创建一个扇区</h2>
+<p>在 node1 中的 lotus 目录内执行</p>
+<p><code>./lotus-miner sectors pledge</code><br>
+等待执行 ./lotus-miner sectors batching precommit 有输出时，执行</p>
+<p><code>./lotus-miner sectors batching precommit --publish-now</code><br>
+等待执行 ./lotus-miner sectors batching commit 有输出时，执行</p>
+<p><code>./lotus-miner sectors batching commit --publish-now</code><br>
+反复执行</p>
+<p>./lotus-miner sectors list<br>
+直到所有扇区的 Active 为 YES 为止。</p>
+<!-- flag of hidden posts --></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/9c74/">https://zhangzqs.cn/posts/9c74/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">102</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">34</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text"> 准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%85%E7%90%86%E7%8E%AF%E5%A2%83"><span class="toc-number">2.</span> <span class="toc-text"> 清理环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">3.</span> <span class="toc-text"> 编译环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-lotus"><span class="toc-number">4.</span> <span class="toc-text"> 编译 Lotus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-lotus-daemon"><span class="toc-number">5.</span> <span class="toc-text"> 启动 Lotus Daemon</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96-lotus-miner"><span class="toc-number">6.</span> <span class="toc-text"> 初始化 Lotus Miner</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-lotus-miner"><span class="toc-number">7.</span> <span class="toc-text"> 启动 Lotus Miner</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-lotus-worker"><span class="toc-number">8.</span> <span class="toc-text"> 启动 Lotus Worker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%B9%B6%E5%90%AF%E5%8A%A8-fcfs"><span class="toc-number">9.</span> <span class="toc-text"> 安装并启动 FCFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%89%87%E5%8C%BA"><span class="toc-number">10.</span> <span class="toc-text"> 创建一个扇区</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/1c54/" title="Hyper-V嵌套虚拟化运行PVE折腾">Hyper-V嵌套虚拟化运行PVE折腾</a><time datetime="2025-04-19T13:37:59.000Z" title="更新于 2025-04-19 21:37:59">2025-04-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/75a2/" title="《数学女孩2-费马大定理》阅读笔记 (下)">《数学女孩2-费马大定理》阅读笔记 (下)</a><time datetime="2025-04-05T05:03:00.000Z" title="更新于 2025-04-05 13:03:00">2025-04-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/e5a3/" title="《数学女孩2-费马大定理》阅读笔记 (上)">《数学女孩2-费马大定理》阅读笔记 (上)</a><time datetime="2025-04-04T20:59:59.000Z" title="更新于 2025-04-05 04:59:59">2025-04-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/8740/" title="一道三角形中求阴影部分面积的题">一道三角形中求阴影部分面积的题</a><time datetime="2024-06-15T21:55:28.000Z" title="更新于 2024-06-16 05:55:28">2024-06-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/37cf/" title="基于线性整数规划求解星穹铁道杯中逸事活动中原料搭配问题">基于线性整数规划求解星穹铁道杯中逸事活动中原料搭配问题</a><time datetime="2024-05-05T03:35:50.000Z" title="更新于 2024-05-05 11:35:50">2024-05-05</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: 'caf23439537509201d82e3c3d2c95552',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
