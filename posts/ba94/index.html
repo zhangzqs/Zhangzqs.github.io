@@ -1,0 +1,426 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>主流向量数据库深度对比：Milvus vs Qdrant 选型指南 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="在 AI 大模型、推荐系统、语义检索等场景的推动下，向量数据库作为承载高维特征数据的核心组件，其选型直接影响系统的部署效率、扩展性与运维成本。本文将聚焦两款热门开源向量数据库 Milvus 与 Qdrant，结合与传统文档型数据库（如 MongoDB）的差异，从技术特性、部署模式、架构组件、查询机制"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/ba94/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '主流向量数据库深度对比：Milvus vs Qdrant 选型指南',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-11-26 21:08:06'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">116</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">537</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">主流向量数据库深度对比：Milvus vs Qdrant 选型指南<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/AI/主流向量数据库Milvus与Qdrant选型指南.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-26T13:08:06.000Z" title="发表于 2025-11-26 21:08:06">2025-11-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-26T13:08:06.000Z" title="更新于 2025-11-26 21:08:06">2025-11-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI/">AI</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="主流向量数据库深度对比：Milvus vs Qdrant 选型指南"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/ba94/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><p>在 AI 大模型、推荐系统、语义检索等场景的推动下，向量数据库作为承载高维特征数据的核心组件，其选型直接影响系统的部署效率、扩展性与运维成本。本文将聚焦两款热门开源向量数据库 Milvus 与 Qdrant，结合与传统文档型数据库（如 MongoDB）的差异，从技术特性、部署模式、架构组件、查询机制等维度展开全面对比，为开发者提供客观的选型参考。</p>
+<h2 id="一-向量数据库基础认知"><a class="markdownIt-Anchor" href="#一-向量数据库基础认知"></a> 一、向量数据库基础认知</h2>
+<h3 id="1-与传统数据库的核心区别"><a class="markdownIt-Anchor" href="#1-与传统数据库的核心区别"></a> 1. 与传统数据库的核心区别</h3>
+<ul>
+<li>传统 SQL 数据库以二维表（行列）组织数据，数据关联依赖字段映射；</li>
+<li>文档型数据库（如 MongoDB）：以<code>collection</code>为存储单元，每个元素是 JSON/BSON 结构化<code>document</code>，适合非结构化数据的灵活存储；</li>
+<li>向量数据库：同样以<code>collection</code>为存储单元，核心存储单元为「点」，每个点由<strong>唯一 ID+向量特征+自定义元数据（payload）</strong> 构成，专为高维向量的快速相似性检索设计，兼顾结构化元数据查询与高维向量计算能力。</li>
+</ul>
+<h3 id="2-核心关键概念"><a class="markdownIt-Anchor" href="#2-核心关键概念"></a> 2. 核心关键概念</h3>
+<ul>
+<li>数据向量化：通过机器学习 Embedding 模型，将文本、图像、音频等非结构化数据转化为高维向量，精准捕捉数据核心特征（如图像向量可表示像素分布，音乐向量可涵盖节奏、流派等属性）；</li>
+<li>距离查询算法（向量检索核心）：
+<ul>
+<li>余弦相似度：基于向量夹角判断相似度（取值-1~1，越接近 1 越相似），适合文本语义匹配等场景；</li>
+<li>点积：向量各分量乘积之和，总和越高相似度越高，归一化后等价于余弦相似度；</li>
+<li>欧几里得距离：向量空间中两点的直线距离（差值平方和的平方根），值越小越相似，适合高维数据的精确距离计算。</li>
+</ul>
+</li>
+</ul>
+<h2 id="二-milvus-核心特性解析"><a class="markdownIt-Anchor" href="#二-milvus-核心特性解析"></a> 二、Milvus 核心特性解析</h2>
+<p>Milvus 是开源向量数据库领域的热门选择，基于 Golang 和 C++开发，拥有成熟的社区生态与完善的功能支持（<a target="_blank" rel="noopener" href="https://github.com/milvus-io/milvus">GitHub 仓库</a> | <a target="_blank" rel="noopener" href="https://zilliz.com.cn/about">官方介绍</a>）。</p>
+<h3 id="1-部署模式"><a class="markdownIt-Anchor" href="#1-部署模式"></a> 1. 部署模式</h3>
+<ul>
+<li><strong>Milvus Lite</strong>：类似 SQLite 的轻量模式，作为 Python 本地库运行，通过本地文件持久化，无需额外依赖，适合快速体验与小规模测试；</li>
+<li><strong>单机部署</strong>：依赖 Docker 打包所有组件，支持生产环境（需充足内存），可通过主从复制实现高可用，核心依赖 etcd（元数据存储）与 MinIO（对象存储）等外部组件（<a target="_blank" rel="noopener" href="https://milvus.io/docs/zh/install-overview.md">安装概述</a> | <a target="_blank" rel="noopener" href="https://milvus.io/docs/zh/install_standalone-docker-compose.md">单机部署指南</a>）；</li>
+<li><strong>分布式部署</strong>：基于 K8s 实现集群部署，暂不支持从单机模式在线升级至分布式，需提前规划架构扩展（<a target="_blank" rel="noopener" href="https://milvus.io/docs/zh/main_components.md">核心组件说明</a>）。</li>
+</ul>
+<h3 id="2-架构设计与核心组件"><a class="markdownIt-Anchor" href="#2-架构设计与核心组件"></a> 2. 架构设计与核心组件</h3>
+<p>采用四层架构+微服务体系，分工明确且扩展性强（<a target="_blank" rel="noopener" href="https://milvus.io/docs/zh/architecture_overview.md">架构概述</a> | <a target="_blank" rel="noopener" href="https://milvus.io/docs/zh/four_layers.md">四层结构详解</a>）：</p>
+<ul>
+<li><strong>接入层</strong>：无状态服务，通过 Nginx 等实现负载均衡，统一接收客户端请求；</li>
+<li><strong>协调服务</strong>：分配任务与负载均衡，保障集群资源高效利用；</li>
+<li><strong>工作节点（核心组件）</strong>：
+<ul>
+<li>查询节点（Query Nodes）：加载对象存储中的历史数据+日志代理的增量数据，响应向量检索请求；</li>
+<li>数据节点（Data Nodes）：将日志代理的增量数据生成快照，持久化至对象存储；</li>
+<li>索引节点（Index Nodes）：从对象存储读取 binlog 数据，构建向量索引并写入存储；</li>
+</ul>
+</li>
+<li><strong>存储服务</strong>：
+<ul>
+<li>元数据存储：依赖 etcd，存储表结构、集群配置等信息，同时负责服务注册与健康检查；</li>
+<li>对象存储：支持所有兼容 S3 协议的存储服务，官方默认使用 MinIO 搭建；</li>
+<li>日志代理：记录所有数据修改操作，单机模式使用 RocksDB，分布式模式支持 Pulsar/Kafka，保障故障恢复时的数据一致性；</li>
+</ul>
+</li>
+<li><strong>第三方依赖</strong>：核心依赖 etcd（协调）、MinIO（存储）、Pulsar/Kafka（消息队列），共三大类第三方组件支撑架构运行。</li>
+</ul>
+<h3 id="3-查询机制"><a class="markdownIt-Anchor" href="#3-查询机制"></a> 3. 查询机制</h3>
+<p>Milvus 通过 API 网关对不同类型的数据库操作进行路由分发，保障查询效率与数据安全性：</p>
+<ul>
+<li>DQL（数据查询语言）：如向量相似性检索，直接路由至查询节点，结合历史数据与增量数据完成检索；</li>
+<li>DML（数据操纵语言）：如数据增删改，先写入消息队列（日志代理），再由查询节点、数据节点异步消费，更新数据与索引；</li>
+<li>DDL/DCL（数据定义/控制语言）：如建表、删表、权限控制，通过 etcd 存储元数据，由 Worker Nodes 根据元数据执行相关操作。</li>
+</ul>
+<h2 id="三-qdrant-核心特性解析"><a class="markdownIt-Anchor" href="#三-qdrant-核心特性解析"></a> 三、Qdrant 核心特性解析</h2>
+<p>Qdrant 是仅次于 Milvus 的开源向量数据库，采用 Rust 开发，以轻量、易部署、扩展性强为核心优势（<a target="_blank" rel="noopener" href="https://github.com/qdrant/qdrant">GitHub 仓库</a>），开发者主要分布于国外（无中文文档），其部署与扩展逻辑与 MongoDB 有诸多相似性。</p>
+<h3 id="1-部署模式与-mongodb-的对比"><a class="markdownIt-Anchor" href="#1-部署模式与-mongodb-的对比"></a> 1. 部署模式（与 MongoDB 的对比）</h3>
+<ul>
+<li><strong>单机部署</strong>：极致轻量，与 MongoDB 单机部署逻辑相似——仅需单个 Docker 容器+持久化目录即可启动，无任何外部依赖（tar.gz 压缩包仅 26MB，解压后 72MB），支持生产环境（需通过快照定期备份数据）（<a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/quickstart/">快速开始</a> | <a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/guides/installation/#docker-and-docker-compose">安装指南</a> | <a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/concepts/snapshots/#snapshots">快照备份说明</a>）；</li>
+<li><strong>分布式部署</strong>：类似 MongoDB 的多副本集群方案，支持多副本存储（官方推荐三副本），副本节点故障可自动从其他副本恢复数据，无需额外定期备份，部署门槛远低于 Milvus（<a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/guides/distributed_deployment/">分布式部署指南</a>）。</li>
+</ul>
+<h3 id="2-架构设计与核心组件-2"><a class="markdownIt-Anchor" href="#2-架构设计与核心组件-2"></a> 2. 架构设计与核心组件</h3>
+<p>Qdrant 架构极简，无复杂外部依赖，核心依赖自身实现的关键技术：</p>
+<ul>
+<li><strong>单二进制文件架构</strong>：整个数据库本体封装为单个二进制文件，无需额外安装组件，部署与迁移成本极低；</li>
+<li><strong>内置 Raft 协议</strong>：自主实现 Raft 分布式共识协议，无需依赖 etcd 等第三方组件，即可维护集群一致性（<a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/guides/distributed_deployment/#raft">Raft 协议详解</a>）；主节点故障时，集群进入只读模式，直至新主节点选举完成，该机制与 MongoDB 主从切换逻辑类似；</li>
+<li><strong>存储设计</strong>：无需独立对象存储或消息队列，数据直接持久化至本地目录+快照，简化运维流程。</li>
+</ul>
+<h3 id="3-关键技术特性分片与副本"><a class="markdownIt-Anchor" href="#3-关键技术特性分片与副本"></a> 3. 关键技术特性（分片与副本）</h3>
+<ul>
+<li><strong>分片（Sharding）</strong>：
+<ul>
+<li>支持自动（一致性哈希）或自定义分片（<a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/guides/distributed_deployment/#user-defined-sharding">自定义分片配置</a>），默认分片数等于集群节点数；</li>
+<li>分片为独立数据子集，支持节点间在线移动分片，便于集群缩容；但无法动态调整分片数，需重建集合实现分片调整；</li>
+<li>官方推荐：即使单机部署，也建议划分至少 2 个分片（最优 12 个），便于后续平滑扩容至分布式集群（如 12 分片可扩展至 2/3/6/12 个节点）。</li>
+</ul>
+</li>
+<li><strong>副本（Replication）</strong>：
+<ul>
+<li>创建集合时可指定副本因子（默认 1），开源版本需通过 API 手动创建分片副本（<a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/guides/distributed_deployment/#creating-new-shard-replicas">创建分片副本指南</a>），Qdrant Cloud 支持自动复制；</li>
+<li>多副本模式下，数据冗余存储，故障时可快速恢复，无需依赖外部备份。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-单机到分布式的平滑升级"><a class="markdownIt-Anchor" href="#4-单机到分布式的平滑升级"></a> 4. 单机到分布式的平滑升级</h3>
+<p>Qdrant 支持单机模式无缝扩展至分布式集群，升级逻辑清晰（以集合<code>c0</code>为例）：</p>
+<ul>
+<li>场景 1：单机单分片（Node1[c0_shard0_0]）→ 新增 Node2 → 仅支持副本复制（Node1[c0_shard0_0]、Node2[c0_shard0_1]），无法重新分片；</li>
+<li>场景 2：单机 2 分片（Node1[c0_shard0_0、c0_shard1_0]）→ 新增 Node2 → 可移动分片（Node1[c0_shard0_0]、Node2[c0_shard1_0]）或复制分片（双节点均含 2 个分片副本）；</li>
+<li>注：开源版本不支持已有集合重新分片，需提前规划分片数，Qdrant Cloud 提供该功能。</li>
+</ul>
+<h3 id="5-查询机制"><a class="markdownIt-Anchor" href="#5-查询机制"></a> 5. 查询机制</h3>
+<p>Qdrant 依托极简架构实现高效查询，核心逻辑：</p>
+<ul>
+<li>向量检索：直接关联分片与副本数据，结合距离算法（支持余弦相似度、点积、欧几里得距离）快速返回结果；</li>
+<li>元数据过滤：payload 支持 JSON 格式自定义字段，查询时可结合向量相似度与元数据条件（如 URL、原始数据标识）进行联合过滤，兼顾检索精度与灵活性；</li>
+<li>集群查询：通过 Raft 协议同步分片状态，确保多节点查询的数据一致性。</li>
+</ul>
+<h2 id="四-milvus-vs-qdrant-核心差异对比"><a class="markdownIt-Anchor" href="#四-milvus-vs-qdrant-核心差异对比"></a> 四、Milvus vs Qdrant 核心差异对比</h2>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Milvus</th>
+<th>Qdrant</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>开发语言</td>
+<td>Golang + C++</td>
+<td>Rust</td>
+</tr>
+<tr>
+<td>部署复杂度</td>
+<td>依赖外部组件（etcd/MinIO 等），部署较复杂</td>
+<td>单二进制文件，无外部依赖，部署极简</td>
+</tr>
+<tr>
+<td>分布式升级</td>
+<td>不支持单机在线升级至分布式</td>
+<td>支持单机无缝扩展至分布式集群</td>
+</tr>
+<tr>
+<td>核心依赖</td>
+<td>需依赖 etcd、Pulsar/Kafka 等第三方组件</td>
+<td>内置 Raft 协议，无强制外部依赖</td>
+</tr>
+<tr>
+<td>分片调整</td>
+<td>支持动态调整（分布式模式）</td>
+<td>需重建集合调整分片数</td>
+</tr>
+<tr>
+<td>高可用实现</td>
+<td>主从复制（单机）、K8s 集群（分布式）</td>
+<td>多副本（Raft 协议）</td>
+</tr>
+<tr>
+<td>官方文档</td>
+<td>支持中文，文档完善</td>
+<td>仅英文，文档清晰</td>
+</tr>
+<tr>
+<td>适合场景</td>
+<td>大规模分布式场景、需复杂架构支持</td>
+<td>快速部署、中小规模场景、平滑扩容需求</td>
+</tr>
+</tbody>
+</table>
+<h2 id="五-选型建议与实践方案"><a class="markdownIt-Anchor" href="#五-选型建议与实践方案"></a> 五、选型建议与实践方案</h2>
+<h3 id="1-选型核心决策点"><a class="markdownIt-Anchor" href="#1-选型核心决策点"></a> 1. 选型核心决策点</h3>
+<ul>
+<li>选 Milvus：需构建大规模分布式集群、依赖复杂架构支持（如多组件协同）、重视中文文档与国内社区支持；</li>
+<li>选 Qdrant：追求轻量部署、低运维成本、单机到分布式的平滑扩容，且纯文本/中小规模向量数据场景（如语义检索、小型推荐系统）；</li>
+<li>选 MongoDB：核心需求是文档存储+灵活查询，向量检索仅为辅助功能（需额外集成 Embedding 工具）。</li>
+</ul>
+<h3 id="2-推荐实践方案qdrant-优先场景"><a class="markdownIt-Anchor" href="#2-推荐实践方案qdrant-优先场景"></a> 2. 推荐实践方案（Qdrant 优先场景）</h3>
+<ol>
+<li>初始部署：采用 Qdrant 单机模式，按官方推荐划分 12 个分片（便于未来扩展至 2/3/6/12 个节点）；</li>
+<li>高可用设计：若需保障数据安全，配置 2-3 个副本，利用 Raft 协议实现故障自动恢复；</li>
+<li>数据存储优化：向量数据为冗余数据，丢失后可通过原始数据重新 Embedding 还原；payload 建议存储 URL、原始数据定位字段等轻量化信息，降低存储压力；</li>
+<li>升级路径：当数据量增长至单机上限时，直接新增节点，通过分片移动/复制扩展为分布式集群，无需重构业务逻辑。</li>
+</ol>
+<h2 id="结语"><a class="markdownIt-Anchor" href="#结语"></a> 结语</h2>
+<p>Milvus 与 Qdrant 作为开源向量数据库的佼佼者，分别适配不同的技术场景与运维需求：Milvus 胜在大规模分布式架构的成熟度，Qdrant 则以轻量、易扩展、低运维成本成为中小规模场景的优选，其部署与扩展逻辑与 MongoDB 的兼容性也降低了开发者的学习成本。</p>
+<p>开发者可根据自身业务数据量、部署资源、扩容规划等因素灵活选型，若追求快速落地与低运维成本，Qdrant 的单机+12 分片方案值得优先尝试；若需支撑超大规模向量数据检索，Milvus 的分布式架构更具优势。如需进一步了解两款数据库的性能测试细节，可参考官方提供的 benchmark 工具与文档，也可结合自身业务场景进行针对性测试。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/ba94/">https://zhangzqs.cn/posts/ba94/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/fdc0/" title="GAMES101课程笔记大纲"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">GAMES101课程笔记大纲</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">116</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">537</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">35</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E8%AE%A4%E7%9F%A5"><span class="toc-number">1.</span> <span class="toc-text"> 一、向量数据库基础认知</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%8E%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E6%A0%B8%E5%BF%83%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.</span> <span class="toc-text"> 1. 与传统数据库的核心区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%B8%E5%BF%83%E5%85%B3%E9%94%AE%E6%A6%82%E5%BF%B5"><span class="toc-number">1.2.</span> <span class="toc-text"> 2. 核心关键概念</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-milvus-%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7%E8%A7%A3%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text"> 二、Milvus 核心特性解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%83%A8%E7%BD%B2%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.1.</span> <span class="toc-text"> 1. 部署模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="toc-number">2.2.</span> <span class="toc-text"> 2. 架构设计与核心组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E8%AF%A2%E6%9C%BA%E5%88%B6"><span class="toc-number">2.3.</span> <span class="toc-text"> 3. 查询机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-qdrant-%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7%E8%A7%A3%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text"> 三、Qdrant 核心特性解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%83%A8%E7%BD%B2%E6%A8%A1%E5%BC%8F%E4%B8%8E-mongodb-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">3.1.</span> <span class="toc-text"> 1. 部署模式（与 MongoDB 的对比）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6-2"><span class="toc-number">3.2.</span> <span class="toc-text"> 2. 架构设计与核心组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%89%B9%E6%80%A7%E5%88%86%E7%89%87%E4%B8%8E%E5%89%AF%E6%9C%AC"><span class="toc-number">3.3.</span> <span class="toc-text"> 3. 关键技术特性（分片与副本）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8D%95%E6%9C%BA%E5%88%B0%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84%E5%B9%B3%E6%BB%91%E5%8D%87%E7%BA%A7"><span class="toc-number">3.4.</span> <span class="toc-text"> 4. 单机到分布式的平滑升级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%9F%A5%E8%AF%A2%E6%9C%BA%E5%88%B6"><span class="toc-number">3.5.</span> <span class="toc-text"> 5. 查询机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-milvus-vs-qdrant-%E6%A0%B8%E5%BF%83%E5%B7%AE%E5%BC%82%E5%AF%B9%E6%AF%94"><span class="toc-number">4.</span> <span class="toc-text"> 四、Milvus vs Qdrant 核心差异对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%80%89%E5%9E%8B%E5%BB%BA%E8%AE%AE%E4%B8%8E%E5%AE%9E%E8%B7%B5%E6%96%B9%E6%A1%88"><span class="toc-number">5.</span> <span class="toc-text"> 五、选型建议与实践方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%80%89%E5%9E%8B%E6%A0%B8%E5%BF%83%E5%86%B3%E7%AD%96%E7%82%B9"><span class="toc-number">5.1.</span> <span class="toc-text"> 1. 选型核心决策点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8E%A8%E8%8D%90%E5%AE%9E%E8%B7%B5%E6%96%B9%E6%A1%88qdrant-%E4%BC%98%E5%85%88%E5%9C%BA%E6%99%AF"><span class="toc-number">5.2.</span> <span class="toc-text"> 2. 推荐实践方案（Qdrant 优先场景）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">6.</span> <span class="toc-text"> 结语</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ba94/" title="主流向量数据库深度对比：Milvus vs Qdrant 选型指南">主流向量数据库深度对比：Milvus vs Qdrant 选型指南</a><time datetime="2025-11-26T13:08:06.000Z" title="更新于 2025-11-26 21:08:06">2025-11-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/fdc0/" title="GAMES101课程笔记大纲">GAMES101课程笔记大纲</a><time datetime="2025-11-05T21:30:00.000Z" title="更新于 2025-11-06 05:30:00">2025-11-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/456a/" title="图形学-光线追踪5(路径追踪)">图形学-光线追踪5(路径追踪)</a><time datetime="2025-10-15T14:44:15.000Z" title="更新于 2025-10-15 22:44:15">2025-10-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/be0e/" title="图形学-光线追踪4(概率论)">图形学-光线追踪4(概率论)</a><time datetime="2025-10-14T15:22:34.000Z" title="更新于 2025-10-14 23:22:34">2025-10-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/298c/" title="图形学-光线追踪(渲染方程)">图形学-光线追踪(渲染方程)</a><time datetime="2025-10-12T14:25:49.000Z" title="更新于 2025-10-12 22:25:49">2025-10-12</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '734af1ab6aa950b1c1814533563d77a6',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
