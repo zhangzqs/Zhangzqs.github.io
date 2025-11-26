@@ -175,7 +175,7 @@
 <ul>
 <li>余弦相似度：基于向量夹角判断相似度（取值-1~1，越接近 1 越相似），适合文本语义匹配等场景；</li>
 <li>点积：向量各分量乘积之和，总和越高相似度越高，归一化后等价于余弦相似度；</li>
-<li>欧几里得距离：向量空间中两点的直线距离（差值平方和的平方根），值越小越相似，适合高维数据的精确距离计算。</li>
+<li>欧几里得距离：向量空间中两点的直线距离（√∑(xi-yi)²），值越小越相似，适合高维数据的精确距离计算。</li>
 </ul>
 </li>
 </ul>
@@ -203,7 +203,7 @@
 <ul>
 <li>元数据存储：依赖 etcd，存储表结构、集群配置等信息，同时负责服务注册与健康检查；</li>
 <li>对象存储：支持所有兼容 S3 协议的存储服务，官方默认使用 MinIO 搭建；</li>
-<li>日志代理：记录所有数据修改操作，单机模式使用 RocksDB，分布式模式支持 Pulsar/Kafka，保障故障恢复时的数据一致性；</li>
+<li>日志代理：记录所有数据修改操作，单机模式使用 <strong>RocksDB</strong>，分布式模式支持 <strong>Pulsar/Kafka</strong>，保障故障恢复时的数据一致性；</li>
 </ul>
 </li>
 <li><strong>第三方依赖</strong>：核心依赖 etcd（协调）、MinIO（存储）、Pulsar/Kafka（消息队列），共三大类第三方组件支撑架构运行。</li>
@@ -216,7 +216,7 @@
 <li>DDL/DCL（数据定义/控制语言）：如建表、删表、权限控制，通过 etcd 存储元数据，由 Worker Nodes 根据元数据执行相关操作。</li>
 </ul>
 <h2 id="三-qdrant-核心特性解析"><a class="markdownIt-Anchor" href="#三-qdrant-核心特性解析"></a> 三、Qdrant 核心特性解析</h2>
-<p>Qdrant 是仅次于 Milvus 的开源向量数据库，采用 Rust 开发，以轻量、易部署、扩展性强为核心优势（<a target="_blank" rel="noopener" href="https://github.com/qdrant/qdrant">GitHub 仓库</a>），开发者主要分布于国外（无中文文档），其部署与扩展逻辑与 MongoDB 有诸多相似性。</p>
+<p>Qdrant 是开源向量数据库领域的另一热门选择，采用 Rust 开发，以轻量、易部署、扩展性强为核心优势（<a target="_blank" rel="noopener" href="https://github.com/qdrant/qdrant">GitHub 仓库</a>），开发者主要分布于国外（无中文文档），其部署与扩展逻辑与 MongoDB 有诸多相似性。</p>
 <h3 id="1-部署模式与-mongodb-的对比"><a class="markdownIt-Anchor" href="#1-部署模式与-mongodb-的对比"></a> 1. 部署模式（与 MongoDB 的对比）</h3>
 <ul>
 <li><strong>单机部署</strong>：极致轻量，与 MongoDB 单机部署逻辑相似——仅需单个 Docker 容器+持久化目录即可启动，无任何外部依赖（tar.gz 压缩包仅 26MB，解压后 72MB），支持生产环境（需通过快照定期备份数据）（<a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/quickstart/">快速开始</a> | <a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/guides/installation/#docker-and-docker-compose">安装指南</a> | <a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/concepts/snapshots/#snapshots">快照备份说明</a>）；</li>
@@ -235,7 +235,7 @@
 <ul>
 <li>支持自动（一致性哈希）或自定义分片（<a target="_blank" rel="noopener" href="https://qdrant.tech/documentation/guides/distributed_deployment/#user-defined-sharding">自定义分片配置</a>），默认分片数等于集群节点数；</li>
 <li>分片为独立数据子集，支持节点间在线移动分片，便于集群缩容；但无法动态调整分片数，需重建集合实现分片调整；</li>
-<li>官方推荐：即使单机部署，也建议划分至少 2 个分片（最优 12 个），便于后续平滑扩容至分布式集群（如 12 分片可扩展至 2/3/6/12 个节点）。</li>
+<li>官方推荐：即使单机部署，也建议划分至少 2 个分片（最优 12 个），便于后续平滑扩容至分布式集群（如 12 分片可扩展至 2/3/4/6/12 个节点，因 12 的因数较多）。</li>
 </ul>
 </li>
 <li><strong>副本（Replication）</strong>：
@@ -319,9 +319,9 @@
 </ul>
 <h3 id="2-推荐实践方案qdrant-优先场景"><a class="markdownIt-Anchor" href="#2-推荐实践方案qdrant-优先场景"></a> 2. 推荐实践方案（Qdrant 优先场景）</h3>
 <ol>
-<li>初始部署：采用 Qdrant 单机模式，按官方推荐划分 12 个分片（便于未来扩展至 2/3/6/12 个节点）；</li>
+<li>初始部署：采用 Qdrant 单机模式，按官方推荐划分 12 个分片（便于未来扩展至 2/3/4/6/12 个节点）；</li>
 <li>高可用设计：若需保障数据安全，配置 2-3 个副本，利用 Raft 协议实现故障自动恢复；</li>
-<li>数据存储优化：向量数据为冗余数据，丢失后可通过原始数据重新 Embedding 还原；payload 建议存储 URL、原始数据定位字段等轻量化信息，降低存储压力；</li>
+<li>数据存储优化：向量数据为冗余数据，丢失后可通过原始数据重新 Embedding 还原；payload 建议存储 URL、原始数据定位字段等轻量化信息（避免存储大字段如原始文本、图片 base64），降低存储压力；</li>
 <li>升级路径：当数据量增长至单机上限时，直接新增节点，通过分片移动/复制扩展为分布式集群，无需重构业务逻辑。</li>
 </ol>
 <h2 id="结语"><a class="markdownIt-Anchor" href="#结语"></a> 结语</h2>
