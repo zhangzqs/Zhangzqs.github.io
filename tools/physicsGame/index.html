@@ -328,7 +328,7 @@ canvas {
 
   // --- Constants ---
   const MAX_CHARS = 20;
-  const CHAR_SIZE = 28;
+  const CHAR_SIZE = 44;
   const TARGET_RADIUS = 18;
   const LINE_WIDTH_DRAW = 6;
   const STABLE_THRESHOLD = 0.15;
@@ -543,21 +543,38 @@ canvas {
     const components = findComponents(binary, cw, ch);
     if (components.length === 0) { charOutlineCache[char] = null; return null; }
 
-    const centerX = cw / 2;
-    const centerY = ch / 2;
-    const vertexSets = [];
-
+    // Collect raw vertex sets first
+    const rawSets = [];
     for (const comp of components) {
       const boundary = mooreBoundaryTrace(binary, cw, ch, comp.startX, comp.startY);
       if (boundary.length < 3) continue;
       const simplified = simplifyDP(boundary, OUTLINE_SIMPLIFY);
       if (simplified.length < 3) continue;
-      const vertices = simplified.map(p => ({ x: p.x - centerX, y: p.y - centerY }));
-      vertexSets.push(vertices);
+      rawSets.push(simplified);
     }
+    if (rawSets.length === 0) { charOutlineCache[char] = null; return null; }
 
-    if (vertexSets.length === 0) { charOutlineCache[char] = null; return null; }
-    const result = { vertexSets, sourceWidth: cw, sourceHeight: ch };
+    // Compute bounding box of all vertices across all components
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const vs of rawSets) {
+      for (const v of vs) {
+        if (v.x < minX) minX = v.x;
+        if (v.x > maxX) maxX = v.x;
+        if (v.y < minY) minY = v.y;
+        if (v.y > maxY) maxY = v.y;
+      }
+    }
+    const bboxCX = (minX + maxX) / 2;
+    const bboxCY = (minY + maxY) / 2;
+    const shapeWidth = maxX - minX;
+    const shapeHeight = maxY - minY;
+
+    // Center vertices on the bounding box center
+    const vertexSets = rawSets.map(vs =>
+      vs.map(p => ({ x: p.x - bboxCX, y: p.y - bboxCY }))
+    );
+
+    const result = { vertexSets, shapeWidth, shapeHeight };
     charOutlineCache[char] = result;
     return result;
   }
@@ -937,7 +954,7 @@ canvas {
       let body;
       const outlineData = getCharVertexSets(ch);
       if (outlineData) {
-        const scale = CHAR_SIZE / Math.max(outlineData.sourceWidth, outlineData.sourceHeight);
+        const scale = CHAR_SIZE / Math.max(outlineData.shapeWidth, outlineData.shapeHeight);
         const scaledSets = outlineData.vertexSets.map(vs =>
           vs.map(v => ({ x: v.x * scale, y: v.y * scale }))
         );
