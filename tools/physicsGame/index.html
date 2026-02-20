@@ -301,7 +301,7 @@ canvas {
       <li>点击 <strong>🎯 目标</strong> 按钮后在画布上点击设置目标点（红色星标）</li>
       <li>点击 <strong>🧹 擦除</strong> 按钮后点击障碍线条可以删除它</li>
       <li>可以 <strong>📁 保存/加载</strong> 自定义关卡</li>
-      <li><strong>游玩模式</strong>：输入ASCII字符（最多20个），点击投放</li>
+      <li><strong>游玩模式</strong>：输入ASCII字符（最多4个），点击投放</li>
       <li>字符会遵循物理规律降落，与障碍物碰撞弹跳</li>
       <li>如果任意字符碰触到 <strong>🎯 目标点</strong>，则游戏<strong style="color:#4ecdc4">胜利</strong>！</li>
       <li>如果物体运动稳定后没有碰到目标，则<strong style="color:#e94560">失败</strong></li>
@@ -327,7 +327,7 @@ canvas {
   'use strict';
 
   // --- Constants ---
-  const MAX_CHARS = 20;
+  const MAX_CHARS = 4;
   const CHAR_SIZE = 44;
   const TARGET_RADIUS = 18;
   const LINE_WIDTH_DRAW = 6;
@@ -669,11 +669,42 @@ canvas {
     ctx.setLineDash([]);
   }
 
+  function drawDropPositions() {
+    const w = canvas.width;
+    const totalWidth = MAX_CHARS * (CHAR_SIZE + 4);
+    const startX = w / 2 - totalWidth / 2 + CHAR_SIZE / 2;
+    const startY = 30;
+    ctx.save();
+    for (let i = 0; i < MAX_CHARS; i++) {
+      const x = startX + i * (CHAR_SIZE + 4);
+      ctx.strokeStyle = 'rgba(78,205,196,0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeRect(x - CHAR_SIZE / 2, startY - CHAR_SIZE / 2, CHAR_SIZE, CHAR_SIZE);
+      ctx.setLineDash([]);
+      // Down arrow
+      ctx.fillStyle = 'rgba(78,205,196,0.4)';
+      ctx.beginPath();
+      ctx.moveTo(x, startY + CHAR_SIZE / 2 + 4);
+      ctx.lineTo(x - 5, startY + CHAR_SIZE / 2 - 2);
+      ctx.lineTo(x + 5, startY + CHAR_SIZE / 2 - 2);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Label
+    ctx.fillStyle = 'rgba(78,205,196,0.5)';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('字符投放位置', w / 2, startY + CHAR_SIZE / 2 + 18);
+    ctx.restore();
+  }
+
   let mousePos = null;
 
   function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawGrid();
+    drawDropPositions();
     drawLines();
     drawTarget();
     drawCurrentLine();
