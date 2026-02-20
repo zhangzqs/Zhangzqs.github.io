@@ -943,6 +943,7 @@ canvas {
         );
         try {
           body = Bodies.fromVertices(x, y, scaledSets, bodyOpts);
+          // fromVertices may overwrite label for compound bodies; restore it
           if (body.label !== bodyOpts.label) body.label = bodyOpts.label;
         } catch (e) {
           body = Bodies.rectangle(x, y, CHAR_SIZE, CHAR_SIZE, bodyOpts);
