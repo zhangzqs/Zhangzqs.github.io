@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物理弹珠 - ASCII物理小游戏</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: #1a1a2e;
+  color: #eee;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #16213e;
+  border-bottom: 2px solid #0f3460;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+#header h1 {
+  font-size: 18px;
+  color: #e94560;
+  white-space: nowrap;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.toolbar button, .toolbar select {
+  padding: 6px 14px;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  background: #16213e;
+  color: #eee;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.toolbar button:hover {
+  background: #0f3460;
+  border-color: #e94560;
+}
+.toolbar button.active {
+  background: #e94560;
+  border-color: #e94560;
+  color: #fff;
+}
+.toolbar button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+#gameArea {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+#overlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 10;
+  justify-content: center;
+  align-items: center;
+}
+#overlay.show { display: flex; }
+#overlayContent {
+  background: #16213e;
+  border: 2px solid #0f3460;
+  border-radius: 16px;
+  padding: 32px 40px;
+  text-align: center;
+  max-width: 90%;
+}
+#overlayContent h2 {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+#overlayContent p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #aaa;
+}
+#overlayContent button {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #e94560;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 0 6px;
+}
+#overlayContent button:hover { background: #c73e54; }
+#inputPanel {
+  display: none;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: #16213e;
+  border: 2px solid #0f3460;
+  border-radius: 12px;
+  padding: 16px 24px;
+  text-align: center;
+}
+#inputPanel.show { display: block; }
+#inputPanel label {
+  font-size: 14px;
+  color: #aaa;
+  display: block;
+  margin-bottom: 8px;
+}
+#asciiInput {
+  width: 300px;
+  max-width: 80vw;
+  padding: 8px 12px;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  background: #1a1a2e;
+  color: #e94560;
+  font-size: 20px;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  outline: none;
+}
+#asciiInput:focus { border-color: #e94560; }
+#charCount {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+#dropBtn {
+  margin-top: 10px;
+  padding: 8px 24px;
+  border: none;
+  border-radius: 6px;
+  background: #e94560;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+#dropBtn:hover { background: #c73e54; }
+#helpPanel {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  background: #16213e;
+  border: 2px solid #e94560;
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+#helpPanel.show { display: block; }
+#helpPanel h3 { color: #e94560; margin-bottom: 12px; font-size: 20px; }
+#helpPanel p, #helpPanel li { font-size: 14px; line-height: 1.8; color: #ccc; }
+#helpPanel ul { padding-left: 20px; }
+#helpPanel .closeHelp {
+  margin-top: 16px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #e94560;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+#statusBar {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: rgba(22, 33, 62, 0.9);
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #aaa;
+  pointer-events: none;
+}
+#levelPanel {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  background: #16213e;
+  border: 2px solid #0f3460;
+  border-radius: 16px;
+  padding: 24px 28px;
+  max-width: 480px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+#levelPanel.show { display: block; }
+#levelPanel h3 { color: #e94560; margin-bottom: 12px; }
+#levelList {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+.levelItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin: 4px 0;
+  background: #1a1a2e;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.levelItem:hover { background: #0f3460; }
+.levelItem .name { font-size: 14px; }
+.levelItem .actions { display: flex; gap: 6px; }
+.levelItem .actions button {
+  padding: 4px 10px;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  background: transparent;
+  color: #e94560;
+  cursor: pointer;
+  font-size: 12px;
+}
+.levelItem .actions button:hover { background: #0f3460; }
+#levelPanel .closePanel {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #0f3460;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>🎮 物理弹珠</h1>
+  <div class="toolbar">
+    <button id="btnEditMode" class="active" title="编辑关卡">✏️ 编辑</button>
+    <button id="btnPlayMode" title="开始游戏">▶️ 游玩</button>
+    <span style="color:#555">|</span>
+    <button id="btnDrawLine" class="active" title="绘制障碍线条">🖊️ 画线</button>
+    <button id="btnSetTarget" title="设置目标点">🎯 目标</button>
+    <button id="btnEraser" title="擦除障碍">🧹 擦除</button>
+    <span style="color:#555">|</span>
+    <button id="btnUndo" title="撤销">↩️</button>
+    <button id="btnClear" title="清空画布">🗑️ 清空</button>
+    <button id="btnLevels" title="关卡管理">📁 关卡</button>
+    <button id="btnHelp" title="帮助">❓</button>
+  </div>
+</div>
+<div id="gameArea">
+  <canvas id="canvas"></canvas>
+  <div id="statusBar">编辑模式：点击拖拽画线，设置目标点后切换到游玩模式</div>
+  <div id="inputPanel">
+    <label id="inputLabel">输入ASCII字符（最多20个字符）</label>
+    <input type="text" id="asciiInput" maxlength="20" placeholder="输入字符..." autocomplete="off">
+    <div id="charCount">0 / 20</div>
+    <button id="dropBtn">🚀 投放！</button>
+  </div>
+  <div id="overlay">
+    <div id="overlayContent">
+      <h2 id="resultTitle"></h2>
+      <p id="resultMsg"></p>
+      <button id="btnRetry">🔄 重试</button>
+      <button id="btnBackEdit">✏️ 编辑关卡</button>
+    </div>
+  </div>
+  <div id="helpPanel">
+    <h3>🎮 物理弹珠 - 游戏说明</h3>
+    <p><strong>这是一个基于物理引擎的益智小游戏</strong></p>
+    <ul>
+      <li><strong>编辑模式</strong>：在画布上拖拽绘制线条作为障碍物</li>
+      <li>点击 <strong>🎯 目标</strong> 按钮后在画布上点击设置目标点（红色星标）</li>
+      <li>点击 <strong>🧹 擦除</strong> 按钮后点击障碍线条可以删除它</li>
+      <li>可以 <strong>📁 保存/加载</strong> 自定义关卡</li>
+      <li><strong>游玩模式</strong>：输入ASCII字符（最多20个），点击投放</li>
+      <li>字符会遵循物理规律降落，与障碍物碰撞弹跳</li>
+      <li>如果任意字符碰触到 <strong>🎯 目标点</strong>，则游戏<strong style="color:#4ecdc4">胜利</strong>！</li>
+      <li>如果物体运动稳定后没有碰到目标，则<strong style="color:#e94560">失败</strong></li>
+    </ul>
+    <p style="margin-top:12px;color:#888">提示：合理利用障碍物引导字符滚向目标点！</p>
+    <button class="closeHelp" onclick="document.getElementById('helpPanel').classList.remove('show')">知道了</button>
+  </div>
+  <div id="levelPanel">
+    <h3>📁 关卡管理</h3>
+    <div style="margin-bottom:12px">
+      <input type="text" id="levelNameInput" placeholder="输入关卡名称..." style="padding:6px 10px;border:1px solid #0f3460;border-radius:4px;background:#1a1a2e;color:#eee;font-size:14px;width:60%">
+      <button id="btnSaveLevel" style="padding:6px 14px;border:1px solid #e94560;border-radius:4px;background:#e94560;color:#fff;cursor:pointer;font-size:13px;margin-left:6px">保存当前</button>
+    </div>
+    <div id="levelList"></div>
+    <button class="closePanel" onclick="document.getElementById('levelPanel').classList.remove('show')">关闭</button>
+  </div>
+</div>
+
+<script src="./decomp.min.js"></script>
+<script src="./matter.min.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  // --- Constants ---
+  const MAX_CHARS = 20;
+  const CHAR_SIZE = 28;
+  const TARGET_RADIUS = 18;
+  const LINE_WIDTH_DRAW = 6;
+  const STABLE_THRESHOLD = 0.15;
+  const STABLE_FRAMES = 120;
+  const MAX_SIM_TIME = 15000;
+  const ERASER_RADIUS = 20;
+
+  // --- DOM ---
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const statusBar = document.getElementById('statusBar');
+  const inputPanel = document.getElementById('inputPanel');
+  const asciiInput = document.getElementById('asciiInput');
+  const charCount = document.getElementById('charCount');
+  const inputLabel = document.getElementById('inputLabel');
+  const dropBtn = document.getElementById('dropBtn');
+  const overlay = document.getElementById('overlay');
+  const resultTitle = document.getElementById('resultTitle');
+  const resultMsg = document.getElementById('resultMsg');
+  const helpPanel = document.getElementById('helpPanel');
+  const levelPanel = document.getElementById('levelPanel');
+  const levelList = document.getElementById('levelList');
+  const levelNameInput = document.getElementById('levelNameInput');
+
+  // --- Buttons ---
+  const btnEditMode = document.getElementById('btnEditMode');
+  const btnPlayMode = document.getElementById('btnPlayMode');
+  const btnDrawLine = document.getElementById('btnDrawLine');
+  const btnSetTarget = document.getElementById('btnSetTarget');
+  const btnEraser = document.getElementById('btnEraser');
+  const btnUndo = document.getElementById('btnUndo');
+  const btnClear = document.getElementById('btnClear');
+  const btnLevels = document.getElementById('btnLevels');
+  const btnHelp = document.getElementById('btnHelp');
+  const btnRetry = document.getElementById('btnRetry');
+  const btnBackEdit = document.getElementById('btnBackEdit');
+  const btnSaveLevel = document.getElementById('btnSaveLevel');
+
+  // --- State ---
+  let mode = 'edit'; // 'edit' | 'play'
+  let editTool = 'line'; // 'line' | 'target' | 'eraser'
+  let lines = []; // [{x1,y1,x2,y2}, ...]
+  let target = null; // {x, y}
+  let drawing = false;
+  let drawStart = null;
+  let drawEnd = null;
+  let gameRunning = false;
+  let gameWon = false;
+  let stableCount = 0;
+  let simStartTime = 0;
+  let charBodies = [];
+  let hasWon = false;
+
+  // --- Matter.js ---
+  const { Engine, World, Bodies, Body, Composite, Events, Vector } = Matter;
+  let engine = null;
+  let runner = null;
+
+  // --- Canvas resize ---
+  function resizeCanvas() {
+    const area = document.getElementById('gameArea');
+    canvas.width = area.clientWidth;
+    canvas.height = area.clientHeight;
+  }
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    if (!gameRunning) render();
+  });
+  resizeCanvas();
+
+  // --- Utility ---
+  function getCanvasPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  function distPointToSegment(px, py, x1, y1, x2, y2) {
+    const dx = x2 - x1, dy = y2 - y1;
+    const lenSq = dx * dx + dy * dy;
+    if (lenSq === 0) return Math.hypot(px - x1, py - y1);
+    let t = ((px - x1) * dx + (py - y1) * dy) / lenSq;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+  }
+
+  // --- Rendering ---
+  function drawGrid() {
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    const step = 40;
+    for (let x = 0; x < canvas.width; x += step) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += step) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+  }
+
+  function drawLines() {
+    ctx.strokeStyle = '#537895';
+    ctx.lineWidth = LINE_WIDTH_DRAW;
+    ctx.lineCap = 'round';
+    lines.forEach(l => {
+      ctx.beginPath();
+      ctx.moveTo(l.x1, l.y1);
+      ctx.lineTo(l.x2, l.y2);
+      ctx.stroke();
+    });
+  }
+
+  function drawTarget() {
+    if (!target) return;
+    const t = Date.now() / 300;
+    const pulse = 1 + 0.15 * Math.sin(t);
+    const r = TARGET_RADIUS * pulse;
+
+    // Glow
+    ctx.save();
+    ctx.shadowColor = '#e94560';
+    ctx.shadowBlur = 20;
+    ctx.beginPath();
+    ctx.arc(target.x, target.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(233,69,96,0.3)';
+    ctx.fill();
+    ctx.restore();
+
+    // Star
+    ctx.save();
+    ctx.translate(target.x, target.y);
+    ctx.rotate(t * 0.5);
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+      const method = i === 0 ? 'moveTo' : 'lineTo';
+      ctx[method](Math.cos(angle) * r, Math.sin(angle) * r);
+    }
+    ctx.closePath();
+    ctx.fillStyle = '#e94560';
+    ctx.fill();
+    ctx.strokeStyle = '#ff6b81';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    // Label
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('目标', target.x, target.y + r + 16);
+  }
+
+  function drawCurrentLine() {
+    if (!drawing || !drawStart || !drawEnd) return;
+    ctx.strokeStyle = 'rgba(83,120,149,0.6)';
+    ctx.lineWidth = LINE_WIDTH_DRAW;
+    ctx.lineCap = 'round';
+    ctx.setLineDash([8, 6]);
+    ctx.beginPath();
+    ctx.moveTo(drawStart.x, drawStart.y);
+    ctx.lineTo(drawEnd.x, drawEnd.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawEraserCursor(pos) {
+    if (editTool !== 'eraser' || !pos) return;
+    ctx.strokeStyle = 'rgba(233,69,96,0.5)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, ERASER_RADIUS, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  let mousePos = null;
+
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid();
+    drawLines();
+    drawTarget();
+    drawCurrentLine();
+    if (mode === 'edit') drawEraserCursor(mousePos);
+  }
+
+  function renderPhysics() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid();
+
+    // Draw static bodies (lines)
+    const allBodies = Composite.allBodies(engine.world);
+    allBodies.forEach(body => {
+      if (body.isStatic && body.label === 'obstacle') {
+        const verts = body.vertices;
+        ctx.beginPath();
+        ctx.moveTo(verts[0].x, verts[0].y);
+        for (let i = 1; i < verts.length; i++) {
+          ctx.lineTo(verts[i].x, verts[i].y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = '#537895';
+        ctx.fill();
+      }
+      if (body.isStatic && body.label === 'wall') {
+        const verts = body.vertices;
+        ctx.beginPath();
+        ctx.moveTo(verts[0].x, verts[0].y);
+        for (let i = 1; i < verts.length; i++) {
+          ctx.lineTo(verts[i].x, verts[i].y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = '#0f3460';
+        ctx.fill();
+      }
+    });
+
+    // Draw target
+    drawTarget();
+
+    // Draw char bodies
+    charBodies.forEach(cb => {
+      const { body, char } = cb;
+      ctx.save();
+      ctx.translate(body.position.x, body.position.y);
+      ctx.rotate(body.angle);
+
+      // Body shape
+      ctx.beginPath();
+      const verts = body.vertices;
+      const cx = body.position.x, cy = body.position.y;
+      ctx.moveTo(verts[0].x - cx, verts[0].y - cy);
+      for (let i = 1; i < verts.length; i++) {
+        ctx.lineTo(verts[i].x - cx, verts[i].y - cy);
+      }
+      ctx.closePath();
+      ctx.fillStyle = hasWon ? 'rgba(78,205,196,0.85)' : 'rgba(233,69,96,0.75)';
+      ctx.fill();
+      ctx.strokeStyle = hasWon ? '#4ecdc4' : '#ff6b81';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Character text
+      ctx.fillStyle = '#fff';
+      ctx.font = `bold ${CHAR_SIZE - 6}px 'Courier New', monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(char, 0, 0);
+
+      ctx.restore();
+    });
+
+    // Win animation
+    if (hasWon && target) {
+      const t = Date.now() / 200;
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2 + t;
+        const dist = 30 + 15 * Math.sin(t * 2 + i);
+        const px = target.x + Math.cos(angle) * dist;
+        const py = target.y + Math.sin(angle) * dist;
+        ctx.beginPath();
+        ctx.arc(px, py, 3, 0, Math.PI * 2);
+        ctx.fillStyle = `hsl(${(i * 45 + Date.now() / 10) % 360}, 80%, 65%)`;
+        ctx.fill();
+      }
+    }
+  }
+
+  // --- Edit mode input ---
+  function onPointerDown(e) {
+    if (mode !== 'edit') return;
+    e.preventDefault();
+    const pos = getCanvasPos(e);
+
+    if (editTool === 'target') {
+      target = { x: pos.x, y: pos.y };
+      render();
+      return;
+    }
+    if (editTool === 'eraser') {
+      // Find and remove nearest line
+      let minDist = Infinity, minIdx = -1;
+      lines.forEach((l, i) => {
+        const d = distPointToSegment(pos.x, pos.y, l.x1, l.y1, l.x2, l.y2);
+        if (d < minDist) { minDist = d; minIdx = i; }
+      });
+      if (minIdx >= 0 && minDist < ERASER_RADIUS) {
+        lines.splice(minIdx, 1);
+        render();
+      }
+      return;
+    }
+
+    // Line drawing
+    drawing = true;
+    drawStart = pos;
+    drawEnd = pos;
+  }
+
+  function onPointerMove(e) {
+    const pos = getCanvasPos(e);
+    mousePos = pos;
+    if (mode !== 'edit') return;
+    if (drawing) {
+      e.preventDefault();
+      drawEnd = pos;
+    }
+    render();
+  }
+
+  function onPointerUp(e) {
+    if (mode !== 'edit' || !drawing) return;
+    drawing = false;
+    if (drawStart && drawEnd) {
+      const dist = Math.hypot(drawEnd.x - drawStart.x, drawEnd.y - drawStart.y);
+      if (dist > 10) {
+        lines.push({ x1: drawStart.x, y1: drawStart.y, x2: drawEnd.x, y2: drawEnd.y });
+      }
+    }
+    drawStart = null;
+    drawEnd = null;
+    render();
+  }
+
+  canvas.addEventListener('mousedown', onPointerDown);
+  canvas.addEventListener('mousemove', onPointerMove);
+  canvas.addEventListener('mouseup', onPointerUp);
+  canvas.addEventListener('touchstart', onPointerDown, { passive: false });
+  canvas.addEventListener('touchmove', onPointerMove, { passive: false });
+  canvas.addEventListener('touchend', onPointerUp);
+
+  // --- Edit tool buttons ---
+  function setEditTool(tool) {
+    editTool = tool;
+    btnDrawLine.classList.toggle('active', tool === 'line');
+    btnSetTarget.classList.toggle('active', tool === 'target');
+    btnEraser.classList.toggle('active', tool === 'eraser');
+    canvas.style.cursor = tool === 'eraser' ? 'crosshair' : tool === 'target' ? 'crosshair' : 'default';
+  }
+  btnDrawLine.addEventListener('click', () => setEditTool('line'));
+  btnSetTarget.addEventListener('click', () => setEditTool('target'));
+  btnEraser.addEventListener('click', () => setEditTool('eraser'));
+
+  btnUndo.addEventListener('click', () => {
+    if (lines.length > 0) { lines.pop(); render(); }
+  });
+  btnClear.addEventListener('click', () => {
+    if (confirm('确定清空所有障碍和目标点吗？')) {
+      lines = [];
+      target = null;
+      render();
+    }
+  });
+
+  // --- Mode switching ---
+  function switchToEdit() {
+    mode = 'edit';
+    gameRunning = false;
+    hasWon = false;
+    stopPhysics();
+    btnEditMode.classList.add('active');
+    btnPlayMode.classList.remove('active');
+    btnDrawLine.disabled = false;
+    btnSetTarget.disabled = false;
+    btnEraser.disabled = false;
+    btnUndo.disabled = false;
+    btnClear.disabled = false;
+    inputPanel.classList.remove('show');
+    overlay.classList.remove('show');
+    statusBar.textContent = '编辑模式：点击拖拽画线，设置目标点后切换到游玩模式';
+    render();
+  }
+
+  function switchToPlay() {
+    if (!target) {
+      alert('请先设置目标点（点击 🎯 目标 按钮后在画布上点击）');
+      return;
+    }
+    mode = 'play';
+    btnEditMode.classList.remove('active');
+    btnPlayMode.classList.add('active');
+    btnDrawLine.disabled = true;
+    btnSetTarget.disabled = true;
+    btnEraser.disabled = true;
+    btnUndo.disabled = true;
+    btnClear.disabled = true;
+    inputPanel.classList.add('show');
+    statusBar.textContent = '游玩模式：输入ASCII字符，点击投放！';
+    asciiInput.value = '';
+    charCount.textContent = '0 / ' + MAX_CHARS;
+    asciiInput.focus();
+    render();
+  }
+
+  btnEditMode.addEventListener('click', switchToEdit);
+  btnPlayMode.addEventListener('click', switchToPlay);
+
+  // --- Input handling ---
+  asciiInput.addEventListener('input', () => {
+    // Filter to printable ASCII only (space \x20 through tilde \x7E)
+    let val = asciiInput.value.replace(/[^\x20-\x7E]/g, '');
+    if (val.length > MAX_CHARS) val = val.slice(0, MAX_CHARS);
+    asciiInput.value = val;
+    charCount.textContent = val.length + ' / ' + MAX_CHARS;
+  });
+
+  // --- Physics ---
+  function createPhysicsWorld(text) {
+    engine = Engine.create({
+      gravity: { x: 0, y: 1.5 }
+    });
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Walls
+    const wallThick = 40;
+    const walls = [
+      Bodies.rectangle(w / 2, h + wallThick / 2, w + wallThick * 2, wallThick, { isStatic: true, label: 'wall' }),
+      Bodies.rectangle(-wallThick / 2, h / 2, wallThick, h, { isStatic: true, label: 'wall' }),
+      Bodies.rectangle(w + wallThick / 2, h / 2, wallThick, h, { isStatic: true, label: 'wall' })
+    ];
+    Composite.add(engine.world, walls);
+
+    // Obstacle lines as thin rectangles
+    lines.forEach(l => {
+      const cx = (l.x1 + l.x2) / 2;
+      const cy = (l.y1 + l.y2) / 2;
+      const len = Math.hypot(l.x2 - l.x1, l.y2 - l.y1);
+      const angle = Math.atan2(l.y2 - l.y1, l.x2 - l.x1);
+      const body = Bodies.rectangle(cx, cy, len, LINE_WIDTH_DRAW, {
+        isStatic: true,
+        angle: angle,
+        label: 'obstacle',
+        friction: 0.5,
+        restitution: 0.3
+      });
+      Composite.add(engine.world, body);
+    });
+
+    // Target sensor
+    const targetBody = Bodies.circle(target.x, target.y, TARGET_RADIUS, {
+      isStatic: true,
+      isSensor: true,
+      label: 'target'
+    });
+    Composite.add(engine.world, targetBody);
+
+    // Characters
+    charBodies = [];
+    const totalWidth = text.length * (CHAR_SIZE + 4);
+    const startX = w / 2 - totalWidth / 2 + CHAR_SIZE / 2;
+    const startY = 30;
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      const x = startX + i * (CHAR_SIZE + 4);
+      const y = startY + (Math.random() - 0.5) * 10;
+      const body = Bodies.rectangle(x, y, CHAR_SIZE, CHAR_SIZE, {
+        label: 'char_' + ch,
+        restitution: 0.4,
+        friction: 0.6,
+        density: 0.002,
+        frictionAir: 0.01
+      });
+      // Add slight random rotation and velocity
+      Body.setAngle(body, (Math.random() - 0.5) * 0.3);
+      Body.setVelocity(body, { x: (Math.random() - 0.5) * 2, y: 0 });
+      Composite.add(engine.world, body);
+      charBodies.push({ body, char: ch });
+    }
+
+    // Collision detection
+    Events.on(engine, 'collisionStart', (event) => {
+      event.pairs.forEach(pair => {
+        const { bodyA, bodyB } = pair;
+        if ((bodyA.label === 'target' && bodyB.label.startsWith('char_')) ||
+            (bodyB.label === 'target' && bodyA.label.startsWith('char_'))) {
+          if (!hasWon) {
+            hasWon = true;
+            setTimeout(() => showResult(true), 500);
+          }
+        }
+      });
+    });
+  }
+
+  function startPhysics(text) {
+    createPhysicsWorld(text);
+    gameRunning = true;
+    hasWon = false;
+    stableCount = 0;
+    simStartTime = Date.now();
+    inputPanel.classList.remove('show');
+    statusBar.textContent = '⏳ 物理模拟中...';
+
+    function step() {
+      if (!gameRunning) return;
+      Engine.update(engine, 1000 / 60);
+
+      // Check stability
+      let totalSpeed = 0;
+      charBodies.forEach(cb => {
+        totalSpeed += Math.hypot(cb.body.velocity.x, cb.body.velocity.y);
+        totalSpeed += Math.abs(cb.body.angularVelocity) * 10;
+      });
+      const avgSpeed = totalSpeed / Math.max(charBodies.length, 1);
+
+      if (avgSpeed < STABLE_THRESHOLD) {
+        stableCount++;
+      } else {
+        stableCount = 0;
+      }
+
+      // Check lose condition
+      const elapsed = Date.now() - simStartTime;
+      if (!hasWon && (stableCount > STABLE_FRAMES || elapsed > MAX_SIM_TIME)) {
+        gameRunning = false;
+        showResult(false);
+        return;
+      }
+
+      renderPhysics();
+      if (gameRunning) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function stopPhysics() {
+    gameRunning = false;
+    if (engine) {
+      Engine.clear(engine);
+      engine = null;
+    }
+    charBodies = [];
+  }
+
+  function showResult(won) {
+    gameRunning = false;
+    gameWon = won;
+    if (won) {
+      resultTitle.textContent = '🎉 恭喜通关！';
+      resultTitle.style.color = '#4ecdc4';
+      resultMsg.textContent = '太棒了！ASCII字符成功触碰到了目标点！';
+    } else {
+      resultTitle.textContent = '😢 挑战失败';
+      resultTitle.style.color = '#e94560';
+      resultMsg.textContent = '物体已稳定，但没有碰到目标点。换个字符或重新布局试试？';
+    }
+    overlay.classList.add('show');
+  }
+
+  // --- Drop button ---
+  dropBtn.addEventListener('click', () => {
+    const text = asciiInput.value.trim();
+    if (!text) {
+      alert('请输入至少一个ASCII字符！');
+      return;
+    }
+    startPhysics(text);
+  });
+  asciiInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') dropBtn.click();
+  });
+
+  // --- Result buttons ---
+  btnRetry.addEventListener('click', () => {
+    overlay.classList.remove('show');
+    stopPhysics();
+    switchToPlay();
+  });
+  btnBackEdit.addEventListener('click', () => {
+    overlay.classList.remove('show');
+    switchToEdit();
+  });
+
+  // --- Help ---
+  btnHelp.addEventListener('click', () => helpPanel.classList.toggle('show'));
+
+  // --- Level Management ---
+  function getLevels() {
+    try {
+      return JSON.parse(localStorage.getItem('physicsGame_levels') || '[]');
+    } catch { return []; }
+  }
+  function saveLevels(levels) {
+    localStorage.setItem('physicsGame_levels', JSON.stringify(levels));
+  }
+
+  function renderLevelList() {
+    const levels = getLevels();
+    levelList.innerHTML = '';
+    if (levels.length === 0) {
+      levelList.innerHTML = '<p style="color:#666;font-size:13px;padding:8px">暂无保存的关卡</p>';
+      return;
+    }
+    levels.forEach((lv, idx) => {
+      const div = document.createElement('div');
+      div.className = 'levelItem';
+      div.innerHTML = `
+        <span class="name">📋 ${escapeHtml(lv.name)}</span>
+        <span class="actions">
+          <button data-action="load" data-idx="${idx}">加载</button>
+          <button data-action="delete" data-idx="${idx}">删除</button>
+        </span>`;
+      levelList.appendChild(div);
+    });
+    levelList.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const action = e.target.dataset.action;
+        const idx = parseInt(e.target.dataset.idx);
+        if (action === 'load') loadLevel(idx);
+        if (action === 'delete') deleteLevel(idx);
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function saveCurrentLevel() {
+    const name = levelNameInput.value.trim();
+    if (!name) { alert('请输入关卡名称'); return; }
+    const levels = getLevels();
+    levels.push({
+      name,
+      lines: JSON.parse(JSON.stringify(lines)),
+      target: target ? { ...target } : null,
+      canvasW: canvas.width,
+      canvasH: canvas.height
+    });
+    saveLevels(levels);
+    levelNameInput.value = '';
+    renderLevelList();
+  }
+
+  function loadLevel(idx) {
+    const levels = getLevels();
+    const lv = levels[idx];
+    if (!lv) return;
+
+    // Scale coordinates if canvas size changed
+    const scaleX = canvas.width / (lv.canvasW || canvas.width);
+    const scaleY = canvas.height / (lv.canvasH || canvas.height);
+    lines = lv.lines.map(l => ({
+      x1: l.x1 * scaleX, y1: l.y1 * scaleY,
+      x2: l.x2 * scaleX, y2: l.y2 * scaleY
+    }));
+    target = lv.target ? { x: lv.target.x * scaleX, y: lv.target.y * scaleY } : null;
+
+    levelPanel.classList.remove('show');
+    switchToEdit();
+    render();
+  }
+
+  function deleteLevel(idx) {
+    if (!confirm('确定删除此关卡？')) return;
+    const levels = getLevels();
+    levels.splice(idx, 1);
+    saveLevels(levels);
+    renderLevelList();
+  }
+
+  btnLevels.addEventListener('click', () => {
+    renderLevelList();
+    levelPanel.classList.toggle('show');
+  });
+  btnSaveLevel.addEventListener('click', saveCurrentLevel);
+
+  // --- Initial setup ---
+  inputLabel.textContent = '输入ASCII字符（最多' + MAX_CHARS + '个字符）';
+  asciiInput.maxLength = MAX_CHARS;
+  charCount.textContent = '0 / ' + MAX_CHARS;
+
+  // --- Initial render ---
+  render();
+
+  // Animation loop for edit mode (target pulsing)
+  function editAnimLoop() {
+    if (mode === 'edit' && !gameRunning) render();
+    requestAnimationFrame(editAnimLoop);
+  }
+  editAnimLoop();
+
+})();
+</script>
+</body>
+</html>
