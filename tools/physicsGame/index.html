@@ -335,6 +335,9 @@ canvas {
   const STABLE_FRAMES = 120;
   const MAX_SIM_TIME = 15000;
   const ERASER_RADIUS = 20;
+  const OUTLINE_FONT_SIZE = 64;
+  const OUTLINE_SIMPLIFY = 1.5;
+  const charOutlineCache = {};
 
   // --- DOM ---
   const canvas = document.getElementById('canvas');
@@ -417,6 +420,146 @@ canvas {
     let t = ((px - x1) * dx + (py - y1) * dy) / lenSq;
     t = Math.max(0, Math.min(1, t));
     return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+  }
+
+  // --- Character Outline Extraction ---
+  function getCharOutlineData(char) {
+    const pad = 6;
+    const fs = OUTLINE_FONT_SIZE;
+    const tmpCanvas = document.createElement('canvas');
+    const tmpCtx = tmpCanvas.getContext('2d');
+
+    tmpCtx.font = `bold ${fs}px 'Courier New', monospace`;
+    const m = tmpCtx.measureText(char);
+
+    const cw = Math.ceil(m.width) + pad * 2 + 4;
+    const ch = Math.ceil(fs * 1.4) + pad * 2;
+    tmpCanvas.width = cw;
+    tmpCanvas.height = ch;
+
+    tmpCtx.font = `bold ${fs}px 'Courier New', monospace`;
+    tmpCtx.fillStyle = '#000';
+    tmpCtx.textBaseline = 'middle';
+    tmpCtx.textAlign = 'center';
+    tmpCtx.fillText(char, cw / 2, ch / 2);
+
+    const imgData = tmpCtx.getImageData(0, 0, cw, ch);
+    const binary = new Uint8Array(cw * ch);
+    for (let i = 0; i < cw * ch; i++) {
+      binary[i] = imgData.data[i * 4 + 3] > 80 ? 1 : 0;
+    }
+    return { binary, w: cw, h: ch };
+  }
+
+  function findComponents(binary, w, h) {
+    const visited = new Uint8Array(w * h);
+    const components = [];
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        if (binary[y * w + x] === 1 && visited[y * w + x] === 0) {
+          let size = 0;
+          const stack = [[x, y]];
+          visited[y * w + x] = 1;
+          const startX = x, startY = y;
+          while (stack.length > 0) {
+            const [cx, cy] = stack.pop();
+            size++;
+            for (const [dx, dy] of [[0,1],[0,-1],[1,0],[-1,0]]) {
+              const nx = cx + dx, ny = cy + dy;
+              if (nx >= 0 && nx < w && ny >= 0 && ny < h &&
+                  binary[ny * w + nx] === 1 && visited[ny * w + nx] === 0) {
+                visited[ny * w + nx] = 1;
+                stack.push([nx, ny]);
+              }
+            }
+          }
+          if (size >= 4) {
+            components.push({ startX, startY, size });
+          }
+        }
+      }
+    }
+    return components;
+  }
+
+  function mooreBoundaryTrace(binary, w, h, sx, sy) {
+    const dx = [1, 1, 0, -1, -1, -1, 0, 1];
+    const dy = [0, 1, 1, 1, 0, -1, -1, -1];
+    function isSet(x, y) {
+      return x >= 0 && x < w && y >= 0 && y < h && binary[y * w + x] === 1;
+    }
+    const contour = [{ x: sx, y: sy }];
+    let cx = sx, cy = sy;
+    let backDir = 4;
+    const maxIter = w * h * 2;
+    for (let iter = 0; iter < maxIter; iter++) {
+      let found = false;
+      const searchStart = (backDir + 1) % 8;
+      for (let i = 0; i < 8; i++) {
+        const d = (searchStart + i) % 8;
+        const nx = cx + dx[d], ny = cy + dy[d];
+        if (isSet(nx, ny)) {
+          if (nx === sx && ny === sy) return contour;
+          contour.push({ x: nx, y: ny });
+          backDir = (d + 4) % 8;
+          cx = nx;
+          cy = ny;
+          found = true;
+          break;
+        }
+      }
+      if (!found) return contour;
+    }
+    return contour;
+  }
+
+  function perpDist(p, a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy);
+    if (len === 0) return Math.hypot(p.x - a.x, p.y - a.y);
+    return Math.abs(dx * (a.y - p.y) - dy * (a.x - p.x)) / len;
+  }
+
+  function simplifyDP(pts, eps) {
+    if (pts.length <= 2) return pts.slice();
+    let dmax = 0, idx = 0;
+    for (let i = 1; i < pts.length - 1; i++) {
+      const d = perpDist(pts[i], pts[0], pts[pts.length - 1]);
+      if (d > dmax) { dmax = d; idx = i; }
+    }
+    if (dmax > eps) {
+      const left = simplifyDP(pts.slice(0, idx + 1), eps);
+      const right = simplifyDP(pts.slice(idx), eps);
+      return left.slice(0, -1).concat(right);
+    }
+    return [pts[0], pts[pts.length - 1]];
+  }
+
+  function getCharVertexSets(char) {
+    if (char === ' ') return null;
+    if (charOutlineCache[char] !== undefined) return charOutlineCache[char];
+
+    const { binary, w: cw, h: ch } = getCharOutlineData(char);
+    const components = findComponents(binary, cw, ch);
+    if (components.length === 0) { charOutlineCache[char] = null; return null; }
+
+    const centerX = cw / 2;
+    const centerY = ch / 2;
+    const vertexSets = [];
+
+    for (const comp of components) {
+      const boundary = mooreBoundaryTrace(binary, cw, ch, comp.startX, comp.startY);
+      if (boundary.length < 3) continue;
+      const simplified = simplifyDP(boundary, OUTLINE_SIMPLIFY);
+      if (simplified.length < 3) continue;
+      const vertices = simplified.map(p => ({ x: p.x - centerX, y: p.y - centerY }));
+      vertexSets.push(vertices);
+    }
+
+    if (vertexSets.length === 0) { charOutlineCache[char] = null; return null; }
+    const result = { vertexSets, sourceWidth: cw, sourceHeight: ch };
+    charOutlineCache[char] = result;
+    return result;
   }
 
   // --- Rendering ---
@@ -556,34 +699,25 @@ canvas {
 
     // Draw char bodies
     charBodies.forEach(cb => {
-      const { body, char } = cb;
-      ctx.save();
-      ctx.translate(body.position.x, body.position.y);
-      ctx.rotate(body.angle);
+      const { body } = cb;
+      const parts = body.parts;
+      const startIdx = parts.length > 1 ? 1 : 0;
 
-      // Body shape
-      ctx.beginPath();
-      const verts = body.vertices;
-      const cx = body.position.x, cy = body.position.y;
-      ctx.moveTo(verts[0].x - cx, verts[0].y - cy);
-      for (let i = 1; i < verts.length; i++) {
-        ctx.lineTo(verts[i].x - cx, verts[i].y - cy);
+      for (let p = startIdx; p < parts.length; p++) {
+        const part = parts[p];
+        const verts = part.vertices;
+        ctx.beginPath();
+        ctx.moveTo(verts[0].x, verts[0].y);
+        for (let vi = 1; vi < verts.length; vi++) {
+          ctx.lineTo(verts[vi].x, verts[vi].y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = hasWon ? 'rgba(78,205,196,0.85)' : 'rgba(233,69,96,0.75)';
+        ctx.fill();
+        ctx.strokeStyle = hasWon ? '#4ecdc4' : '#ff6b81';
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
-      ctx.closePath();
-      ctx.fillStyle = hasWon ? 'rgba(78,205,196,0.85)' : 'rgba(233,69,96,0.75)';
-      ctx.fill();
-      ctx.strokeStyle = hasWon ? '#4ecdc4' : '#ff6b81';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Character text
-      ctx.fillStyle = '#fff';
-      ctx.font = `bold ${CHAR_SIZE - 6}px 'Courier New', monospace`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(char, 0, 0);
-
-      ctx.restore();
     });
 
     // Win animation
@@ -792,14 +926,31 @@ canvas {
       const ch = text[i];
       const x = startX + i * (CHAR_SIZE + 4);
       const y = startY + (Math.random() - 0.5) * 10;
-      const body = Bodies.rectangle(x, y, CHAR_SIZE, CHAR_SIZE, {
+      const bodyOpts = {
         label: 'char_' + ch,
         restitution: 0.4,
         friction: 0.6,
         density: 0.002,
         frictionAir: 0.01
-      });
-      // Add slight random rotation and velocity
+      };
+
+      let body;
+      const outlineData = getCharVertexSets(ch);
+      if (outlineData) {
+        const scale = CHAR_SIZE / Math.max(outlineData.sourceWidth, outlineData.sourceHeight);
+        const scaledSets = outlineData.vertexSets.map(vs =>
+          vs.map(v => ({ x: v.x * scale, y: v.y * scale }))
+        );
+        try {
+          body = Bodies.fromVertices(x, y, scaledSets, bodyOpts);
+          if (body.label !== bodyOpts.label) body.label = bodyOpts.label;
+        } catch (e) {
+          body = Bodies.rectangle(x, y, CHAR_SIZE, CHAR_SIZE, bodyOpts);
+        }
+      } else {
+        body = Bodies.rectangle(x, y, CHAR_SIZE, CHAR_SIZE, bodyOpts);
+      }
+
       Body.setAngle(body, (Math.random() - 0.5) * 0.3);
       Body.setVelocity(body, { x: (Math.random() - 0.5) * 2, y: 0 });
       Composite.add(engine.world, body);
@@ -810,8 +961,10 @@ canvas {
     Events.on(engine, 'collisionStart', (event) => {
       event.pairs.forEach(pair => {
         const { bodyA, bodyB } = pair;
-        if ((bodyA.label === 'target' && bodyB.label.startsWith('char_')) ||
-            (bodyB.label === 'target' && bodyA.label.startsWith('char_'))) {
+        const labelA = bodyA.parent ? bodyA.parent.label : bodyA.label;
+        const labelB = bodyB.parent ? bodyB.parent.label : bodyB.label;
+        if ((labelA === 'target' && labelB.startsWith('char_')) ||
+            (labelB === 'target' && labelA.startsWith('char_'))) {
           if (!hasWon) {
             hasWon = true;
             setTimeout(() => showResult(true), 500);
