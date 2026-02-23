@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#e74c3c" />
+    </marker>
+  </defs>
+
+  <!-- 标题 -->
+  <text x="300" y="25" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">弦的微元段受力分析</text>
+
+  <!-- 坐标轴 -->
+  <line x1="50" y1="200" x2="550" y2="200" stroke="#95a5a6" stroke-width="1" stroke-dasharray="5,5"/>
+  <text x="560" y="205" font-size="14" fill="#7f8c8d">x</text>
+
+  <!-- 弦的微元段（曲线） -->
+  <path d="M 150 200 Q 200 150, 250 180 T 350 170 T 450 185"
+        stroke="#3498db" stroke-width="3" fill="none"/>
+
+  <!-- 左端点位置 -->
+  <circle cx="250" cy="180" r="4" fill="#e74c3c"/>
+  <line x1="250" y1="180" x2="250" y2="200" stroke="#95a5a6" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="250" y="220" text-anchor="middle" font-size="13" fill="#2c3e50">x</text>
+
+  <!-- 右端点位置 -->
+  <circle cx="350" cy="170" r="4" fill="#e74c3c"/>
+  <line x1="350" y1="170" x2="350" y2="200" stroke="#95a5a6" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="350" y="220" text-anchor="middle" font-size="13" fill="#2c3e50">x+Δx</text>
+
+  <!-- 微元段标注 -->
+  <line x1="250" y1="240" x2="350" y2="240" stroke="#27ae60" stroke-width="2"/>
+  <line x1="250" y1="235" x2="250" y2="245" stroke="#27ae60" stroke-width="2"/>
+  <line x1="350" y1="235" x2="350" y2="245" stroke="#27ae60" stroke-width="2"/>
+  <text x="300" y="260" text-anchor="middle" font-size="13" fill="#27ae60">Δx</text>
+
+  <!-- 左端张力 T1 -->
+  <line x1="250" y1="180" x2="200" y2="140" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+  <text x="185" y="135" font-size="14" fill="#e74c3c" font-weight="bold">T</text>
+  <text x="220" y="155" font-size="12" fill="#7f8c8d">θ₁</text>
+
+  <!-- 右端张力 T2 -->
+  <line x1="350" y1="170" x2="400" y2="140" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arrowhead)"/>
+  <text x="405" y="135" font-size="14" fill="#e74c3c" font-weight="bold">T</text>
+  <text x="365" y="155" font-size="12" fill="#7f8c8d">θ₂</text>
+
+  <!-- 重力（向下箭头，位于中点） -->
+  <defs>
+    <marker id="arrowhead-down" markerWidth="10" markerHeight="10" refX="5" refY="9" orient="auto">
+      <polygon points="0 0, 10 0, 5 10" fill="#9b59b6" />
+    </marker>
+  </defs>
+  <line x1="300" y1="175" x2="300" y2="130" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrowhead-down)"/>
+  <text x="310" y="155" font-size="13" fill="#9b59b6">ρgΔx</text>
+
+  <!-- 位移标注 -->
+  <line x1="250" y1="180" x2="250" y2="200" stroke="#f39c12" stroke-width="1.5"/>
+  <line x1="245" y1="180" x2="255" y2="180" stroke="#f39c12" stroke-width="1.5"/>
+  <line x1="245" y1="200" x2="255" y2="200" stroke="#f39c12" stroke-width="1.5"/>
+  <text x="235" y="192" font-size="12" fill="#f39c12" text-anchor="end">u(x,t)</text>
+
+  <!-- 说明文字 -->
+  <text x="50" y="50" font-size="12" fill="#34495e">• 张力 T（红色）沿切线方向</text>
+  <text x="50" y="70" font-size="12" fill="#34495e">• θ₁, θ₂：切线与水平方向夹角</text>
+  <text x="50" y="90" font-size="12" fill="#34495e">• u(x,t)：垂直位移（橙色）</text>
+</svg>
