@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>3. VIVO-Y927 Linux 内核 + BusyBox 最小系统引导启动实验 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="背景 上一章节完成了 lk1st 的移植，为Linux主线内核的引导和ARM64 Linux 的启动提供了基础。此时 fastboot 正常工作，但是 fastboot boot 无法启动下一步。 本章即将进入到Linux主线内核的真正启动阶段，  获取Linux内核源码 获取内核源码 123cd"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/2ba4/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '3. VIVO-Y927 Linux 内核 + BusyBox 最小系统引导启动实验',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-06-07 15:42:00'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://github.com/zhangzqs.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">124</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">516</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">37</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">3. VIVO-Y927 Linux 内核 + BusyBox 最小系统引导启动实验<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/VIVO-Y927移植主线Linux发行版/3-Linux内核+BusyBox最小系统引导启动实验.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-07T07:42:00.000Z" title="发表于 2026-06-07 15:42:00">2026-06-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-07T07:42:00.000Z" title="更新于 2026-06-07 15:42:00">2026-06-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/VIVO-Y927%E7%A7%BB%E6%A4%8D%E4%B8%BB%E7%BA%BFLinux%E5%8F%91%E8%A1%8C%E7%89%88/">VIVO-Y927移植主线Linux发行版</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="3. VIVO-Y927 Linux 内核 + BusyBox 最小系统引导启动实验"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/2ba4/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><h2 id="背景"><a class="markdownIt-Anchor" href="#背景"></a> 背景</h2>
+<p>上一章节完成了 <code>lk1st</code> 的移植，为Linux主线内核的引导和ARM64 Linux 的启动提供了基础。此时 fastboot 正常工作，但是 <code>fastboot boot</code> 无法启动下一步。</p>
+<p>本章即将进入到Linux主线内核的真正启动阶段，</p>
+<h2 id="获取linux内核源码"><a class="markdownIt-Anchor" href="#获取linux内核源码"></a> 获取Linux内核源码</h2>
+<p>获取内核源码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/y927</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/msm8916-mainline/linux.git -b wip/msm8916/7.0 --depth 1</span><br><span class="line"><span class="built_in">cd</span> linux</span><br></pre></td></tr></table></figure>
+<h2 id="第0阶段零外设验证内核引导启动"><a class="markdownIt-Anchor" href="#第0阶段零外设验证内核引导启动"></a> 第0阶段：零外设验证内核引导启动</h2>
+<h3 id="目标"><a class="markdownIt-Anchor" href="#目标"></a> 目标</h3>
+<p>最极简的验证：<strong>不需要串口、不需要 USB、不需要看屏幕任何输出</strong>。只需要一个秒表。</p>
+<p>原理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">内核启动 → 挂载 initramfs → 执行 /init → sleep 15 秒 → exit 触发 panic → kernel 重启</span><br></pre></td></tr></table></figure>
+<p>观察设备行为：</p>
+<ul>
+<li>刷入 boot.img 后重启</li>
+<li>屏幕亮起（lk1st splash） → 停 ~15 秒 → 重启 → 再次亮起（lk1st）</li>
+<li><strong>如果这个循环发生了，内核就启动了。</strong></li>
+</ul>
+<p>不需要任何调试外设，不需要 DTB 写的正确——只需要内核能成功解压、初始化基础 SoC、挂载 initramfs 并运行 init 进程。</p>
+<h3 id="最简的骨架-dts"><a class="markdownIt-Anchor" href="#最简的骨架-dts"></a> 最简的骨架 DTS</h3>
+<p>只要一个<strong>骨架设备树</strong>，告诉内核这是 MSM8916 平台即可：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SPDX-License-Identifier: GPL-2.0-only</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">/dts-v1/</span><span class="punctuation">;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;msm8916-pm8916.dtsi&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="title class_">/</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">model</span> <span class="operator">=</span> <span class="string">&quot;vivo Y927 (PD1410V)&quot;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">compatible</span> <span class="operator">=</span> <span class="string">&quot;vivo,y927&quot;</span>, <span class="string">&quot;qcom,msm8916&quot;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">chassis-type</span> <span class="operator">=</span> <span class="string">&quot;handset&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
+<p>只有 10 行！<code>msm8916-pm8916.dtsi</code> 已经把 SoC 时钟、中断控制器、timer、regulator 等基础全部定义好了。内核只需要 <code>compatible = &quot;qcom,msm8916&quot;</code> 就能初始化 MSM8916 平台。</p>
+<p>不写任何外设节点——没有串口、没有 USB、没有 eMMC。内核启动后唯一能做的事就是从 initramfs 执行 <code>/init</code>。</p>
+<p>编辑Makefile <code>linux/arch/arm64/boot/dts/qcom/Makefile</code></p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-vivo-y21l.dtb</span></span><br><span class="line">dtb-<span class="variable">$(CONFIG_ARCH_QCOM)</span>	+= msm8916-vivo-y927.dtb</span><br><span class="line"><span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<h3 id="制作一个最简-initramfs"><a class="markdownIt-Anchor" href="#制作一个最简-initramfs"></a> 制作一个最简 initramfs</h3>
+<p>Linux 内核完成自举后，会启动用户态第一个进程，也就是 PID 为 1 的 /init 程序。</p>
+<p>BusyBox 是遵循 GPL 协议的开源轻量工具集，被称作嵌入式 Linux 的 “瑞士军刀”。它将数百款 Linux 常用命令与工具整合为单个可执行文件，通过软链接和调用名区分不同功能，具备体积小巧、可灵活裁剪的特点，广泛应用于嵌入式设备、微型 Linux 系统及容器场景。</p>
+<p>常规完整 Linux 系统中，/init 一般为 SysV init 或 systemd；而搭建极简 initramfs 无需这类重型初始化程序。BusyBox 内置了精简版 init，运行逻辑与 SysV init 相近，完全可以胜任最简系统的初始化工作。</p>
+<h4 id="编译-busybox"><a class="markdownIt-Anchor" href="#编译-busybox"></a> 编译 BusyBox</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/y927</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载源码</span></span><br><span class="line">wget https://busybox.net/downloads/busybox-1.38.0.tar.bz2</span><br><span class="line">tar xf busybox-1.38.0.tar.bz2</span><br><span class="line"><span class="built_in">rm</span> busybox-1.38.0.tar.bz2</span><br><span class="line"><span class="built_in">cd</span> busybox-1.38.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置交叉编译器</span></span><br><span class="line"><span class="built_in">export</span> CROSS_COMPILE=aarch64-linux-gnu-</span><br><span class="line"><span class="built_in">export</span> ARCH=arm64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成默认配置</span></span><br><span class="line">make defconfig</span><br><span class="line"><span class="comment"># 改为静态链接（不依赖任何 .so）</span></span><br><span class="line">sed -i <span class="string">&#x27;s/# CONFIG_STATIC is not set/CONFIG_STATIC=y/&#x27;</span> .config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 确认这些必要命令是否已开启</span></span><br><span class="line">grep -E <span class="string">&quot;CONFIG_(SLEEP|ASH|MOUNT|REBOOT|INIT)=&quot;</span> .config</span><br><span class="line"><span class="comment"># CONFIG_SLEEP=y</span></span><br><span class="line"><span class="comment"># CONFIG_REBOOT=y</span></span><br><span class="line"><span class="comment"># CONFIG_INIT=y</span></span><br><span class="line"><span class="comment"># CONFIG_MOUNT=y</span></span><br><span class="line"><span class="comment"># CONFIG_ASH=y</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭TC支持，这个命令不需要，但是不关闭会导致编译失败</span></span><br><span class="line">sed -i <span class="string">&#x27;s/CONFIG_TC=y/CONFIG_TC=n/&#x27;</span> .config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始多线程编译</span></span><br><span class="line">make -j$(<span class="built_in">nproc</span>)</span><br><span class="line"></span><br><span class="line">file busybox</span><br><span class="line"><span class="comment"># busybox: ELF 64-bit LSB executable, ARM aarch64, version 1 (GNU/Linux), statically linked, BuildID[sha1]=8d5f61a63654db70668b4b0419e6f781e2e5acc3, for GNU/Linux 3.7.0, stripped</span></span><br></pre></td></tr></table></figure>
+<h4 id="制作-initramfs"><a class="markdownIt-Anchor" href="#制作-initramfs"></a> 制作 initramfs</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ~/y927/initramfs/simple-0</span><br><span class="line"><span class="built_in">cd</span> ~/y927/initramfs/simple-0</span><br><span class="line"><span class="built_in">mkdir</span> -p bin &amp;&amp; <span class="built_in">cd</span> bin</span><br><span class="line"><span class="built_in">cp</span> ~/y927/busybox-1.38.0/busybox .</span><br><span class="line"><span class="built_in">ln</span> -s busybox init</span><br><span class="line"><span class="built_in">ln</span> -s busybox ash</span><br><span class="line"><span class="built_in">ln</span> -s busybox sh</span><br><span class="line"><span class="built_in">ln</span> -s busybox <span class="built_in">sleep</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入 init 脚本</span></span><br><span class="line"><span class="built_in">cd</span> ~/y927/initramfs/simple-0</span><br><span class="line"><span class="built_in">cat</span> &gt; init &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line">/bin/sleep 15</span><br><span class="line">EOF</span><br><span class="line"><span class="built_in">chmod</span> +x init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打包</span></span><br><span class="line">find . | cpio -o -H newc | gzip &gt; ../initramfs-simple-0.cpio.gz</span><br></pre></td></tr></table></figure>
+<h3 id="编译-linux-内核"><a class="markdownIt-Anchor" href="#编译-linux-内核"></a> 编译 Linux 内核</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装编译依赖包</span></span><br><span class="line"><span class="built_in">sudo</span> apt install flex bison bc rsync libssl-dev libelf-dev -y</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/y927/linux</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用默认 defconfig —— 不需要改任何配置</span></span><br><span class="line">make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- msm8916_defconfig</span><br><span class="line">make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j$(<span class="built_in">nproc</span>) Image.gz dtbs</span><br></pre></td></tr></table></figure>
+<h3 id="构建-bootimg-文件"><a class="markdownIt-Anchor" href="#构建-bootimg-文件"></a> 构建 boot.img 文件</h3>
+<p>可以使用mkbootimg工具制作boot.img文件。mkbootimg是专门打包 Android Boot Image 的工具，这个工具之前在lk2nd仓库中存在。</p>
+<p>boot.img的格式如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>大小</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ANDROID! header</td>
+<td>2048B</td>
+<td>header_verrsion=0 固定 2KB</td>
+</tr>
+<tr>
+<td>kernel</td>
+<td>-</td>
+<td>Image.gz + DTB</td>
+</tr>
+<tr>
+<td>ramdisk</td>
+<td>-</td>
+<td>cpio.gz</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拼接内核 + DTB</span></span><br><span class="line"><span class="built_in">cat</span> <span class="built_in">arch</span>/arm64/boot/Image.gz \</span><br><span class="line">    <span class="built_in">arch</span>/arm64/boot/dts/qcom/msm8916-vivo-y927.dtb \</span><br><span class="line">    &gt; vmlinuz-dtb</span><br><span class="line"></span><br><span class="line">~/y927/lk2nd/lk2nd/scripts/mkbootimg \</span><br><span class="line">    --kernel vmlinuz-dtb \</span><br><span class="line">    --ramdisk <span class="variable">$HOME</span>/y927/initramfs/initramfs-simple-0.cpio.gz \</span><br><span class="line">    --cmdline <span class="string">&quot;console=ttyMSM0,115200 panic=1&quot;</span> \</span><br><span class="line">    --base 0x80000000 \</span><br><span class="line">    --kernel_offset 0x00008000 \</span><br><span class="line">    --ramdisk_offset 0x01000000 \</span><br><span class="line">    --second_offset 0x00f00000 \</span><br><span class="line">    --tags_offset 0x00000100 \</span><br><span class="line">    --pagesize 2048 \</span><br><span class="line">    --header_version 0 \</span><br><span class="line">    --output boot-phase0.img</span><br></pre></td></tr></table></figure>
+<h3 id="刷入-bootimg-文件"><a class="markdownIt-Anchor" href="#刷入-bootimg-文件"></a> 刷入 boot.img 文件</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fastboot flash boot boot-phase0.img</span><br><span class="line">fastboot reboot</span><br></pre></td></tr></table></figure>
+<p>重启后，手机会陷入 15s 的重启循环中，说明最简 Linux 内核启动成功！</p>
+<h2 id="第1阶段启动-usb-模拟串口进入-linux-进行操作"><a class="markdownIt-Anchor" href="#第1阶段启动-usb-模拟串口进入-linux-进行操作"></a> 第1阶段：启动 USB 模拟串口进入 Linux 进行操作</h2>
+<h3 id="目标-2"><a class="markdownIt-Anchor" href="#目标-2"></a> 目标</h3>
+<p>阶段0验证了内核能够正常引导成功，但是看不到任何输出。本阶段的目标是通过 USB Gadget Serial 实现串口交互式输入输出，可以通过 USB 线在 PC 端与手机 Linux 系统进行交互。</p>
+<h3 id="设备树-dts"><a class="markdownIt-Anchor" href="#设备树-dts"></a> 设备树 DTS</h3>
+<p>编写以下 DTS 初始化 USB：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SPDX-License-Identifier: GPL-2.0-only</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">/dts-v1/</span><span class="punctuation">;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;msm8916-pm8916.dtsi&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;dt-bindings/gpio/gpio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="title class_">/</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">model</span> <span class="operator">=</span> <span class="string">&quot;vivo Y927 (PD1410V)&quot;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">compatible</span> <span class="operator">=</span> <span class="string">&quot;vivo,y927&quot;</span>, <span class="string">&quot;qcom,msm8916&quot;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">chassis-type</span> <span class="operator">=</span> <span class="string">&quot;handset&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">    usb_id:</span> <span class="title class_">usb-id</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">compatible</span> <span class="operator">=</span> <span class="string">&quot;linux,extcon-usb-gpio&quot;</span><span class="punctuation">;</span></span><br><span class="line">        <span class="attr">id-gpios</span> <span class="operator">=</span> <span class="params">&lt;<span class="variable">&amp;tlmm</span> <span class="number">110</span> GPIO_ACTIVE_HIGH&gt;</span><span class="punctuation">;</span></span><br><span class="line">        <span class="attr">pinctrl-names</span> <span class="operator">=</span> <span class="string">&quot;default&quot;</span><span class="punctuation">;</span></span><br><span class="line">        pinctrl<span class="number">-0</span> = <span class="params">&lt;<span class="variable">&amp;usb_id_default</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="punctuation">&#125;;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">&amp;usb</span> <span class="punctuation">&#123;</span></span><br><span class="line">    dr_<span class="attr">mode</span> <span class="operator">=</span> <span class="string">&quot;peripheral&quot;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">extcon</span> <span class="operator">=</span> <span class="params">&lt;<span class="variable">&amp;usb_id</span>&gt;</span>, <span class="params">&lt;<span class="variable">&amp;usb_id</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">status</span> <span class="operator">=</span> <span class="string">&quot;okay&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">&amp;usb_hs_phy</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">extcon</span> <span class="operator">=</span> <span class="params">&lt;<span class="variable">&amp;usb_id</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">    <span class="attr">status</span> <span class="operator">=</span> <span class="string">&quot;okay&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">&amp;tlmm</span> <span class="punctuation">&#123;</span></span><br><span class="line"><span class="symbol">    usb_id_default:</span> <span class="title class_">usb-id-default</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">pins</span> <span class="operator">=</span> <span class="string">&quot;gpio110&quot;</span><span class="punctuation">;</span></span><br><span class="line">        <span class="attr">function</span> <span class="operator">=</span> <span class="string">&quot;gpio&quot;</span><span class="punctuation">;</span></span><br><span class="line">        <span class="attr">drive-strength</span> <span class="operator">=</span> <span class="params">&lt;<span class="number">8</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">        <span class="attr">bias-pull-up</span><span class="punctuation">;</span></span><br><span class="line">    <span class="punctuation">&#125;;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
+<h3 id="制作-initramfs-2"><a class="markdownIt-Anchor" href="#制作-initramfs-2"></a> 制作 initramfs</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">BUSYBOX_BINARY=~/y927/busybox-1.38.0/busybox</span><br><span class="line"><span class="built_in">cd</span> ~/y927/initramfs</span><br><span class="line"><span class="built_in">rm</span> -rf phase-1</span><br><span class="line"><span class="built_in">mkdir</span> -p phase-1 &amp;&amp; <span class="built_in">cd</span> phase-1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 initramfs 目录结构</span></span><br><span class="line"><span class="built_in">mkdir</span> -p bin dev proc sys</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制 BusyBox 到 initramfs</span></span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$BUSYBOX_BINARY</span> bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建基础命令的软链接</span></span><br><span class="line"><span class="built_in">cd</span> bin</span><br><span class="line"><span class="keyword">for</span> cmd <span class="keyword">in</span> sh mount <span class="built_in">ls</span> <span class="built_in">cat</span> <span class="built_in">sleep</span> <span class="built_in">exec</span> <span class="built_in">echo</span>; <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">ln</span> -sf busybox <span class="variable">$cmd</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 /init 脚本</span></span><br><span class="line"><span class="built_in">cat</span> &gt; init &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line">mount -t proc proc /proc</span><br><span class="line">mount -t sysfs sys /sys</span><br><span class="line">mount -t devtmpfs dev /dev</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;===== Phase 1: kernel booted! =====&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Serial: <span class="subst">$(cat /proc/cmdline)</span>&quot;</span></span><br><span class="line"><span class="built_in">sleep</span> 5</span><br><span class="line"><span class="built_in">exec</span> sh &lt;/dev/ttyGS0 &gt;/dev/ttyGS0 2&gt;&amp;1</span><br><span class="line">EOF</span><br><span class="line"><span class="built_in">chmod</span> +x init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打包</span></span><br><span class="line">find . | cpio -o -H newc | gzip &gt; ../initramfs-phase-1.cpio.gz</span><br></pre></td></tr></table></figure>
+<h3 id="内核编译配置"><a class="markdownIt-Anchor" href="#内核编译配置"></a> 内核编译配置</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/y927/linux</span><br><span class="line">make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- msm8916_defconfig</span><br></pre></td></tr></table></figure>
+<p><code>msm8916_defconfig</code> 只需额外启用 USB gadget serial 相关选项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./scripts/config --<span class="built_in">enable</span> CONFIG_USB_G_SERIAL</span><br><span class="line">./scripts/config --<span class="built_in">enable</span> CONFIG_U_SERIAL_CONSOLE</span><br><span class="line">make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>olddefconfig</code> 会自动解析新选项的 Kconfig 依赖链（USB_CHIPIDEA、USB_GADGET、USB_CONFIGFS 等），避免手动改 <code>.config</code> 导致的依赖缺失。</p>
+</blockquote>
+<h3 id="编译-linux-内核-2"><a class="markdownIt-Anchor" href="#编译-linux-内核-2"></a> 编译 Linux 内核</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j$(<span class="built_in">nproc</span>) Image.gz dtbs</span><br></pre></td></tr></table></figure>
+<p>产物：</p>
+<ul>
+<li><code>arch/arm64/boot/Image.gz</code> — 压缩内核</li>
+<li><code>arch/arm64/boot/dts/qcom/msm8916-vivo-y927.dtb</code> — 设备树 blob</li>
+</ul>
+<h3 id="构建-bootimg-文件-2"><a class="markdownIt-Anchor" href="#构建-bootimg-文件-2"></a> 构建 boot.img 文件</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/y927/linux</span><br><span class="line"></span><br><span class="line"><span class="comment"># 拼接内核 + DTB</span></span><br><span class="line"><span class="built_in">cat</span> <span class="built_in">arch</span>/arm64/boot/Image.gz \</span><br><span class="line">    <span class="built_in">arch</span>/arm64/boot/dts/qcom/msm8916-vivo-y927.dtb \</span><br><span class="line">    &gt; vmlinuz-dtb</span><br><span class="line"></span><br><span class="line">~/y927/lk2nd/lk2nd/scripts/mkbootimg \</span><br><span class="line">    --kernel vmlinuz-dtb \</span><br><span class="line">    --ramdisk <span class="variable">$HOME</span>/y927/initramfs/initramfs-phase-1.cpio.gz \</span><br><span class="line">    --cmdline <span class="string">&quot;console=ttyGS0,115200 panic=1&quot;</span> \</span><br><span class="line">    --base 0x80000000 \</span><br><span class="line">    --kernel_offset 0x00008000 \</span><br><span class="line">    --ramdisk_offset 0x01000000 \</span><br><span class="line">    --second_offset 0x00f00000 \</span><br><span class="line">    --tags_offset 0x00000100 \</span><br><span class="line">    --pagesize 2048 \</span><br><span class="line">    --header_version 0 \</span><br><span class="line">    --output boot-phase1.img</span><br></pre></td></tr></table></figure>
+<p>cmdline 只启用 USB 串口，不碰屏幕（无 <code>console=tty0</code>、无 <code>lk2nd.pass-simplefb</code>）。</p>
+<h3 id="刷入-bootimg-文件-2"><a class="markdownIt-Anchor" href="#刷入-bootimg-文件-2"></a> 刷入 boot.img 文件</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fastboot flash boot boot-phase1.img</span><br><span class="line">fastboot reboot</span><br></pre></td></tr></table></figure>
+<h3 id="usb-串口交互式输入输出测试"><a class="markdownIt-Anchor" href="#usb-串口交互式输入输出测试"></a> USB 串口交互式输入输出测试</h3>
+<p>PC 端安装 picocom：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install -y picocom</span><br></pre></td></tr></table></figure>
+<p>连接（需 root 权限访问 <code>/dev/ttyACM0</code>）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> picocom -b 115200 /dev/ttyACM0</span><br></pre></td></tr></table></figure>
+<p>启动成功后应看到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/ # _</span><br></pre></td></tr></table></figure>
+<p>此时可以使用busybox中打包的所有命令</p>
+<p>串口终端 退出 picocom：<code>Ctrl+A</code> 松手 → <code>Ctrl+X</code>。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/2ba4/">https://zhangzqs.cn/posts/2ba4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BE%E5%A4%87%E6%A0%91/">设备树</a><a class="post-meta__tags" href="/tags/DTS/">DTS</a><a class="post-meta__tags" href="/tags/ARM64/">ARM64</a><a class="post-meta__tags" href="/tags/BusyBox/">BusyBox</a><a class="post-meta__tags" href="/tags/initramfs/">initramfs</a><a class="post-meta__tags" href="/tags/Linux%E5%86%85%E6%A0%B8/">Linux内核</a><a class="post-meta__tags" href="/tags/USB-Gadget-Serial/">USB Gadget Serial</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/zhangzqs.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/34a8/" title="2. VIVO-Y927 lk1st 的移植"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">2. VIVO-Y927 lk1st 的移植</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/dbd3/" title="1. VIVO-Y927 lk2nd 的移植"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-06</div><div class="title">1. VIVO-Y927 lk2nd 的移植</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://github.com/zhangzqs.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">124</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">516</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">37</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text"> 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96linux%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text"> 获取Linux内核源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC0%E9%98%B6%E6%AE%B5%E9%9B%B6%E5%A4%96%E8%AE%BE%E9%AA%8C%E8%AF%81%E5%86%85%E6%A0%B8%E5%BC%95%E5%AF%BC%E5%90%AF%E5%8A%A8"><span class="toc-number">3.</span> <span class="toc-text"> 第0阶段：零外设验证内核引导启动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-number">3.1.</span> <span class="toc-text"> 目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%AE%80%E7%9A%84%E9%AA%A8%E6%9E%B6-dts"><span class="toc-number">3.2.</span> <span class="toc-text"> 最简的骨架 DTS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80-initramfs"><span class="toc-number">3.3.</span> <span class="toc-text"> 制作一个最简 initramfs</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-busybox"><span class="toc-number">3.3.1.</span> <span class="toc-text"> 编译 BusyBox</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C-initramfs"><span class="toc-number">3.3.2.</span> <span class="toc-text"> 制作 initramfs</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-linux-%E5%86%85%E6%A0%B8"><span class="toc-number">3.4.</span> <span class="toc-text"> 编译 Linux 内核</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA-bootimg-%E6%96%87%E4%BB%B6"><span class="toc-number">3.5.</span> <span class="toc-text"> 构建 boot.img 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B7%E5%85%A5-bootimg-%E6%96%87%E4%BB%B6"><span class="toc-number">3.6.</span> <span class="toc-text"> 刷入 boot.img 文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC1%E9%98%B6%E6%AE%B5%E5%90%AF%E5%8A%A8-usb-%E6%A8%A1%E6%8B%9F%E4%B8%B2%E5%8F%A3%E8%BF%9B%E5%85%A5-linux-%E8%BF%9B%E8%A1%8C%E6%93%8D%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text"> 第1阶段：启动 USB 模拟串口进入 Linux 进行操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87-2"><span class="toc-number">4.1.</span> <span class="toc-text"> 目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E6%A0%91-dts"><span class="toc-number">4.2.</span> <span class="toc-text"> 设备树 DTS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C-initramfs-2"><span class="toc-number">4.3.</span> <span class="toc-text"> 制作 initramfs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E7%BC%96%E8%AF%91%E9%85%8D%E7%BD%AE"><span class="toc-number">4.4.</span> <span class="toc-text"> 内核编译配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-linux-%E5%86%85%E6%A0%B8-2"><span class="toc-number">4.5.</span> <span class="toc-text"> 编译 Linux 内核</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA-bootimg-%E6%96%87%E4%BB%B6-2"><span class="toc-number">4.6.</span> <span class="toc-text"> 构建 boot.img 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B7%E5%85%A5-bootimg-%E6%96%87%E4%BB%B6-2"><span class="toc-number">4.7.</span> <span class="toc-text"> 刷入 boot.img 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#usb-%E4%B8%B2%E5%8F%A3%E4%BA%A4%E4%BA%92%E5%BC%8F%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%B5%8B%E8%AF%95"><span class="toc-number">4.8.</span> <span class="toc-text"> USB 串口交互式输入输出测试</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/2ba4/" title="3. VIVO-Y927 Linux 内核 + BusyBox 最小系统引导启动实验">3. VIVO-Y927 Linux 内核 + BusyBox 最小系统引导启动实验</a><time datetime="2026-06-07T07:42:00.000Z" title="更新于 2026-06-07 15:42:00">2026-06-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/34a8/" title="2. VIVO-Y927 lk1st 的移植">2. VIVO-Y927 lk1st 的移植</a><time datetime="2026-06-06T13:54:00.000Z" title="更新于 2026-06-06 21:54:00">2026-06-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/dbd3/" title="1. VIVO-Y927 lk2nd 的移植">1. VIVO-Y927 lk2nd 的移植</a><time datetime="2026-06-06T12:28:00.000Z" title="更新于 2026-06-06 20:28:00">2026-06-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/c457/" title="0. VIVO-Y927 9008 模式下通过 EDL 线刷恢复至出厂状态">0. VIVO-Y927 9008 模式下通过 EDL 线刷恢复至出厂状态</a><time datetime="2026-06-06T08:56:00.000Z" title="更新于 2026-06-06 16:56:00">2026-06-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5c48/" title="线段组求交算法的 SIMD 矢量化优化实践">线段组求交算法的 SIMD 矢量化优化实践</a><time datetime="2026-05-20T04:00:00.000Z" title="更新于 2026-05-20 12:00:00">2026-05-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2026 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: 'd8874bc9fe59ef4345d276389be992e7',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
