@@ -11,15 +11,6 @@
   </url>
   
   <url>
-    <loc>https://zhangzqs.cn/link/index.html</loc>
-    
-    <lastmod>2026-06-14</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://zhangzqs.cn/recommend/index.html</loc>
     
     <lastmod>2026-06-14</lastmod>
@@ -38,6 +29,15 @@
   </url>
   
   <url>
+    <loc>https://zhangzqs.cn/link/index.html</loc>
+    
+    <lastmod>2026-06-14</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://zhangzqs.cn/categories/index.html</loc>
     
     <lastmod>2026-06-14</lastmod>
@@ -47,7 +47,7 @@
   </url>
   
   <url>
-    <loc>https://zhangzqs.cn/posts/2129/</loc>
+    <loc>https://zhangzqs.cn/posts/cb81/</loc>
     
     <lastmod>2026-06-14</lastmod>
     
