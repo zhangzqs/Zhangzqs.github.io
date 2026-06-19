@@ -1,0 +1,678 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>基于 rust-vmm 玩转虚拟化 | Zhangzqs</title><meta name="author" content="Zhangzqs,i@zhangzqs.cn"><meta name="copyright" content="Zhangzqs"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言 在云原生、Serverless 与机密计算快速发展的今天，传统 C 语言实现的虚拟化栈（如 QEMU）面临内存安全漏洞频发、代码体积庞大、攻击面过宽等问题。2019 年由 Intel、Google、AWS、阿里云等多家厂商联合发起的 rust-vmm 项目应运而生 —— 它不是一款完整的虚拟"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhangzqs.cn/posts/e273/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于 rust-vmm 玩转虚拟化',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-06-19 09:04:00'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Zhangzqs" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://github.com/zhangzqs.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">132</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">553</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">37</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Zhangzqs"><span class="site-name">Zhangzqs</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/recommend/"><i class="fa-fw fas fa-tools"></i><span> 推荐工具</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-tools"></i><span> 站长工具</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">基于 rust-vmm 玩转虚拟化<a class="post-edit-link" href="https://github.com/Zhangzqs/blog/edit/master/source/_posts/虚拟化/基于rust-vmm玩转虚拟化.md" title="编辑" target="_blank"><i class="fas fa-pencil-alt"></i></a></h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-06-19T01:04:00.000Z" title="发表于 2025-06-19 09:04:00">2025-06-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-19T01:04:00.000Z" title="更新于 2026-06-19 09:04:00">2026-06-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/">虚拟化</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">6.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>28分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于 rust-vmm 玩转虚拟化"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span><span class="post-meta-separator">|</span><span class="post-meta-commentcount"><i class="far fa-comments fa-fw post-meta-icon"></i><span class="post-meta-label">评论数:</span><a href="/posts/e273/#post-comment"><span class="gitalk-comment-count"><i class="fa-solid fa-spinner fa-spin"></i></span></a></span></div></div></div><article class="post-content" id="article-container"><h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>在云原生、Serverless 与机密计算快速发展的今天，传统 C 语言实现的虚拟化栈（如 QEMU）面临内存安全漏洞频发、代码体积庞大、攻击面过宽等问题。2019 年由 Intel、Google、AWS、阿里云等多家厂商联合发起的 <a target="_blank" rel="noopener" href="https://github.com/rust-vmm"><strong>rust-vmm</strong></a> 项目应运而生 —— 它不是一款完整的虚拟机监视器（VMM），而是一套高度解耦、可按需组装的 Rust 虚拟化基础组件库，为整个行业提供了构建轻量、安全、高性能 VMM 的标准化「积木」。</p>
+<p>rust-vmm 遵循「一个组件一个 crate」的设计原则，所有 crate 独立发布、按需依赖，从最底层的系统调用封装到上层的设备模拟，覆盖了虚拟化技术栈的全部核心环节。本文将按功能分层，系统梳理 rust-vmm 生态下的全部核心 crate 及其定位、能力、核心 API 与最小调用示例。</p>
+<blockquote>
+<p><strong>核实声明</strong>：本文所有事实（仓库归属、架构支持、trait 名称、crate 是否存在、API 签名）均经过对 rust-vmm 组织 GitHub 仓库与 <a target="_blank" rel="noopener" href="http://crates.io">crates.io</a> 的实际比对，更新于 2026-06；示例 API 以 <a target="_blank" rel="noopener" href="http://docs.rs">docs.rs</a> latest 为准。近一两年 rust-vmm 推动了多次「workspace 化合并」，部分原本独立的仓库（如 <code>kvm-bindings</code>、<code>kvm-ioctls</code>、<code>vfio-user</code>）已被归档并整合到 workspace 仓库中，下文会标注实际位置。</p>
+</blockquote>
+<h2 id="整体架构分层解耦的虚拟化积木"><a class="markdownIt-Anchor" href="#整体架构分层解耦的虚拟化积木"></a> 整体架构：分层解耦的虚拟化积木</h2>
+<p>rust-vmm 采用自底向上的分层设计，每一层只依赖下层能力，职责边界清晰：</p>
+<pre class="mermaid">graph TD
+    A[工程化与参考实现<br>rust-vmm-ci / rust-vmm-container / vmm-reference] --> B
+    B[启动与兼容层<br>linux-loader / vm-fdt / vm-superio / vm-superio-ser] --> C
+    C[硬件直通层<br>vfio-bindings / vfio-ioctls / vfio-user] --> D
+    D[VirtIO & vhost 半虚拟化层<br>virtio-bindings / virtio-queue / virtio-queue-ser / vhost / vhost-user-backend / vhost-device-*] --> E
+    E[核心资源层<br>vm-memory / vm-allocator / vm-device] --> F
+    F[Hypervisor 抽象层<br>kvm-bindings / kvm-ioctls / mshv-bindings / mshv-ioctls] --> G
+    G[基础系统工具层<br>vmm-sys-util / event-manager]</pre>
+<h2 id="基础系统工具层"><a class="markdownIt-Anchor" href="#基础系统工具层"></a> 基础系统工具层</h2>
+<p>这一层是整个 rust-vmm 生态的公共基座，将操作系统底层能力封装为安全、跨平台的 Rust 接口。</p>
+<h3 id="vmm-sys-util"><a class="markdownIt-Anchor" href="#vmm-sys-util"></a> vmm-sys-util</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vmm-sys-util">https://github.com/rust-vmm/vmm-sys-util</a></li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vmm-sys-util">https://crates.io/crates/vmm-sys-util</a></li>
+<li><strong>平台支持</strong>：Linux（完整）/ Windows（部分支持）</li>
+<li><strong>架构支持</strong>：x86_64 / aarch64 / riscv64</li>
+</ul>
+<p>所有 rust-vmm 组件最核心的公共依赖。它将 <code>eventfd</code>、<code>ioctl</code>、<code>epoll</code>、文件描述符管理、<code>tempfile</code>、字节序处理、<code>errno</code> 错误类型、灵活数组成员（FAM）安全封装等系统级原语统一收敛在一个 crate 中，把 <code>unsafe</code> 收拢到最小范围。</p>
+<p><strong>核心 API</strong>：<code>eventfd::EventFd</code>、<code>ioctl_*!</code> 宏家族（<code>ioctl_none!</code> / <code>ioctl_io!</code> / <code>ioctl_ior!</code> / <code>ioctl_iow!</code> / <code>ioctl_iowr!</code>）、<code>ioctl_with_val</code> / <code>ioctl_with_ref</code>、<code>tempfile::TempFile</code>、<code>epoll</code>、<code>errno::Error</code>、<code>fam::FamStruct</code>。</p>
+<p><strong>最小示例</strong>（来自源码 doctest）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> vmm_sys_util::eventfd::&#123;EventFd, EFD_NONBLOCK&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">evt</span> = EventFd::<span class="title function_ invoke__">new</span>(EFD_NONBLOCK).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">evt.<span class="title function_ invoke__">write</span>(<span class="number">55</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="built_in">assert_eq!</span>(evt.<span class="title function_ invoke__">read</span>().<span class="title function_ invoke__">unwrap</span>(), <span class="number">55</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 跨线程共享同一计数（dup fd）</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">evt_clone</span> = evt.<span class="title function_ invoke__">try_clone</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">evt.<span class="title function_ invoke__">write</span>(<span class="number">923</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="built_in">assert_eq!</span>(evt_clone.<span class="title function_ invoke__">read</span>().<span class="title function_ invoke__">unwrap</span>(), <span class="number">923</span>);</span><br></pre></td></tr></table></figure>
+<p><code>EventFd</code> 在 rust-vmm 里被广泛用作中断注入信号、退出信号、跨线程唤醒的轻量通道。</p>
+<h3 id="event-manager"><a class="markdownIt-Anchor" href="#event-manager"></a> event-manager</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/event-manager">https://github.com/rust-vmm/event-manager</a></li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/event-manager">https://crates.io/crates/event-manager</a></li>
+<li><strong>平台支持</strong>：仅 Linux（基于 epoll）</li>
+</ul>
+<p>轻量级事件驱动框架，VMM 中 I/O 事件、中断事件的核心调度器。它采用「事件管理器 - 事件订阅者」模型，提供两种订阅 trait 适配不同借用语义场景：</p>
+<ul>
+<li><code>EventSubscriber</code>：要求 <code>&amp;self</code>，适用于通过 <code>Arc&lt;T&gt;</code> 共享、内部用 <code>Mutex</code> 自管的场景</li>
+<li><code>MutEventSubscriber</code>：要求 <code>&amp;mut self</code>，适用于经 <code>Mutex&lt;T&gt;</code>/<code>RefCell&lt;T&gt;</code> 包装后由 manager 独占借用的场景</li>
+</ul>
+<p><strong>核心 API</strong>：<code>EventManager&lt;T&gt;</code>、<code>EventSubscriber</code> / <code>MutEventSubscriber</code>、<code>EventOps</code>、<code>Events</code>、<code>SubscriberId</code>、<code>SubscriberOps</code>。</p>
+<p><strong>最小示例</strong>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> event_manager::&#123;EventManager, EventOps, Events, MutEventSubscriber&#125;;</span><br><span class="line"><span class="keyword">use</span> vmm_sys_util::&#123;epoll::EventSet, eventfd::EventFd&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">CounterSubscriber</span> &#123; event_fd: EventFd, counter: <span class="type">u64</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">MutEventSubscriber</span> <span class="keyword">for</span> <span class="title class_">CounterSubscriber</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">init</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, ops: &amp;<span class="keyword">mut</span> EventOps) &#123;</span><br><span class="line">        ops.<span class="title function_ invoke__">add</span>(Events::<span class="title function_ invoke__">new</span>(&amp;<span class="keyword">self</span>.event_fd, EventSet::IN)).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">process</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, events: Events, ops: &amp;<span class="keyword">mut</span> EventOps) &#123;</span><br><span class="line">        <span class="keyword">match</span> events.<span class="title function_ invoke__">event_set</span>() &#123;</span><br><span class="line">            EventSet::IN =&gt; &#123; <span class="keyword">self</span>.counter += <span class="number">1</span>; <span class="keyword">let</span> <span class="variable">_</span> = <span class="keyword">self</span>.event_fd.<span class="title function_ invoke__">read</span>(); &#125;</span><br><span class="line">            EventSet::HANG_UP =&gt; &#123; ops.<span class="title function_ invoke__">remove</span>(events).<span class="title function_ invoke__">ok</span>(); &#125;</span><br><span class="line">            _ =&gt; &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">mgr</span> = EventManager::&lt;CounterSubscriber&gt;::<span class="title function_ invoke__">new</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">_id</span> = mgr.<span class="title function_ invoke__">add_subscriber</span>(CounterSubscriber &#123;</span><br><span class="line">    event_fd: EventFd::<span class="title function_ invoke__">new</span>(<span class="number">0</span>).<span class="title function_ invoke__">unwrap</span>(), counter: <span class="number">0</span>,</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">_</span> = mgr.<span class="title function_ invoke__">run_with_timeout</span>(<span class="number">100</span>);   <span class="comment">// 进入 epoll_wait</span></span><br></pre></td></tr></table></figure>
+<p><code>init</code> 中注册感兴趣的 fd，<code>process</code> 中处理就绪事件；VMM 在主循环里反复调用 <code>EventManager::run</code>。</p>
+<h2 id="hypervisor-抽象层"><a class="markdownIt-Anchor" href="#hypervisor-抽象层"></a> Hypervisor 抽象层</h2>
+<p>这一层直接对接操作系统内核的虚拟化模块，将底层 unsafe 的内核接口封装为类型安全的 Rust API。rust-vmm 同时支持 Linux KVM 与微软 MSHV 两大虚拟化平台。</p>
+<h3 id="kvm-系列linux-硬件虚拟化标准接口"><a class="markdownIt-Anchor" href="#kvm-系列linux-硬件虚拟化标准接口"></a> KVM 系列：Linux 硬件虚拟化标准接口</h3>
+<blockquote>
+<p>自 2024 年起，原 <code>rust-vmm/kvm-bindings</code> 与 <code>rust-vmm/kvm-ioctls</code> 已归档合并至单仓库 <a target="_blank" rel="noopener" href="https://github.com/rust-vmm/kvm">https://github.com/rust-vmm/kvm</a>（workspace），但 <a target="_blank" rel="noopener" href="http://crates.io">crates.io</a> 上的两个 crate 名称与发布节奏不变。</p>
+</blockquote>
+<h4 id="kvm-bindings"><a class="markdownIt-Anchor" href="#kvm-bindings"></a> kvm-bindings</h4>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/kvm">https://github.com/rust-vmm/kvm</a>（原 <a target="_blank" rel="noopener" href="https://github.com/rust-vmm/kvm-bindings">https://github.com/rust-vmm/kvm-bindings</a> 已归档）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/kvm-bindings">https://crates.io/crates/kvm-bindings</a></li>
+<li><strong>架构支持</strong>：<strong>x86_64 / aarch64 / riscv64</strong>（三架构均已稳定支持）</li>
+</ul>
+<p>通过 bindgen 自动生成的 Linux KVM API 原生 FFI 绑定，包含所有 KVM ioctl 命令、数据结构与常量定义，并为灵活数组成员（如 <code>kvm_cpuid2</code>、<code>kvm_msr_list</code>）提供安全的 FAM 封装，是 Rust 代码与 KVM 内核交互的底层协议基础。</p>
+<h4 id="kvm-ioctls"><a class="markdownIt-Anchor" href="#kvm-ioctls"></a> kvm-ioctls</h4>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/kvm">https://github.com/rust-vmm/kvm</a>（原 <a target="_blank" rel="noopener" href="https://github.com/rust-vmm/kvm-ioctls">https://github.com/rust-vmm/kvm-ioctls</a> 已归档）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/kvm-ioctls">https://crates.io/crates/kvm-ioctls</a></li>
+<li><strong>架构支持</strong>：x86_64 / aarch64 / riscv64</li>
+</ul>
+<p>构建在 <code>kvm-bindings</code> 之上的安全封装层，将原本 unsafe 的 ioctl 调用转化为类型安全的高级 API。</p>
+<p><strong>核心 API</strong>：</p>
+<ul>
+<li><code>Kvm</code>：系统级 ioctl 入口（<code>new</code>、<code>create_vm</code>、<code>get_api_version</code>、<code>check_extension</code>）</li>
+<li><code>VmFd</code>：VM 级（<code>set_user_memory_region</code>、<code>create_vcpu</code>、<code>get_dirty_log</code>、<code>create_irq_chip</code>、<code>register_irqfd</code>）</li>
+<li><code>VcpuFd</code>：vCPU 级（<code>get_regs</code>/<code>set_regs</code>、<code>get_sregs</code>/<code>set_sregs</code>、<code>run</code>）</li>
+<li><code>VcpuExit</code>：枚举 <code>Hlt</code> / <code>IoIn</code> / <code>IoOut</code> / <code>MmioRead</code> / <code>MmioWrite</code> / …</li>
+</ul>
+<p><strong>最小示例</strong>（节选自 <code>kvm-ioctls</code> 顶层 doctest，x86_64）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> kvm_bindings::&#123;kvm_userspace_memory_region, KVM_MEM_LOG_DIRTY_PAGES&#125;;</span><br><span class="line"><span class="keyword">use</span> kvm_ioctls::&#123;Kvm, VcpuExit&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// guest 在 0x1000 处运行：out %al,%dx; mov $0,(0x8000); hlt</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">asm</span>: &amp;[<span class="type">u8</span>] = &amp;[<span class="number">0xba</span>,<span class="number">0xf8</span>,<span class="number">0x03</span>, <span class="number">0x00</span>,<span class="number">0xd8</span>, <span class="number">0x04</span>,<span class="string">b&#x27;0&#x27;</span>, <span class="number">0xee</span>, <span class="number">0xec</span>,</span><br><span class="line">                   <span class="number">0xc6</span>,<span class="number">0x06</span>,<span class="number">0x00</span>,<span class="number">0x80</span>,<span class="number">0x00</span>, <span class="number">0x8a</span>,<span class="number">0x16</span>,<span class="number">0x00</span>,<span class="number">0x80</span>, <span class="number">0xf4</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">kvm</span> = Kvm::<span class="title function_ invoke__">new</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">vm</span> = kvm.<span class="title function_ invoke__">create_vm</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">mem_size</span> = <span class="number">0x4000</span>; <span class="keyword">let</span> <span class="variable">guest_addr</span> = <span class="number">0x1000</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">host</span> = <span class="keyword">unsafe</span> &#123; libc::<span class="title function_ invoke__">mmap</span>(std::ptr::<span class="title function_ invoke__">null_mut</span>(), mem_size,</span><br><span class="line">    libc::PROT_READ|libc::PROT_WRITE,</span><br><span class="line">    libc::MAP_ANONYMOUS|libc::MAP_SHARED, -<span class="number">1</span>, <span class="number">0</span>) <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="type">u8</span> &#125;;</span><br><span class="line"><span class="keyword">unsafe</span> &#123; std::slice::<span class="title function_ invoke__">from_raw_parts_mut</span>(host, mem_size)[..asm.<span class="title function_ invoke__">len</span>()].<span class="title function_ invoke__">copy_from_slice</span>(asm); &#125;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">region</span> = kvm_userspace_memory_region &#123;</span><br><span class="line">    slot: <span class="number">0</span>, guest_phys_addr: guest_addr, memory_size: mem_size <span class="keyword">as</span> <span class="type">u64</span>,</span><br><span class="line">    userspace_addr: host <span class="keyword">as</span> <span class="type">u64</span>, flags: KVM_MEM_LOG_DIRTY_PAGES,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">unsafe</span> &#123; vm.<span class="title function_ invoke__">set_user_memory_region</span>(region).<span class="title function_ invoke__">unwrap</span>(); &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">vcpu</span> = vm.<span class="title function_ invoke__">create_vcpu</span>(<span class="number">0</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">sregs</span> = vcpu.<span class="title function_ invoke__">get_sregs</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">sregs.cs.base = <span class="number">0</span>; sregs.cs.selector = <span class="number">0</span>; vcpu.<span class="title function_ invoke__">set_sregs</span>(&amp;sregs).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">regs</span> = vcpu.<span class="title function_ invoke__">get_regs</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">regs.rip = guest_addr; regs.rax = <span class="number">2</span>; regs.rbx = <span class="number">3</span>; regs.rflags = <span class="number">2</span>;</span><br><span class="line">vcpu.<span class="title function_ invoke__">set_regs</span>(&amp;regs).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">loop</span> &#123;</span><br><span class="line">    <span class="keyword">match</span> vcpu.<span class="title function_ invoke__">run</span>().<span class="title function_ invoke__">unwrap</span>() &#123;</span><br><span class="line">        VcpuExit::<span class="title function_ invoke__">IoOut</span>(addr, data) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;OUT &#123;:#x&#125; = &#123;:#x&#125;&quot;</span>, addr, data[<span class="number">0</span>]),</span><br><span class="line">        VcpuExit::Hlt =&gt; <span class="keyword">break</span>,</span><br><span class="line">        e =&gt; <span class="built_in">panic!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, e),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经典的「五步走」流程：<code>Kvm::new</code> → <code>create_vm</code> → <code>set_user_memory_region</code> → <code>create_vcpu</code> 并 setup regs → <code>vcpu.run()</code> 循环匹配 <code>VcpuExit</code>。</p>
+<h3 id="mshv-系列windows-平台虚拟化支持"><a class="markdownIt-Anchor" href="#mshv-系列windows-平台虚拟化支持"></a> MSHV 系列：Windows 平台虚拟化支持</h3>
+<h4 id="mshv-bindings-mshv-ioctls"><a class="markdownIt-Anchor" href="#mshv-bindings-mshv-ioctls"></a> mshv-bindings / mshv-ioctls</h4>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/mshv">https://github.com/rust-vmm/mshv</a>（同一 workspace 包含两个 crate）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/mshv-bindings">https://crates.io/crates/mshv-bindings</a>、<a target="_blank" rel="noopener" href="https://crates.io/crates/mshv-ioctls">https://crates.io/crates/mshv-ioctls</a></li>
+<li><strong>架构支持</strong>：官方 README 声明 <strong>x86_64</strong>；arm64 绑定文件已生成、支持正在演进中（尚未列为 Supported Platform）</li>
+</ul>
+<p>对应微软 Hypervisor（MSHV）的 FFI 绑定与安全接口封装，让 rust-vmm 突破 Linux 限制，可适配 Azure 等 Windows 云环境。设计逻辑与 KVM 系列完全一致（<code>Mshv</code> / <code>VmFd</code> / <code>VcpuFd</code>），降低跨平台开发的心智负担。</p>
+<h2 id="虚拟机核心资源层"><a class="markdownIt-Anchor" href="#虚拟机核心资源层"></a> 虚拟机核心资源层</h2>
+<p>这一层定义了虚拟机的核心资源模型 —— 内存、地址空间、设备抽象，是所有虚拟设备与业务逻辑的运行载体。</p>
+<h3 id="vm-memory"><a class="markdownIt-Anchor" href="#vm-memory"></a> vm-memory</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-memory">https://github.com/rust-vmm/vm-memory</a></li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vm-memory">https://crates.io/crates/vm-memory</a></li>
+<li><strong>架构支持</strong>：x86_64 / aarch64 / riscv64；OS：Linux/Unix/Windows；可选 <code>xen</code> feature（仅 Unix）</li>
+</ul>
+<p>虚拟机客户机内存管理的基石组件。它支持匿名内存、文件 - backed 内存的 mmap 映射，实现了客户机物理地址（GPA）到宿主机虚拟地址（HVA）的安全转换，提供脏页跟踪、原子读写、零拷贝数据传输、跨字节序访问等核心能力，是设备 DMA 模拟、虚拟机热迁移、内存快照的基础支撑。</p>
+<p><strong>核心 API</strong>：</p>
+<ul>
+<li>trait：<code>GuestMemory</code>（只读视图）、<code>GuestMemoryRegion</code>、<code>Bytes</code>（<code>read</code>/<code>write</code>/<code>read_obj</code>/<code>write_obj</code>）、<code>Address</code></li>
+<li>类型：<code>GuestAddress</code>、<code>GuestUsize</code>、<code>GuestMemoryMmap&lt;B = ()&gt;</code>、<code>MmapRegion</code>、<code>GuestRegionMmap</code>、<code>GuestMemoryAtomic</code>（多线程换页 / 快照）</li>
+</ul>
+<p><strong>最小示例</strong>（来自 README）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> vm_memory::&#123;Bytes, GuestAddress, GuestMemoryMmap&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">gm</span>: GuestMemoryMmap&lt;()&gt; = GuestMemoryMmap::<span class="title function_ invoke__">from_ranges</span>(&amp;[</span><br><span class="line">    (<span class="title function_ invoke__">GuestAddress</span>(<span class="number">0</span>),      <span class="number">0x1000</span>),</span><br><span class="line">    (<span class="title function_ invoke__">GuestAddress</span>(<span class="number">0x1000</span>), <span class="number">0x1000</span>),</span><br><span class="line">]).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">sample</span> = &amp;[<span class="number">1u8</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"><span class="built_in">assert_eq!</span>(gm.<span class="title function_ invoke__">write</span>(sample, <span class="title function_ invoke__">GuestAddress</span>(<span class="number">0xffc</span>)).<span class="title function_ invoke__">unwrap</span>(), <span class="number">5</span>); <span class="comment">// 跨 region 边界写</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buf</span> = [<span class="number">0u8</span>; <span class="number">5</span>];</span><br><span class="line"><span class="built_in">assert_eq!</span>(gm.<span class="title function_ invoke__">read</span>(&amp;<span class="keyword">mut</span> buf, <span class="title function_ invoke__">GuestAddress</span>(<span class="number">0xffc</span>)).<span class="title function_ invoke__">unwrap</span>(), <span class="number">5</span>);</span><br><span class="line"><span class="built_in">assert_eq!</span>(&amp;buf, sample);</span><br></pre></td></tr></table></figure>
+<p><code>GuestMemoryMmap::from_ranges</code> 在宿主匿名 mmap 出来的内存基础上构建 guest 物理地址空间；<code>Bytes</code> trait 让设备模型直接以 <code>(addr, slice)</code> 方式跨 region 读写。</p>
+<h3 id="vm-allocator"><a class="markdownIt-Anchor" href="#vm-allocator"></a> vm-allocator</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-allocator">https://github.com/rust-vmm/vm-allocator</a></li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vm-allocator">https://crates.io/crates/vm-allocator</a></li>
+</ul>
+<p>虚拟机系统资源分配器，负责 MMIO 地址空间、PIO 端口、中断号（GSI）、设备 ID 等硬件资源的分配与回收。它支持地址区间对齐校验、资源冲突检测，确保虚拟机的硬件资源布局符合架构规范。</p>
+<p><strong>核心 API</strong>：</p>
+<ul>
+<li><code>IdAllocator</code>：整数资源分配器（如 GSI、KVM memslot id），用 <code>BTreeSet</code> 维护已释放 ID</li>
+<li><code>AddressAllocator</code>：区间资源分配器（基于 IntervalTree 的地址段）</li>
+<li><code>AllocPolicy::&#123;FirstMatch, LastMatch, ExactMatch&#125;</code>、<code>Constraint</code>、<code>RangeInclusive</code></li>
+</ul>
+<p><strong>最小示例</strong>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> vm_allocator::&#123;AddressAllocator, AllocPolicy, IdAllocator&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> MMIO_START: <span class="type">u64</span> = (<span class="number">1</span> &lt;&lt; <span class="number">32</span>) - (<span class="number">768</span> &lt;&lt; <span class="number">20</span>); <span class="comment">// 32-bit gap</span></span><br><span class="line"><span class="keyword">const</span> MMIO_SIZE:  <span class="type">u64</span> = <span class="number">768</span> &lt;&lt; <span class="number">20</span>;</span><br><span class="line"><span class="keyword">const</span> PAGE: <span class="type">u64</span> = <span class="number">0x1000</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">ids</span>   = IdAllocator::<span class="title function_ invoke__">new</span>(<span class="number">0</span>, <span class="number">100</span>).<span class="title function_ invoke__">unwrap</span>();   <span class="comment">// 闭区间 [0, 100]，共 101 个 ID</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">mmio</span>  = AddressAllocator::<span class="title function_ invoke__">new</span>(MMIO_START, MMIO_SIZE).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 给一个新设备分配一个 ID + 一页对齐的 MMIO 区间</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">id</span>    = ids.<span class="title function_ invoke__">allocate_id</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">range</span> = mmio.<span class="title function_ invoke__">allocate</span>(PAGE, PAGE, AllocPolicy::FirstMatch).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;dev#&#123;id&#125; mmio = [&#123;:#x&#125;, &#123;:#x&#125;]&quot;</span>, range.<span class="title function_ invoke__">start</span>(), range.<span class="title function_ invoke__">end</span>());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 释放</span></span><br><span class="line">mmio.<span class="title function_ invoke__">free</span>(&amp;range).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">ids.<span class="title function_ invoke__">free_id</span>(id).<span class="title function_ invoke__">unwrap</span>();</span><br></pre></td></tr></table></figure>
+<h3 id="vm-device"><a class="markdownIt-Anchor" href="#vm-device"></a> vm-device</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-device">https://github.com/rust-vmm/vm-device</a></li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vm-device">https://crates.io/crates/vm-device</a></li>
+</ul>
+<p>虚拟设备的统一抽象框架。它定义了 PIO 与 MMIO 两条总线上的设备 trait，并提供 <code>IoManager</code> 作为按地址段路由 I/O 的总线分发器。所有虚拟设备均可基于这套抽象开发，无缝接入任意 VMM。</p>
+<p><strong>核心 API</strong>：</p>
+<ul>
+<li>设备 trait（共 4 个）：
+<ul>
+<li>PIO：<code>DevicePio</code>（不可变 self）、<code>MutDevicePio</code>（可变 self）</li>
+<li>MMIO：<code>DeviceMmio</code>（不可变 self）、<code>MutDeviceMmio</code>（可变 self）</li>
+</ul>
+</li>
+<li>总线 trait：<code>PioManager</code>、<code>MmioManager</code></li>
+<li>具体管理器：<code>IoManager</code></li>
+<li>地址类型：<code>PioAddress</code>、<code>PioRange</code>、<code>MmioAddress</code>、<code>MmioRange</code></li>
+</ul>
+<p><strong>最小示例</strong>（来自 README）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Mutex&#125;;</span><br><span class="line"><span class="keyword">use</span> vm_device::bus::&#123;PioAddress, PioAddressOffset, PioRange&#125;;</span><br><span class="line"><span class="keyword">use</span> vm_device::device_manager::&#123;IoManager, PioManager&#125;;</span><br><span class="line"><span class="keyword">use</span> vm_device::MutDevicePio;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">LogDevice</span>;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">MutDevicePio</span> <span class="keyword">for</span> <span class="title class_">LogDevice</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">pio_read</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, base: PioAddress, off: PioAddressOffset, _data: &amp;<span class="keyword">mut</span> [<span class="type">u8</span>]) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;read base=&#123;:?&#125; off=&#123;off&#125;&quot;</span>, base);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">pio_write</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, base: PioAddress, off: PioAddressOffset, data: &amp;[<span class="type">u8</span>]) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;write base=&#123;:?&#125; off=&#123;off&#125; data=&#123;:?&#125;&quot;</span>, base, data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">mgr</span> = IoManager::<span class="title function_ invoke__">new</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">range</span> = PioRange::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">PioAddress</span>(<span class="number">0</span>), <span class="number">10</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">mgr.<span class="title function_ invoke__">register_pio</span>(range, Arc::<span class="title function_ invoke__">new</span>(Mutex::<span class="title function_ invoke__">new</span>(LogDevice))).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">mgr.<span class="title function_ invoke__">pio_write</span>(<span class="title function_ invoke__">PioAddress</span>(<span class="number">0</span>), &amp;[<span class="string">b&#x27;o&#x27;</span>, <span class="string">b&#x27;k&#x27;</span>]).<span class="title function_ invoke__">unwrap</span>(); <span class="comment">// 由 IoManager 路由到 LogDevice</span></span><br></pre></td></tr></table></figure>
+<p>VMM 在 <code>VcpuExit::IoOut/MmioWrite</code> 上调用 <code>mgr.pio_write/mmio_write</code>，Manager 按地址范围找到对应设备并转发。</p>
+<h2 id="virtio-生态层"><a class="markdownIt-Anchor" href="#virtio-生态层"></a> VirtIO 生态层</h2>
+<p>VirtIO 是云计算领域的事实半虚拟化设备标准，rust-vmm 提供了从协议绑定到队列实现、再到设备框架的完整支持。</p>
+<blockquote>
+<p><strong>仓库结构</strong>：<code>virtio-bindings</code>、<code>virtio-queue</code>、<code>virtio-queue-ser</code>、<code>virtio-blk</code>、<code>virtio-console</code>、<code>virtio-device</code>、<code>virtio-vsock</code> 等 crate <strong>同属一个仓库</strong> <a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-virtio">https://github.com/rust-vmm/vm-virtio</a>（workspace），并非各自独立仓库，且 <a target="_blank" rel="noopener" href="http://crates.io">crates.io</a> 上<strong>没有名为 <code>vm-virtio</code> 的 crate</strong>，仓库名只是 workspace 容器。</p>
+</blockquote>
+<h3 id="virtio-bindings"><a class="markdownIt-Anchor" href="#virtio-bindings"></a> virtio-bindings</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-virtio">https://github.com/rust-vmm/vm-virtio</a>（子 crate <code>virtio-bindings/</code>）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/virtio-bindings">https://crates.io/crates/virtio-bindings</a></li>
+</ul>
+<p>VirtIO 规范的原生 FFI 绑定（来源是 Linux kernel 的 virtio uapi 头文件），定义了 VirtIO 设备的标准数据结构、特性位、队列协议常量，按内核版本提供不同 feature。是所有 VirtIO 相关组件的协议底座。</p>
+<h3 id="virtio-queue"><a class="markdownIt-Anchor" href="#virtio-queue"></a> virtio-queue</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-virtio">https://github.com/rust-vmm/vm-virtio</a>（子 crate <code>virtio-queue/</code>）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/virtio-queue">https://crates.io/crates/virtio-queue</a></li>
+</ul>
+<p>VirtIO Split Virtqueue 的纯 Rust 完整实现，包含描述符表、可用环（avail ring）、使用环（used ring）的全部逻辑，并通过 <a target="_blank" rel="noopener" href="https://github.com/model-checking/kani">Kani</a> 进行了形式化证明。</p>
+<p><strong>核心 API</strong>：</p>
+<ul>
+<li><code>Queue</code>（单线程）、<code>QueueSync</code>（<code>Arc&lt;Mutex&lt;Queue&gt;&gt;</code>）</li>
+<li>trait：<code>QueueT</code> / <code>QueueOwnedT</code></li>
+<li><code>Descriptor</code>、<code>DescriptorChain</code>、<code>DescriptorChainRwIter</code>、<code>AvailIter</code></li>
+<li><code>QueueState</code>（save/restore 用）</li>
+</ul>
+<p><strong>最小示例</strong>（节选自 <code>Queue</code> doctest）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> virtio_queue::&#123;Queue, QueueOwnedT, QueueT&#125;;</span><br><span class="line"><span class="keyword">use</span> vm_memory::&#123;Bytes, GuestAddress, GuestMemoryMmap&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">mem</span>: GuestMemoryMmap&lt;()&gt; =</span><br><span class="line">    GuestMemoryMmap::<span class="title function_ invoke__">from_ranges</span>(&amp;[(<span class="title function_ invoke__">GuestAddress</span>(<span class="number">0</span>), <span class="number">0x10000</span>)]).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">queue</span> = Queue::<span class="title function_ invoke__">new</span>(<span class="number">1024</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">queue.<span class="title function_ invoke__">set_size</span>(<span class="number">8</span>);</span><br><span class="line">queue.<span class="title function_ invoke__">set_desc_table_address</span>(<span class="title function_ invoke__">Some</span>(<span class="number">0x1000</span>), <span class="literal">None</span>);</span><br><span class="line">queue.<span class="title function_ invoke__">set_avail_ring_address</span>(<span class="title function_ invoke__">Some</span>(<span class="number">0x2000</span>), <span class="literal">None</span>);</span><br><span class="line">queue.<span class="title function_ invoke__">set_used_ring_address</span>(<span class="title function_ invoke__">Some</span>(<span class="number">0x3000</span>), <span class="literal">None</span>);</span><br><span class="line">queue.<span class="title function_ invoke__">set_event_idx</span>(<span class="literal">true</span>);</span><br><span class="line">queue.<span class="title function_ invoke__">set_ready</span>(<span class="literal">true</span>);</span><br><span class="line"><span class="built_in">assert!</span>(queue.<span class="title function_ invoke__">is_valid</span>(&amp;mem));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟 driver 把一个 chain head 推到 avail ring，并把 idx 推到 3</span></span><br><span class="line">mem.write_obj::&lt;<span class="type">u16</span>&gt;(<span class="number">3</span>, <span class="title function_ invoke__">GuestAddress</span>(<span class="number">0x2002</span>)).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">loop</span> &#123;</span><br><span class="line">    queue.<span class="title function_ invoke__">disable_notification</span>(&amp;mem).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(chain) = queue.<span class="title function_ invoke__">iter</span>(&amp;mem).<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">next</span>() &#123;</span><br><span class="line">        <span class="comment">// 这里遍历 chain 的描述符（chain.into_iter() / readable / writable）</span></span><br><span class="line">        queue.<span class="title function_ invoke__">add_used</span>(&amp;mem, chain.<span class="title function_ invoke__">head_index</span>(), <span class="number">0x100</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        <span class="keyword">if</span> queue.<span class="title function_ invoke__">needs_notification</span>(&amp;mem).<span class="title function_ invoke__">unwrap</span>() &#123; <span class="comment">/* 注入中断 */</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> !queue.<span class="title function_ invoke__">enable_notification</span>(&amp;mem).<span class="title function_ invoke__">unwrap</span>() &#123; <span class="keyword">break</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>标准的 split virtqueue 处理循环 —— 禁用通知 → 迭代 <code>AvailIter</code> 取出 <code>DescriptorChain</code> → 处理后 <code>add_used</code> → 按 <code>needs_notification</code> 决定是否触发中断。</p>
+<h3 id="virtio-queue-ser"><a class="markdownIt-Anchor" href="#virtio-queue-ser"></a> virtio-queue-ser</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-virtio">https://github.com/rust-vmm/vm-virtio</a>（子 crate <code>virtio-queue-ser/</code>）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/virtio-queue-ser">https://crates.io/crates/virtio-queue-ser</a></li>
+</ul>
+<p><code>virtio-queue</code> 的版本感知序列化扩展，对 <code>QueueState</code> 进行序列化与反序列化。它是热迁移的关键 —— 虚拟机暂停后，可将所有 VirtIO 设备的队列状态持久化，目标主机恢复后重建队列状态，保证业务无感知迁移。</p>
+<h2 id="vhost-与-vhost-user-层"><a class="markdownIt-Anchor" href="#vhost-与-vhost-user-层"></a> vhost 与 vhost-user 层</h2>
+<p>vhost 系列组件将 VirtIO 设备的数据面从 VMM 进程中剥离，分别下沉到内核态（vhost）、独立用户态进程（vhost-user）或硬件（vDPA），既提升性能，又通过进程隔离缩小攻击面。</p>
+<h3 id="vhost"><a class="markdownIt-Anchor" href="#vhost"></a> vhost</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vhost">https://github.com/rust-vmm/vhost</a>（workspace，同时包含 <code>vhost-user-backend</code>）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vhost">https://crates.io/crates/vhost</a></li>
+</ul>
+<p>vhost、vhost-user、vDPA 三种加速方案的统一抽象库。它屏蔽了内核态 vhost、用户态 vhost-user、硬件 vDPA 的实现差异，提供统一的 vring 操作、事件通知、特性协商接口。</p>
+<h3 id="vhost-user-backend"><a class="markdownIt-Anchor" href="#vhost-user-backend"></a> vhost-user-backend</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vhost">https://github.com/rust-vmm/vhost</a>（与 <code>vhost</code> crate 同 workspace 子 crate）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-user-backend">https://crates.io/crates/vhost-user-backend</a></li>
+</ul>
+<p>vhost-user 后端设备的通用开发框架，完整封装了 vhost-user 协议的控制面交互逻辑：握手、特性协商、队列配置、生命周期管理、中断注入。开发者只需实现设备的数据面处理逻辑。</p>
+<p><strong>核心 API</strong>：</p>
+<ul>
+<li>trait：<code>VhostUserBackend</code> / <code>VhostUserBackendMut</code>（<code>num_queues</code>、<code>max_queue_size</code>、<code>features</code>、<code>set_event_idx</code>、<code>update_memory</code>、<code>handle_event</code>、<code>process_queue</code> 等）</li>
+<li><code>VhostUserDaemon&lt;S, V, B&gt;</code>：服务端入口（<code>new</code> / <code>start</code> / <code>wait</code> / <code>get_epoll_handlers</code>）</li>
+<li>vring trait：<code>VringT</code>，三种实现 <code>VringState</code> / <code>VringMutex</code> / <code>VringRwLock</code></li>
+</ul>
+<p><strong>最小示例</strong>（来自 README，关键骨架；下面的 <code>Error::*</code> 为读者自定义错误类型，需结合具体后端实现）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> vhost_user_backend::&#123;VhostUserBackendMut, VringMutex, VringT&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">VhostUserBackendMut</span> <span class="keyword">for</span> <span class="title class_">MyBackend</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">process_queue</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, vring: &amp;VringMutex) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">bool</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">mem</span> = <span class="keyword">self</span>.mem.<span class="title function_ invoke__">as_ref</span>().<span class="title function_ invoke__">ok_or</span>(Error::NoMem)?.<span class="title function_ invoke__">memory</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">state</span> = vring.<span class="title function_ invoke__">get_mut</span>();</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(avail) = state.<span class="title function_ invoke__">get_queue_mut</span>().<span class="title function_ invoke__">iter</span>()</span><br><span class="line">            .<span class="title function_ invoke__">map_err</span>(|_| Error::IterateQueue)?.<span class="title function_ invoke__">next</span>()</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 1) 解析 avail 的 readable/writable 描述符并完成 I/O</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">head</span> = avail.<span class="title function_ invoke__">head_index</span>();</span><br><span class="line">            <span class="comment">// 2) 归还到 used ring</span></span><br><span class="line">            state.<span class="title function_ invoke__">add_used</span>(head, <span class="number">0</span>).<span class="title function_ invoke__">ok</span>();</span><br><span class="line">            <span class="comment">// 3) 必要时触发中断</span></span><br><span class="line">            <span class="keyword">if</span> !<span class="keyword">self</span>.event_idx || state.<span class="title function_ invoke__">needs_notification</span>().<span class="title function_ invoke__">unwrap_or</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">                state.<span class="title function_ invoke__">signal_used_queue</span>().<span class="title function_ invoke__">ok</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(<span class="literal">true</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 还需实现 num_queues / max_queue_size / features / protocol_features /</span></span><br><span class="line">    <span class="comment">// set_event_idx / update_memory / handle_event ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 入口：</span></span><br><span class="line"><span class="comment">//   let mut daemon = VhostUserDaemon::new(name, backend, atomic_mem)?;</span></span><br><span class="line"><span class="comment">//   daemon.start(Listener::new(&quot;/tmp/sock&quot;, true)?)?;</span></span><br><span class="line"><span class="comment">//   daemon.wait()?;</span></span><br></pre></td></tr></table></figure>
+<h3 id="vhost-device-系列"><a class="markdownIt-Anchor" href="#vhost-device-系列"></a> vhost-device 系列</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vhost-device">https://github.com/rust-vmm/vhost-device</a>（workspace）</li>
+</ul>
+<p>rust-vmm 社区维护的开箱即用 vhost-user 设备集合，每个设备是 workspace 内独立的二进制 crate（<code>vhost-device-&lt;name&gt;</code>）。<strong>截至 2026-06，仓库内官方设备清单</strong>（按字母序）：</p>
+<table>
+<thead>
+<tr>
+<th>crate</th>
+<th>用途</th>
+<th><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vhost-device-can</code></td>
+<td>CAN 总线（车载 / 工控）</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-can">https://crates.io/crates/vhost-device-can</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-console</code></td>
+<td>串口 / 控制台</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-console">https://crates.io/crates/vhost-device-console</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-gpio</code></td>
+<td>GPIO</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-gpio">https://crates.io/crates/vhost-device-gpio</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-gpu</code></td>
+<td>GPU（virtio-gpu）</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-gpu">https://crates.io/crates/vhost-device-gpu</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-i2c</code></td>
+<td>I2C 总线</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-i2c">https://crates.io/crates/vhost-device-i2c</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-input</code></td>
+<td>输入设备（键鼠等）</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-input">https://crates.io/crates/vhost-device-input</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-rng</code></td>
+<td>熵源 / 随机数</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-rng">https://crates.io/crates/vhost-device-rng</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-scmi</code></td>
+<td>ARM SCMI 协议</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-scmi">https://crates.io/crates/vhost-device-scmi</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-scsi</code></td>
+<td>SCSI 块存储</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-scsi">https://crates.io/crates/vhost-device-scsi</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-sound</code></td>
+<td>音频（virtio-snd）</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-sound">https://crates.io/crates/vhost-device-sound</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-spi</code></td>
+<td>SPI 总线</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-spi">https://crates.io/crates/vhost-device-spi</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-vsock</code></td>
+<td>guest-host socket 通道</td>
+<td><a target="_blank" rel="noopener" href="https://crates.io/crates/vhost-device-vsock">https://crates.io/crates/vhost-device-vsock</a></td>
+</tr>
+<tr>
+<td><code>vhost-device-template</code></td>
+<td>新设备开发模板</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>vhost-device-video</code>（staging）</td>
+<td>视频编解码</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>辨析</strong>：<code>vhost-device-blk</code>、<code>vhost-device-net</code> <strong>并不存在于本仓库</strong>。块设备 / 网络设备的 vhost-user 实现一般由 VMM 自带（如 Cloud Hypervisor 的 <code>vhost-user-block</code>、SPDK 的 <code>vhost-user-blk</code>、DPDK 的 <code>vhost-user-net</code>）或者部署内核态 vhost-net。</p>
+</blockquote>
+<h2 id="vfio-硬件直通层"><a class="markdownIt-Anchor" href="#vfio-硬件直通层"></a> VFIO 硬件直通层</h2>
+<p>对于需要极致性能的场景（如 GPU 计算、高速网卡），rust-vmm 提供了完整的 VFIO 硬件直通支持。</p>
+<blockquote>
+<p>原 <code>rust-vmm/vfio-user</code> 已于 2025 年归档，源码迁移至 <a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vfio">https://github.com/rust-vmm/vfio</a> workspace；<code>vfio-bindings</code>、<code>vfio-ioctls</code>、<code>vfio-user</code> 三个 crate 现位于同一仓库。</p>
+</blockquote>
+<h3 id="vfio-bindings"><a class="markdownIt-Anchor" href="#vfio-bindings"></a> vfio-bindings</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vfio">https://github.com/rust-vmm/vfio</a>（子 crate <code>vfio-bindings/</code>）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vfio-bindings">https://crates.io/crates/vfio-bindings</a></li>
+</ul>
+<p>Linux VFIO（Virtual Function I/O）子系统的 FFI 绑定，包含 VFIO 容器、设备组、物理设备的所有数据结构与 ioctl 命令定义。</p>
+<h3 id="vfio-ioctls"><a class="markdownIt-Anchor" href="#vfio-ioctls"></a> vfio-ioctls</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vfio">https://github.com/rust-vmm/vfio</a>（子 crate <code>vfio-ioctls/</code>）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vfio-ioctls">https://crates.io/crates/vfio-ioctls</a></li>
+<li><strong>平台支持</strong>：Linux；x86_64 主测，aarch64 支持中（依赖 ARM SMMU）</li>
+</ul>
+<p>VFIO API 的安全 Rust 封装，支持 PCIe 设备的完整透传流程。</p>
+<p><strong>核心 API</strong>：</p>
+<ul>
+<li><code>VfioContainer</code>：包装 <code>/dev/vfio/vfio</code>，提供 <code>vfio_dma_map</code> / <code>vfio_dma_unmap</code></li>
+<li><code>VfioDevice</code>：单个透传设备（<code>get_irq_info</code>、<code>enable_irq</code>、<code>region_read</code> / <code>region_write</code>、<code>get_region_info</code>）</li>
+<li><code>VfioGroup</code>、<code>VfioRegion</code>、<code>VfioIrq</code>、错误类型 <code>VfioError</code></li>
+</ul>
+<p><strong>最小骨架</strong>（仓库未提供独立 examples，下面按公共 API 还原）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::path::Path;</span><br><span class="line"><span class="keyword">use</span> std::sync::Arc;</span><br><span class="line"><span class="keyword">use</span> vfio_ioctls::&#123;VfioContainer, VfioDevice&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1) 打开容器（device_fd 通常来自 KVM VmFd 实现的 hypervisor handle）</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">container</span> = Arc::<span class="title function_ invoke__">new</span>(VfioContainer::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">Some</span>(device_fd))?);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2) 通过 sysfs 路径打开一个 PCI 设备，例如 0000:01:00.0</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">sysfs</span> = Path::<span class="title function_ invoke__">new</span>(<span class="string">&quot;/sys/bus/pci/devices/0000:01:00.0&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">dev</span>   = VfioDevice::<span class="title function_ invoke__">new</span>(sysfs, container.<span class="title function_ invoke__">clone</span>())?;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3) 查询 BAR0 region 信息 / 读寄存器</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">info</span>  = dev.<span class="title function_ invoke__">get_region_info</span>(<span class="number">0</span>)?;</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buf</span> = [<span class="number">0u8</span>; <span class="number">4</span>];</span><br><span class="line">dev.<span class="title function_ invoke__">region_read</span>(<span class="number">0</span>, &amp;<span class="keyword">mut</span> buf, <span class="number">0</span>);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;BAR0 size=&#123;:#x&#125; flags=&#123;:#x&#125; val=&#123;:?&#125;&quot;</span>, info.size, info.flags, buf);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4) 把一段宿主内存映射到 IOVA，供设备 DMA</span></span><br><span class="line">container.<span class="title function_ invoke__">vfio_dma_map</span>(<span class="comment">/*iova=*/</span><span class="number">0x1_0000_0000</span>, len, host_va)?;</span><br></pre></td></tr></table></figure>
+<h3 id="vfio-user"><a class="markdownIt-Anchor" href="#vfio-user"></a> vfio-user</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vfio">https://github.com/rust-vmm/vfio</a>（子 crate <code>vfio-user/</code>，原独立仓库 <code>rust-vmm/vfio-user</code> 已于 2025-05 归档）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vfio-user">https://crates.io/crates/vfio-user</a></li>
+</ul>
+<p>vfio-user 协议（基于 Nutanix <a target="_blank" rel="noopener" href="https://github.com/nutanix/libvfio-user">libvfio-user</a> 规范）的纯 Rust 实现，<strong>同时提供 <code>Client</code>（VMM 侧）与 <code>Server</code>（设备侧）两种 struct</strong>，支持把物理 / 模拟设备以 socket 形式远程挂载到虚拟机，适合分布式虚拟化与设备池化。</p>
+<blockquote>
+<p><strong>关于 iommufd</strong>：截至 2026-06，<strong>rust-vmm 组织下并不存在 <code>iommufd-bindings</code> 或 <code>iommufd-ioctls</code> 这两个 crate</strong>。Linux 新一代 iommufd 子系统的能力目前通过 <code>vfio-bindings</code> / <code>vfio-ioctls</code> 在 VFIO 容器/IOMMUFD 兼容路径中暴露；如未来 rust-vmm 推出独立的 iommufd crate，会以 workspace 子 crate 形式发布在 vfio 仓库。本节不再假装存在这两个 crate。</p>
+</blockquote>
+<h2 id="启动与兼容层"><a class="markdownIt-Anchor" href="#启动与兼容层"></a> 启动与兼容层</h2>
+<p>这一层提供虚拟机启动所需的内核加载、硬件信息传递、legacy 设备兼容能力，是 Guest OS 正常引导的基础。</p>
+<h3 id="vm-superio-vm-superio-ser"><a class="markdownIt-Anchor" href="#vm-superio-vm-superio-ser"></a> vm-superio / vm-superio-ser</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-superio">https://github.com/rust-vmm/vm-superio</a>（workspace，包含两个 crate）</li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vm-superio">https://crates.io/crates/vm-superio</a>、<a target="_blank" rel="noopener" href="https://crates.io/crates/vm-superio-ser">https://crates.io/crates/vm-superio-ser</a></li>
+</ul>
+<p>经典超级 I/O 控制器的模拟实现，包含：</p>
+<ul>
+<li><code>Serial&lt;T, EV, W&gt;</code>：<strong>16550A UART</strong> 串口（PC 与多数嵌入式平台通用）</li>
+<li><code>Rtc&lt;EV&gt;</code>：<strong>ARM PL031 RTC</strong>（注意是 ARM 的 PL031，不是 PC 上的 CMOS RTC，也不是 i8042）</li>
+<li><code>I8042Device</code>：极简 i8042 PS/2 控制器，目前<strong>仅模拟 CPU Reset 命令</strong>用于关机通告</li>
+</ul>
+<p><code>vm-superio-ser</code> 提供配套的 <code>*StateSer</code> 序列化结构，支持热迁移时 legacy 设备状态的 save/restore。</p>
+<p><strong>最小示例（16550A UART）</strong>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::io::&#123;Error, <span class="type">Result</span>&#125;;</span><br><span class="line"><span class="keyword">use</span> std::ops::Deref;</span><br><span class="line"><span class="keyword">use</span> vm_superio::&#123;Serial, Trigger&#125;;</span><br><span class="line"><span class="keyword">use</span> vmm_sys_util::eventfd::EventFd;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EventFdTrigger</span>(EventFd);</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Trigger</span> <span class="keyword">for</span> <span class="title class_">EventFdTrigger</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">E</span> = Error;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">trigger</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123; <span class="keyword">self</span>.<span class="number">0</span>.<span class="title function_ invoke__">write</span>(<span class="number">1</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Deref</span> <span class="keyword">for</span> <span class="title class_">EventFdTrigger</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Target</span> = EventFd;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">deref</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> &amp;EventFd &#123; &amp;<span class="keyword">self</span>.<span class="number">0</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">intr</span> = <span class="title function_ invoke__">EventFdTrigger</span>(EventFd::<span class="title function_ invoke__">new</span>(libc::EFD_NONBLOCK).<span class="title function_ invoke__">unwrap</span>());</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">serial</span> = Serial::<span class="title function_ invoke__">new</span>(intr, <span class="type">Vec</span>::&lt;<span class="type">u8</span>&gt;::<span class="title function_ invoke__">new</span>()); <span class="comment">// 输出可换 io::stdout()</span></span><br><span class="line"></span><br><span class="line">serial.<span class="title function_ invoke__">write</span>(<span class="number">0</span>, <span class="string">b&#x27;H&#x27;</span>).<span class="title function_ invoke__">unwrap</span>();      <span class="comment">// 写 THR -&gt; 立刻刷到 out</span></span><br><span class="line">serial.<span class="title function_ invoke__">write</span>(<span class="number">0</span>, <span class="string">b&#x27;i&#x27;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">input</span> = <span class="string">b&quot;abc&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> serial.<span class="title function_ invoke__">fifo_capacity</span>() &gt;= input.<span class="title function_ invoke__">len</span>() &#123;</span><br><span class="line">    serial.<span class="title function_ invoke__">enqueue_raw_bytes</span>(input).<span class="title function_ invoke__">unwrap</span>();   <span class="comment">// 把数据塞进 RX FIFO，触发 RDA 中断</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">_</span> = serial.<span class="title function_ invoke__">read</span>(<span class="number">0</span>);              <span class="comment">// 从 RBR 读</span></span><br></pre></td></tr></table></figure>
+<p><strong>最小示例（PL031 RTC）</strong>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::time::&#123;SystemTime, UNIX_EPOCH&#125;;</span><br><span class="line"><span class="keyword">use</span> vm_superio::Rtc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> RTCDR: <span class="type">u16</span> = <span class="number">0x0</span>;   <span class="comment">// Data Register</span></span><br><span class="line"><span class="keyword">const</span> RTCLR: <span class="type">u16</span> = <span class="number">0x8</span>;   <span class="comment">// Load Register</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">rtc</span> = Rtc::<span class="title function_ invoke__">new</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">now</span> = SystemTime::<span class="title function_ invoke__">now</span>().<span class="title function_ invoke__">duration_since</span>(UNIX_EPOCH).<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">as_secs</span>() <span class="keyword">as</span> <span class="type">u32</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">data</span> = now.<span class="title function_ invoke__">to_le_bytes</span>();</span><br><span class="line">rtc.<span class="title function_ invoke__">write</span>(RTCLR, &amp;data);                 <span class="comment">// 设置当前时间</span></span><br><span class="line">rtc.<span class="title function_ invoke__">read</span>(RTCLR, &amp;<span class="keyword">mut</span> data);</span><br><span class="line"><span class="built_in">assert_eq!</span>(now, <span class="type">u32</span>::<span class="title function_ invoke__">from_le_bytes</span>(data));</span><br><span class="line">rtc.<span class="title function_ invoke__">read</span>(RTCDR, &amp;<span class="keyword">mut</span> data);              <span class="comment">// 读出递增后的时钟值</span></span><br></pre></td></tr></table></figure>
+<h3 id="linux-loader"><a class="markdownIt-Anchor" href="#linux-loader"></a> linux-loader</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/linux-loader">https://github.com/rust-vmm/linux-loader</a></li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/linux-loader">https://crates.io/crates/linux-loader</a></li>
+<li><strong>架构支持</strong>：x86_64 / aarch64 / riscv64</li>
+</ul>
+<p>Linux 内核加载器，按架构提供不同的具体实现：</p>
+<table>
+<thead>
+<tr>
+<th>Loader</th>
+<th>feature</th>
+<th>适用范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loader::elf::Elf</code></td>
+<td><code>elf</code></td>
+<td>x86_64：<strong>同时承担 Linux 64-bit boot protocol 与 PVH boot protocol</strong>，PVH 入口由 ELF Note 发现，编码在结果的 <code>pvh_boot_cap</code> 字段</td>
+</tr>
+<tr>
+<td><code>loader::bzimage::BzImage</code></td>
+<td><code>bzimage</code></td>
+<td>x86_64：传统 bzImage</td>
+</tr>
+<tr>
+<td><code>loader::pe::PE</code></td>
+<td><code>pe</code></td>
+<td>aarch64 / riscv64：内核 <code>Image</code>（PE/COFF 格式）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注意：<code>PVH</code> <strong>不是独立 loader</strong>，而是 <code>Elf</code> loader 通过 <code>KernelLoaderResult::pvh_boot_cap</code> 暴露的能力。</p>
+</blockquote>
+<p><strong>核心 API</strong>：trait <code>KernelLoader::load</code>、返回值 <code>KernelLoaderResult</code>（<code>kernel_load</code>、<code>kernel_end</code>、<code>setup_header</code>、<code>pvh_boot_cap</code>）、独立函数 <code>load_cmdline</code>、命令行构造器 <code>Cmdline</code>。</p>
+<p><strong>最小示例</strong>（节选自 README，bzImage）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::fs::File;</span><br><span class="line"><span class="keyword">use</span> linux_loader::loader::bzimage::BzImage;          <span class="comment">// 也可换成 elf::Elf / pe::PE</span></span><br><span class="line"><span class="keyword">use</span> linux_loader::loader::&#123;KernelLoader, load_cmdline, Cmdline&#125;;</span><br><span class="line"><span class="keyword">use</span> vm_memory::&#123;GuestAddress, GuestMemoryMmap&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">gm</span>: GuestMemoryMmap&lt;()&gt; =</span><br><span class="line">    GuestMemoryMmap::<span class="title function_ invoke__">from_ranges</span>(&amp;[(<span class="title function_ invoke__">GuestAddress</span>(<span class="number">0</span>), <span class="number">256</span> &lt;&lt; <span class="number">20</span>)]).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">kernel</span> = File::<span class="title function_ invoke__">open</span>(<span class="string">&quot;bzImage&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">res</span> = BzImage::load::&lt;File, GuestMemoryMmap&lt;()&gt;&gt;(</span><br><span class="line">    &amp;gm,</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(<span class="title function_ invoke__">GuestAddress</span>(<span class="number">0x10_0000</span>)),   <span class="comment">// kernel_offset</span></span><br><span class="line">    &amp;<span class="keyword">mut</span> kernel,</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(<span class="title function_ invoke__">GuestAddress</span>(<span class="number">0x10_0000</span>)),   <span class="comment">// himem_start</span></span><br><span class="line">).<span class="title function_ invoke__">expect</span>(<span class="string">&quot;load bzImage&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cl</span> = Cmdline::<span class="title function_ invoke__">new</span>(<span class="number">0x1_0000</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">cl.<span class="title function_ invoke__">insert_str</span>(<span class="string">&quot;console=ttyS0 reboot=k panic=1&quot;</span>).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="title function_ invoke__">load_cmdline</span>(&amp;gm, <span class="title function_ invoke__">GuestAddress</span>(<span class="number">0x2_0000</span>), &amp;cl).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;kernel loaded at &#123;:#x&#125;, end &#123;:#x&#125;&quot;</span>, res.kernel_load.<span class="number">0</span>, res.kernel_end);</span><br></pre></td></tr></table></figure>
+<h3 id="vm-fdt"><a class="markdownIt-Anchor" href="#vm-fdt"></a> vm-fdt</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vm-fdt">https://github.com/rust-vmm/vm-fdt</a></li>
+<li><strong><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a></strong>：<a target="_blank" rel="noopener" href="https://crates.io/crates/vm-fdt">https://crates.io/crates/vm-fdt</a></li>
+<li><strong>维护状态</strong>：低频维护中，最近发布 v0.3.0（2023-11，支持 <code>no_std</code>）；最近一次提交 2024-04，<strong>未弃用</strong></li>
+</ul>
+<p>扁平化设备树（FDT/DTB）生成库，符合 <a target="_blank" rel="noopener" href="https://www.devicetree-specification.readthedocs.io/">Devicetree Specification</a> 规范。在 aarch64、riscv64 等架构下，它负责向 Guest OS 传递硬件拓扑、内存布局、中断控制器、设备地址等启动信息。</p>
+<p><strong>核心 API</strong>：<code>FdtWriter</code>（<code>new</code> / <code>begin_node</code> / <code>end_node</code> / <code>finish</code>）、节点句柄 <code>FdtWriterNode</code>、属性 setter（<code>property_string</code> / <code>property_u32</code> / <code>property_u64</code> / <code>property_array_u32</code> / <code>property_array_u64</code> / <code>property_null</code> / <code>property_string_list</code> / 裸字节 <code>property</code>）。</p>
+<p><strong>最小示例</strong>（来自 README）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> vm_fdt::&#123;Error, FdtWriter&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">create_fdt</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;, Error&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">fdt</span> = FdtWriter::<span class="title function_ invoke__">new</span>()?;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">root</span> = fdt.<span class="title function_ invoke__">begin_node</span>(<span class="string">&quot;&quot;</span>)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">property_string</span>(<span class="string">&quot;compatible&quot;</span>, <span class="string">&quot;linux,dummy-virt&quot;</span>)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">property_u32</span>(<span class="string">&quot;#address-cells&quot;</span>, <span class="number">0x2</span>)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">property_u32</span>(<span class="string">&quot;#size-cells&quot;</span>, <span class="number">0x2</span>)?;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">chosen</span> = fdt.<span class="title function_ invoke__">begin_node</span>(<span class="string">&quot;chosen&quot;</span>)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">property_u32</span>(<span class="string">&quot;linux,pci-probe-only&quot;</span>, <span class="number">1</span>)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">property_string</span>(<span class="string">&quot;bootargs&quot;</span>, <span class="string">&quot;panic=-1 console=hvc0&quot;</span>)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">end_node</span>(chosen)?;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">memory</span> = fdt.<span class="title function_ invoke__">begin_node</span>(<span class="string">&quot;memory&quot;</span>)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">property_string</span>(<span class="string">&quot;device_type&quot;</span>, <span class="string">&quot;memory&quot;</span>)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">end_node</span>(memory)?;</span><br><span class="line"></span><br><span class="line">    fdt.<span class="title function_ invoke__">end_node</span>(root)?;</span><br><span class="line">    fdt.<span class="title function_ invoke__">finish</span>()                       <span class="comment">// -&gt; Vec&lt;u8&gt;，可直接写入 guest 物理内存</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="工程化与参考实现"><a class="markdownIt-Anchor" href="#工程化与参考实现"></a> 工程化与参考实现</h2>
+<blockquote>
+<p>本节的三个项目都<strong>不是</strong> crate（<a target="_blank" rel="noopener" href="http://crates.io">crates.io</a> 上未发布），而是配套基础设施仓库。</p>
+</blockquote>
+<h3 id="rust-vmm-ci"><a class="markdownIt-Anchor" href="#rust-vmm-ci"></a> rust-vmm-ci</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/rust-vmm-ci">https://github.com/rust-vmm/rust-vmm-ci</a></li>
+</ul>
+<p>社区统一的 CI 测试框架（Buildkite pipeline + pytest），通过 git submodule 引入到各 rust-vmm 仓库，提供一致的单元测试、格式检查（rustfmt）、Clippy、依赖漏洞审计、覆盖率检查。</p>
+<h3 id="rust-vmm-container"><a class="markdownIt-Anchor" href="#rust-vmm-container"></a> rust-vmm-container</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/rust-vmm-container">https://github.com/rust-vmm/rust-vmm-container</a></li>
+</ul>
+<p>预配置的开发测试 Docker 镜像（<code>rustvmm/dev</code>），内置 Rust 工具链、x86_64 / aarch64 / riscv64 平台的内核头文件、QEMU 测试工具、依赖库等，让开发者一键搭建一致的 rust-vmm 开发与测试环境。</p>
+<h3 id="vmm-reference"><a class="markdownIt-Anchor" href="#vmm-reference"></a> vmm-reference</h3>
+<ul>
+<li><strong>GitHub</strong>：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/vmm-reference">https://github.com/rust-vmm/vmm-reference</a></li>
+</ul>
+<p>官方参考 VMM 实现，通过极少量胶水代码串联起核心 rust-vmm 组件，构建出一个可直接运行的最小功能虚拟机。<strong>注意它声明为「实验性」、不应用于生产</strong>，定位是学习 / 验证 / 二次开发的范本。</p>
+<h2 id="生态落地与应用价值"><a class="markdownIt-Anchor" href="#生态落地与应用价值"></a> 生态落地与应用价值</h2>
+<p>rust-vmm 组件已经成为业界 Rust VMM 的事实标准，被大量生产级项目广泛复用：</p>
+<ul>
+<li><strong><a target="_blank" rel="noopener" href="https://github.com/firecracker-microvm/firecracker">Firecracker</a>（AWS）</strong>：Serverless 微虚拟机标杆，核心依赖 <code>kvm-ioctls</code>、<code>vm-memory</code>、<code>virtio-queue</code>、<code>linux-loader</code>、<code>vm-superio</code>、<code>event-manager</code> 等组件，实现毫秒级启动与极低内存开销</li>
+<li><strong><a target="_blank" rel="noopener" href="https://github.com/cloud-hypervisor/cloud-hypervisor">Cloud Hypervisor</a></strong>：云原生通用 VMM，Kata Containers 主流后端之一，几乎覆盖全部 rust-vmm 组件，支持热迁移、TDX/SEV 机密计算、VFIO 直通等高级能力</li>
+<li><strong><a target="_blank" rel="noopener" href="https://github.com/kata-containers/kata-containers/tree/main/src/dragonball">Dragonball</a>（蚂蚁/阿里）</strong>：Kata Containers 内置 VMM，针对容器场景优化，深度复用 rust-vmm 模块化能力</li>
+<li><strong><a target="_blank" rel="noopener" href="https://gitee.com/openeuler/stratovirt">StratoVirt</a>（华为 openEuler）</strong>：面向云、边缘、嵌入式的轻量化虚拟机，跨架构支持依托 rust-vmm 实现</li>
+<li><strong><a target="_blank" rel="noopener" href="https://github.com/google/crosvm">crosvm</a>（Google）</strong>：ChromeOS / Android 的沙盒虚拟机，是 rust-vmm 组件的重要上游贡献者</li>
+</ul>
+<p>与传统 QEMU 相比，基于 rust-vmm 构建的 VMM 拥有天然内存安全、攻击面极小、按需裁剪、启动极速等优势，尤其适合 Serverless 函数计算、安全容器、机密计算、边缘虚拟化等新一代云场景。</p>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>rust-vmm 的核心价值，在于用 Rust 的内存安全特性与模块化设计，重新定义了虚拟化基础设施的构建方式。它终结了各个 VMM 项目重复造轮子的局面，将 KVM 交互、内存管理、VirtIO 协议、设备模型等通用能力沉淀为标准化组件，让开发者可以聚焦业务场景创新，而非重复实现底层虚拟化逻辑。</p>
+<p>随着云原生与安全需求的持续升级，rust-vmm 生态仍在不断扩展 ——RISC-V 架构（KVM / linux-loader / vm-memory 已稳定支持）、机密计算（TDX / SEV / SEV-SNP / pKVM）、更多设备模型（sound、video、scmi）都在持续推进。它不仅是 Rust 语言在系统级领域的标杆项目，更是下一代云基础设施的重要技术基石。</p>
+<h2 id="参考链接"><a class="markdownIt-Anchor" href="#参考链接"></a> 参考链接</h2>
+<ul>
+<li>rust-vmm 组织主页：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm">https://github.com/rust-vmm</a></li>
+<li>rust-vmm community（贡献规范、crate 治理）：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/community">https://github.com/rust-vmm/community</a></li>
+<li>rust-vmm monorepo（集中后的工具仓库）：<a target="_blank" rel="noopener" href="https://github.com/rust-vmm/rust-vmm">https://github.com/rust-vmm/rust-vmm</a></li>
+<li><a target="_blank" rel="noopener" href="http://crates.io">crates.io</a> 关键字搜索：<a target="_blank" rel="noopener" href="https://crates.io/search?q=rust-vmm">https://crates.io/search?q=rust-vmm</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn">Zhangzqs</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhangzqs.cn/posts/e273/">https://zhangzqs.cn/posts/e273/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://zhangzqs.cn" target="_blank">Zhangzqs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Rust/">Rust</a><a class="post-meta__tags" href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/">虚拟化</a><a class="post-meta__tags" href="/tags/%E7%BB%84%E4%BB%B6%E5%BA%93/">组件库</a><a class="post-meta__tags" href="/tags/KVM/">KVM</a><a class="post-meta__tags" href="/tags/rust-vmm/">rust-vmm</a><a class="post-meta__tags" href="/tags/VMM/">VMM</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/zhangzqs.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechatpay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/wechatpay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/69ef/" title="GAMES101笔记-光栅化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">GAMES101笔记-光栅化</div></div></a></div><div class="next-post pull-right"><a href="/posts/498d/" title="椭圆周长公式推导"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">椭圆周长公式推导</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/c587/" title="使用Rust描述音乐系统并模拟乐器演奏"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-25</div><div class="title">使用Rust描述音乐系统并模拟乐器演奏</div></div></a></div><div><a href="/posts/78a4/" title="pingora体验入门"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-26</div><div class="title">pingora体验入门</div></div></a></div><div><a href="/posts/1c54/" title="Hyper-V嵌套虚拟化运行PVE折腾"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-19</div><div class="title">Hyper-V嵌套虚拟化运行PVE折腾</div></div></a></div><div><a href="/posts/9699/" title="树莓派安装虚拟化平台VMware ESXi"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-15</div><div class="title">树莓派安装虚拟化平台VMware ESXi</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://github.com/zhangzqs.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Zhangzqs</div><div class="author-info__description">一个分享与记录的个人空间</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">132</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">553</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">37</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhangzqs"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Zhangzqs" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:i@zhangzqs.cn" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=2428698039&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/images/wechat.png" target="_blank" title="WeChat"><i class="fab fa-weixin"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fab fa-rss-square"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E5%B1%82%E8%A7%A3%E8%80%A6%E7%9A%84%E8%99%9A%E6%8B%9F%E5%8C%96%E7%A7%AF%E6%9C%A8"><span class="toc-number">2.</span> <span class="toc-text"> 整体架构：分层解耦的虚拟化积木</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7%E5%B1%82"><span class="toc-number">3.</span> <span class="toc-text"> 基础系统工具层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vmm-sys-util"><span class="toc-number">3.1.</span> <span class="toc-text"> vmm-sys-util</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-manager"><span class="toc-number">3.2.</span> <span class="toc-text"> event-manager</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hypervisor-%E6%8A%BD%E8%B1%A1%E5%B1%82"><span class="toc-number">4.</span> <span class="toc-text"> Hypervisor 抽象层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kvm-%E7%B3%BB%E5%88%97linux-%E7%A1%AC%E4%BB%B6%E8%99%9A%E6%8B%9F%E5%8C%96%E6%A0%87%E5%87%86%E6%8E%A5%E5%8F%A3"><span class="toc-number">4.1.</span> <span class="toc-text"> KVM 系列：Linux 硬件虚拟化标准接口</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#kvm-bindings"><span class="toc-number">4.1.1.</span> <span class="toc-text"> kvm-bindings</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kvm-ioctls"><span class="toc-number">4.1.2.</span> <span class="toc-text"> kvm-ioctls</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mshv-%E7%B3%BB%E5%88%97windows-%E5%B9%B3%E5%8F%B0%E8%99%9A%E6%8B%9F%E5%8C%96%E6%94%AF%E6%8C%81"><span class="toc-number">4.2.</span> <span class="toc-text"> MSHV 系列：Windows 平台虚拟化支持</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#mshv-bindings-mshv-ioctls"><span class="toc-number">4.2.1.</span> <span class="toc-text"> mshv-bindings &#x2F; mshv-ioctls</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%B8%E5%BF%83%E8%B5%84%E6%BA%90%E5%B1%82"><span class="toc-number">5.</span> <span class="toc-text"> 虚拟机核心资源层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vm-memory"><span class="toc-number">5.1.</span> <span class="toc-text"> vm-memory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vm-allocator"><span class="toc-number">5.2.</span> <span class="toc-text"> vm-allocator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vm-device"><span class="toc-number">5.3.</span> <span class="toc-text"> vm-device</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#virtio-%E7%94%9F%E6%80%81%E5%B1%82"><span class="toc-number">6.</span> <span class="toc-text"> VirtIO 生态层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#virtio-bindings"><span class="toc-number">6.1.</span> <span class="toc-text"> virtio-bindings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#virtio-queue"><span class="toc-number">6.2.</span> <span class="toc-text"> virtio-queue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#virtio-queue-ser"><span class="toc-number">6.3.</span> <span class="toc-text"> virtio-queue-ser</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vhost-%E4%B8%8E-vhost-user-%E5%B1%82"><span class="toc-number">7.</span> <span class="toc-text"> vhost 与 vhost-user 层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vhost"><span class="toc-number">7.1.</span> <span class="toc-text"> vhost</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vhost-user-backend"><span class="toc-number">7.2.</span> <span class="toc-text"> vhost-user-backend</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vhost-device-%E7%B3%BB%E5%88%97"><span class="toc-number">7.3.</span> <span class="toc-text"> vhost-device 系列</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vfio-%E7%A1%AC%E4%BB%B6%E7%9B%B4%E9%80%9A%E5%B1%82"><span class="toc-number">8.</span> <span class="toc-text"> VFIO 硬件直通层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vfio-bindings"><span class="toc-number">8.1.</span> <span class="toc-text"> vfio-bindings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vfio-ioctls"><span class="toc-number">8.2.</span> <span class="toc-text"> vfio-ioctls</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vfio-user"><span class="toc-number">8.3.</span> <span class="toc-text"> vfio-user</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E4%B8%8E%E5%85%BC%E5%AE%B9%E5%B1%82"><span class="toc-number">9.</span> <span class="toc-text"> 启动与兼容层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vm-superio-vm-superio-ser"><span class="toc-number">9.1.</span> <span class="toc-text"> vm-superio &#x2F; vm-superio-ser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#linux-loader"><span class="toc-number">9.2.</span> <span class="toc-text"> linux-loader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vm-fdt"><span class="toc-number">9.3.</span> <span class="toc-text"> vm-fdt</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E5%8C%96%E4%B8%8E%E5%8F%82%E8%80%83%E5%AE%9E%E7%8E%B0"><span class="toc-number">10.</span> <span class="toc-text"> 工程化与参考实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#rust-vmm-ci"><span class="toc-number">10.1.</span> <span class="toc-text"> rust-vmm-ci</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rust-vmm-container"><span class="toc-number">10.2.</span> <span class="toc-text"> rust-vmm-container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vmm-reference"><span class="toc-number">10.3.</span> <span class="toc-text"> vmm-reference</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%80%81%E8%90%BD%E5%9C%B0%E4%B8%8E%E5%BA%94%E7%94%A8%E4%BB%B7%E5%80%BC"><span class="toc-number">11.</span> <span class="toc-text"> 生态落地与应用价值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">12.</span> <span class="toc-text"> 总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">13.</span> <span class="toc-text"> 参考链接</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/0/" title="无题">无题</a><time datetime="2026-06-19T01:53:08.302Z" title="更新于 2026-06-19 09:53:08">2026-06-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/e273/" title="基于 rust-vmm 玩转虚拟化">基于 rust-vmm 玩转虚拟化</a><time datetime="2026-06-19T01:04:00.000Z" title="更新于 2026-06-19 09:04:00">2026-06-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/a339/" title="8. VIVO-Y927 Linux 内核设备树完善（电池和充电）">8. VIVO-Y927 Linux 内核设备树完善（电池和充电）</a><time datetime="2026-06-15T01:38:00.000Z" title="更新于 2026-06-15 09:38:00">2026-06-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/b55f/" title="8. VIVO-Y927 Linux 内核设备树完善（WiFi-蓝牙）">8. VIVO-Y927 Linux 内核设备树完善（WiFi-蓝牙）</a><time datetime="2026-06-14T15:30:00.000Z" title="更新于 2026-06-14 23:30:00">2026-06-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cb81/" title="7. VIVO-Y927 Linux 内核设备树完善（GPU）">7. VIVO-Y927 Linux 内核设备树完善（GPU）</a><time datetime="2026-06-14T12:52:00.000Z" title="更新于 2026-06-14 20:52:00">2026-06-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2026 By Zhangzqs</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const initGitalk = () => {
+    const gitalk = new Gitalk(Object.assign({
+      clientID: 'ab268de21c96effa2a00',
+      clientSecret: '700d9eb89a708c0d5b4c8582987544d5871c48a9',
+      repo: 'Zhangzqs.github.io',
+      owner: 'Zhangzqs',
+      admin: ['Zhangzqs'],
+      id: '2c64e07525f5fa7cb86c92c97ff6c421',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async() => {
+    if (typeof Gitalk === 'function') initGitalk()
+    else {
+      await getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk()
+    }
+  }
+  
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
