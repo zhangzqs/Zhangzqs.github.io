@@ -55,9 +55,9 @@
       
         <tags>
             
-            <tag> Linux内核 </tag>
-            
             <tag> 设备树(DTS) </tag>
+            
+            <tag> Linux内核 </tag>
             
             <tag> 嵌入式Linux </tag>
             
@@ -131,9 +131,9 @@
       
         <tags>
             
-            <tag> Linux内核 </tag>
-            
             <tag> 设备树(DTS) </tag>
+            
+            <tag> Linux内核 </tag>
             
             <tag> 触摸屏驱动 </tag>
             
@@ -236,8 +236,6 @@
       
         <tags>
             
-            <tag> Linux内核 </tag>
-            
             <tag> 设备树(DTS) </tag>
             
             <tag> ARM64 </tag>
@@ -245,6 +243,8 @@
             <tag> BusyBox </tag>
             
             <tag> initramfs </tag>
+            
+            <tag> Linux内核 </tag>
             
             <tag> USB Gadget Serial </tag>
             
@@ -650,11 +650,11 @@
             
             <tag> 光线追踪 </tag>
             
+            <tag> BRDF </tag>
+            
             <tag> 全局光照 </tag>
             
             <tag> 渲染方程 </tag>
-            
-            <tag> BRDF </tag>
             
         </tags>
       
@@ -994,9 +994,9 @@
       
         <tags>
             
-            <tag> 虚拟化 </tag>
-            
             <tag> 嵌套虚拟化 </tag>
+            
+            <tag> 虚拟化 </tag>
             
             <tag> Hyper-V </tag>
             
@@ -1173,13 +1173,13 @@
       
         <tags>
             
-            <tag> 十二平均律 </tag>
-            
-            <tag> 音乐 </tag>
-            
             <tag> 泛音点计算 </tag>
             
             <tag> 吉他自然泛音点计算 </tag>
+            
+            <tag> 十二平均律 </tag>
+            
+            <tag> 音乐 </tag>
             
             <tag> Python代码 </tag>
             
@@ -1276,19 +1276,19 @@
       
         <tags>
             
+            <tag> 十二平均律 </tag>
+            
+            <tag> 音乐 </tag>
+            
             <tag> 和弦 </tag>
             
             <tag> 乐理知识 </tag>
             
             <tag> 纯律 </tag>
             
-            <tag> 十二平均律 </tag>
-            
             <tag> 五度相生律 </tag>
             
             <tag> 五声音阶 </tag>
-            
-            <tag> 音乐 </tag>
             
         </tags>
       
