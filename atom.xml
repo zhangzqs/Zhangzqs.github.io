@@ -72,9 +72,9 @@
     <category term="VIVO-Y927移植主线Linux发行版" scheme="https://zhangzqs.cn/categories/VIVO-Y927%E7%A7%BB%E6%A4%8D%E4%B8%BB%E7%BA%BFLinux%E5%8F%91%E8%A1%8C%E7%89%88/"/>
     
     
-    <category term="设备树(DTS)" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91-DTS/"/>
-    
     <category term="Linux内核" scheme="https://zhangzqs.cn/tags/Linux%E5%86%85%E6%A0%B8/"/>
+    
+    <category term="设备树(DTS)" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91-DTS/"/>
     
     <category term="嵌入式Linux" scheme="https://zhangzqs.cn/tags/%E5%B5%8C%E5%85%A5%E5%BC%8FLinux/"/>
     
@@ -115,9 +115,9 @@
     
     <category term="Qualcomm" scheme="https://zhangzqs.cn/tags/Qualcomm/"/>
     
-    <category term="设备树" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
-    
     <category term="Linux内核" scheme="https://zhangzqs.cn/tags/Linux%E5%86%85%E6%A0%B8/"/>
+    
+    <category term="设备树" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
     
     <category term="Adreno" scheme="https://zhangzqs.cn/tags/Adreno/"/>
     
@@ -148,9 +148,9 @@
     <category term="VIVO-Y927移植主线Linux发行版" scheme="https://zhangzqs.cn/categories/VIVO-Y927%E7%A7%BB%E6%A4%8D%E4%B8%BB%E7%BA%BFLinux%E5%8F%91%E8%A1%8C%E7%89%88/"/>
     
     
-    <category term="设备树(DTS)" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91-DTS/"/>
-    
     <category term="Linux内核" scheme="https://zhangzqs.cn/tags/Linux%E5%86%85%E6%A0%B8/"/>
+    
+    <category term="设备树(DTS)" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91-DTS/"/>
     
     <category term="触摸屏驱动" scheme="https://zhangzqs.cn/tags/%E8%A7%A6%E6%91%B8%E5%B1%8F%E9%A9%B1%E5%8A%A8/"/>
     
@@ -183,9 +183,9 @@
     <category term="VIVO-Y927移植主线Linux发行版" scheme="https://zhangzqs.cn/categories/VIVO-Y927%E7%A7%BB%E6%A4%8D%E4%B8%BB%E7%BA%BFLinux%E5%8F%91%E8%A1%8C%E7%89%88/"/>
     
     
-    <category term="设备树" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
-    
     <category term="Linux内核" scheme="https://zhangzqs.cn/tags/Linux%E5%86%85%E6%A0%B8/"/>
+    
+    <category term="设备树" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
     
     <category term="交叉编译" scheme="https://zhangzqs.cn/tags/%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/"/>
     
@@ -253,6 +253,8 @@
     <category term="VIVO-Y927移植主线Linux发行版" scheme="https://zhangzqs.cn/categories/VIVO-Y927%E7%A7%BB%E6%A4%8D%E4%B8%BB%E7%BA%BFLinux%E5%8F%91%E8%A1%8C%E7%89%88/"/>
     
     
+    <category term="Linux内核" scheme="https://zhangzqs.cn/tags/Linux%E5%86%85%E6%A0%B8/"/>
+    
     <category term="设备树(DTS)" scheme="https://zhangzqs.cn/tags/%E8%AE%BE%E5%A4%87%E6%A0%91-DTS/"/>
     
     <category term="ARM64" scheme="https://zhangzqs.cn/tags/ARM64/"/>
@@ -260,8 +262,6 @@
     <category term="BusyBox" scheme="https://zhangzqs.cn/tags/BusyBox/"/>
     
     <category term="initramfs" scheme="https://zhangzqs.cn/tags/initramfs/"/>
-    
-    <category term="Linux内核" scheme="https://zhangzqs.cn/tags/Linux%E5%86%85%E6%A0%B8/"/>
     
     <category term="USB Gadget Serial" scheme="https://zhangzqs.cn/tags/USB-Gadget-Serial/"/>
     
@@ -663,11 +663,11 @@
     
     <category term="光线追踪" scheme="https://zhangzqs.cn/tags/%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA/"/>
     
-    <category term="BRDF" scheme="https://zhangzqs.cn/tags/BRDF/"/>
-    
     <category term="全局光照" scheme="https://zhangzqs.cn/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/"/>
     
     <category term="渲染方程" scheme="https://zhangzqs.cn/tags/%E6%B8%B2%E6%9F%93%E6%96%B9%E7%A8%8B/"/>
+    
+    <category term="BRDF" scheme="https://zhangzqs.cn/tags/BRDF/"/>
     
   </entry>
   
@@ -1029,9 +1029,9 @@
     <category term="虚拟化" scheme="https://zhangzqs.cn/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     
     
-    <category term="嵌套虚拟化" scheme="https://zhangzqs.cn/tags/%E5%B5%8C%E5%A5%97%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
-    
     <category term="虚拟化" scheme="https://zhangzqs.cn/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
+    
+    <category term="嵌套虚拟化" scheme="https://zhangzqs.cn/tags/%E5%B5%8C%E5%A5%97%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     
     <category term="Hyper-V" scheme="https://zhangzqs.cn/tags/Hyper-V/"/>
     
@@ -1210,13 +1210,13 @@
     <category term="音乐" scheme="https://zhangzqs.cn/categories/%E9%9F%B3%E4%B9%90/"/>
     
     
-    <category term="泛音点计算" scheme="https://zhangzqs.cn/tags/%E6%B3%9B%E9%9F%B3%E7%82%B9%E8%AE%A1%E7%AE%97/"/>
-    
-    <category term="吉他自然泛音点计算" scheme="https://zhangzqs.cn/tags/%E5%90%89%E4%BB%96%E8%87%AA%E7%84%B6%E6%B3%9B%E9%9F%B3%E7%82%B9%E8%AE%A1%E7%AE%97/"/>
-    
     <category term="十二平均律" scheme="https://zhangzqs.cn/tags/%E5%8D%81%E4%BA%8C%E5%B9%B3%E5%9D%87%E5%BE%8B/"/>
     
     <category term="音乐" scheme="https://zhangzqs.cn/tags/%E9%9F%B3%E4%B9%90/"/>
+    
+    <category term="泛音点计算" scheme="https://zhangzqs.cn/tags/%E6%B3%9B%E9%9F%B3%E7%82%B9%E8%AE%A1%E7%AE%97/"/>
+    
+    <category term="吉他自然泛音点计算" scheme="https://zhangzqs.cn/tags/%E5%90%89%E4%BB%96%E8%87%AA%E7%84%B6%E6%B3%9B%E9%9F%B3%E7%82%B9%E8%AE%A1%E7%AE%97/"/>
     
     <category term="Python代码" scheme="https://zhangzqs.cn/tags/Python%E4%BB%A3%E7%A0%81/"/>
     
@@ -1316,19 +1316,19 @@
     <category term="音乐" scheme="https://zhangzqs.cn/categories/%E9%9F%B3%E4%B9%90/"/>
     
     
-    <category term="十二平均律" scheme="https://zhangzqs.cn/tags/%E5%8D%81%E4%BA%8C%E5%B9%B3%E5%9D%87%E5%BE%8B/"/>
-    
-    <category term="音乐" scheme="https://zhangzqs.cn/tags/%E9%9F%B3%E4%B9%90/"/>
-    
     <category term="和弦" scheme="https://zhangzqs.cn/tags/%E5%92%8C%E5%BC%A6/"/>
     
     <category term="乐理知识" scheme="https://zhangzqs.cn/tags/%E4%B9%90%E7%90%86%E7%9F%A5%E8%AF%86/"/>
     
     <category term="纯律" scheme="https://zhangzqs.cn/tags/%E7%BA%AF%E5%BE%8B/"/>
     
+    <category term="十二平均律" scheme="https://zhangzqs.cn/tags/%E5%8D%81%E4%BA%8C%E5%B9%B3%E5%9D%87%E5%BE%8B/"/>
+    
     <category term="五度相生律" scheme="https://zhangzqs.cn/tags/%E4%BA%94%E5%BA%A6%E7%9B%B8%E7%94%9F%E5%BE%8B/"/>
     
     <category term="五声音阶" scheme="https://zhangzqs.cn/tags/%E4%BA%94%E5%A3%B0%E9%9F%B3%E9%98%B6/"/>
+    
+    <category term="音乐" scheme="https://zhangzqs.cn/tags/%E9%9F%B3%E4%B9%90/"/>
     
   </entry>
   
