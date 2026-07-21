@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480">
+  <defs>
+    <marker id="arrow-odometry" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="800" height="480" fill="#f8fafc"/>
+  <text x="400" y="38" text-anchor="middle" font-size="28" fill="#1f2937">编码器增量到位姿轨迹</text>
+
+  <rect x="30" y="75" width="160" height="85" rx="16" fill="none" stroke="#1f2937" stroke-width="3"/>
+  <rect x="230" y="75" width="160" height="85" rx="16" fill="none" stroke="#1f2937" stroke-width="3"/>
+  <rect x="430" y="75" width="160" height="85" rx="16" fill="none" stroke="#1f2937" stroke-width="3"/>
+  <rect x="630" y="75" width="160" height="85" rx="16" fill="none" stroke="#1f2937" stroke-width="3"/>
+  <text x="110" y="126" text-anchor="middle" font-size="20" fill="#1f2937">Δφ_L, Δφ_R</text>
+  <text x="310" y="126" text-anchor="middle" font-size="20" fill="#1f2937">Δs_L, Δs_R</text>
+  <text x="510" y="126" text-anchor="middle" font-size="20" fill="#1f2937">Δs, Δθ</text>
+  <text x="710" y="126" text-anchor="middle" font-size="20" fill="#1f2937">x, y, θ</text>
+  <line x1="190" y1="118" x2="225" y2="118" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-odometry)"/>
+  <line x1="390" y1="118" x2="425" y2="118" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-odometry)"/>
+  <line x1="590" y1="118" x2="625" y2="118" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-odometry)"/>
+
+  <path d="M 100 400 C 260 410 390 315 700 300" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-odometry)"/>
+  <circle cx="100" cy="400" r="7" fill="#d97706"/>
+  <circle cx="195" cy="397" r="7" fill="#d97706"/>
+  <circle cx="290" cy="375" r="7" fill="#d97706"/>
+  <circle cx="390" cy="342" r="7" fill="#d97706"/>
+  <circle cx="495" cy="317" r="7" fill="#d97706"/>
+  <circle cx="600" cy="304" r="7" fill="#d97706"/>
+  <circle cx="700" cy="300" r="7" fill="#d97706"/>
+
+  <polygon points="18,0 -12,-10 -12,10" transform="translate(100 400) rotate(2)" fill="#f8fafc" stroke="#1f2937" stroke-width="3"/>
+  <polygon points="18,0 -12,-10 -12,10" transform="translate(390 342) rotate(-17)" fill="#f8fafc" stroke="#1f2937" stroke-width="3"/>
+  <polygon points="18,0 -12,-10 -12,10" transform="translate(700 300) rotate(-3)" fill="#f8fafc" stroke="#1f2937" stroke-width="3"/>
+</svg>
