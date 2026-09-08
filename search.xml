@@ -582,9 +582,9 @@
             
             <tag> GAMES101 </tag>
             
-            <tag> 光线追踪 </tag>
-            
             <tag> 光栅化 </tag>
+            
+            <tag> 光线追踪 </tag>
             
             <tag> 动画 </tag>
             
@@ -1002,11 +1002,11 @@
             
             <tag> C++实现 </tag>
             
-            <tag> Leetcode </tag>
-            
             <tag> 数组差值计算 </tag>
             
             <tag> 隐藏数组统计 </tag>
+            
+            <tag> Leetcode </tag>
             
         </tags>
       
@@ -1210,13 +1210,13 @@
       
         <tags>
             
-            <tag> 泛音点计算 </tag>
-            
-            <tag> 吉他自然泛音点计算 </tag>
-            
             <tag> 十二平均律 </tag>
             
             <tag> 音乐 </tag>
+            
+            <tag> 泛音点计算 </tag>
+            
+            <tag> 吉他自然泛音点计算 </tag>
             
             <tag> Python代码 </tag>
             
@@ -1245,11 +1245,11 @@
             
             <tag> 工具使用 </tag>
             
+            <tag> 数学 </tag>
+            
             <tag> 二元关系符 </tag>
             
             <tag> 上标输入 </tag>
-            
-            <tag> 数学 </tag>
             
             <tag> 数学符号 </tag>
             
@@ -1313,19 +1313,19 @@
       
         <tags>
             
-            <tag> 十二平均律 </tag>
-            
-            <tag> 音乐 </tag>
-            
             <tag> 和弦 </tag>
             
             <tag> 乐理知识 </tag>
             
             <tag> 纯律 </tag>
             
+            <tag> 十二平均律 </tag>
+            
             <tag> 五度相生律 </tag>
             
             <tag> 五声音阶 </tag>
+            
+            <tag> 音乐 </tag>
             
         </tags>
       
@@ -2096,11 +2096,11 @@
       
         <tags>
             
-            <tag> 数学 </tag>
-            
             <tag> 等比数列求和公式 </tag>
             
             <tag> 二进制 </tag>
+            
+            <tag> 数学 </tag>
             
             <tag> k进制 </tag>
             
@@ -2265,15 +2265,15 @@
       
         <tags>
             
+            <tag> 软件测试 </tag>
+            
+            <tag> 集成测试 </tag>
+            
             <tag> 边界值分析法 </tag>
             
             <tag> 等价类划分法 </tag>
             
             <tag> 基本路径测试法 </tag>
-            
-            <tag> 集成测试 </tag>
-            
-            <tag> 软件测试 </tag>
             
             <tag> 因果图法 </tag>
             
@@ -2681,11 +2681,11 @@
             
             <tag> 词频统计 </tag>
             
+            <tag> Spark配置 </tag>
+            
             <tag> Pyspark </tag>
             
             <tag> Spark Shell </tag>
-            
-            <tag> Spark配置 </tag>
             
         </tags>
       
@@ -2712,13 +2712,13 @@
             
             <tag> 大数据 </tag>
             
-            <tag> Spark配置 </tag>
-            
             <tag> Spark踩坑 </tag>
             
             <tag> Spark环境搭建 </tag>
             
             <tag> Spark集群启动 </tag>
+            
+            <tag> Spark配置 </tag>
             
         </tags>
       
@@ -3155,11 +3155,11 @@
       
         <tags>
             
-            <tag> 集成测试 </tag>
-            
             <tag> 软件测试 </tag>
             
             <tag> 单元测试 </tag>
+            
+            <tag> 集成测试 </tag>
             
             <tag> 系统测试 </tag>
             
@@ -3262,6 +3262,8 @@
             
             <tag> 算法 </tag>
             
+            <tag> Leetcode </tag>
+            
             <tag> 数据结构 </tag>
             
             <tag> 树的直径 </tag>
@@ -3269,8 +3271,6 @@
             <tag> 最小高度树 </tag>
             
             <tag> BFS </tag>
-            
-            <tag> Leetcode </tag>
             
         </tags>
       
@@ -3336,9 +3336,9 @@
             
             <tag> 算法 </tag>
             
-            <tag> 数据结构 </tag>
-            
             <tag> Leetcode </tag>
+            
+            <tag> 数据结构 </tag>
             
             <tag> 递归算法 </tag>
             
@@ -3651,13 +3651,13 @@
       
         <tags>
             
+            <tag> 软件工程 </tag>
+            
             <tag> 分布式系统 </tag>
             
             <tag> 负载均衡 </tag>
             
             <tag> 容器化技术 </tag>
-            
-            <tag> 软件工程 </tag>
             
             <tag> 数据库读写分离 </tag>
             
@@ -4228,15 +4228,15 @@
             
             <tag> 数据库 </tag>
             
+            <tag> Java </tag>
+            
+            <tag> PostgreSQL </tag>
+            
             <tag> Hibernate基本使用 </tag>
             
             <tag> Hibernate配置 </tag>
             
             <tag> Hibernate映射 </tag>
-            
-            <tag> Java </tag>
-            
-            <tag> PostgreSQL </tag>
             
         </tags>
       
@@ -4395,9 +4395,9 @@
             
             <tag> 读书笔记 </tag>
             
-            <tag> 软件工程 </tag>
-            
             <tag> 敏捷开发 </tag>
+            
+            <tag> 软件工程 </tag>
             
             <tag> 敏捷宣言 </tag>
             
@@ -4430,11 +4430,11 @@
       
         <tags>
             
-            <tag> 软件工程 </tag>
-            
             <tag> 敏捷开发 </tag>
             
             <tag> 瀑布模式开发 </tag>
+            
+            <tag> 软件工程 </tag>
             
             <tag> Scrum框架 </tag>
             
@@ -4500,11 +4500,11 @@
             
             <tag> Java </tag>
             
-            <tag> PostgreSQL </tag>
-            
             <tag> Maven依赖 </tag>
             
             <tag> MyBatis </tag>
+            
+            <tag> PostgreSQL </tag>
             
             <tag> XML配置 </tag>
             
